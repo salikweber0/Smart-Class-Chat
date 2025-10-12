@@ -182,6 +182,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            cursor: pointer;
         }
 
         .group-avatar {
@@ -240,11 +241,15 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 20px 10px 80px 10px;
+            padding: 20px 10px 100px 10px;
             -webkit-overflow-scrolling: touch;
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: scroll;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
         }
 
         [data-theme="light"] .messages-area {
@@ -364,6 +369,15 @@
             line-height: 1.4;
         }
 
+        .message-text.deleted {
+            font-style: italic;
+            color: var(--text-secondary);
+        }
+
+        .message-text.deleted::before {
+            content: '🚫 ';
+        }
+
         .message-time {
             font-size: 11px;
             color: var(--text-secondary);
@@ -396,12 +410,29 @@
             text-overflow: ellipsis;
         }
 
-        .emoji-reactions {
-            display: inline-flex;
-            gap: 4px;
-            margin-left: 8px;
+        .message-reactions {
+    display: flex;
+    gap: 3px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+        .reaction-item {
+            background: var(--bg-input);
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
             align-items: center;
-            font-size: 16px;
+            gap: 3px;
+            border: 1px solid var(--border-color);
+        }
+
+        .reaction-count {
+            font-size: 11px;
+            color: var(--text-secondary);
         }
 
         .context-menu {
@@ -481,6 +512,8 @@
             grid-template-columns: repeat(6, 1fr);
             gap: 8px;
             max-width: 300px;
+            max-height: 250px;
+            overflow-y: auto;
         }
 
         .emoji-picker.active {
@@ -497,6 +530,200 @@
 
         .emoji-item:hover {
             background: var(--bg-input);
+        }
+
+        .reaction-viewer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-radius: 15px 15px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            display: none;
+            max-height: 60vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .reaction-viewer.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .reaction-viewer-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--bg-secondary);
+            z-index: 10;
+        }
+
+        .reaction-viewer-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .reaction-viewer-close {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .reaction-viewer-content {
+            padding: 10px;
+        }
+
+        .reaction-group {
+            margin-bottom: 15px;
+        }
+
+        .reaction-group-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .reaction-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .reaction-user:hover {
+            background: var(--bg-input);
+        }
+
+        .reaction-user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            overflow: hidden;
+        }
+
+        .reaction-user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .members-sidebar {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .members-sidebar.active {
+            left: 0;
+        }
+
+        .members-header {
+            background: var(--header-bg);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .members-header h3 {
+            color: var(--header-text);
+            font-size: 18px;
+        }
+
+        .members-close {
+            background: none;
+            border: none;
+            color: var(--header-text);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .members-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+        }
+
+        .member-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.member-avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.member-info {
+    flex: 1;
+}
+
+.member-name {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 199;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
         }
 
         .input-area {
@@ -735,6 +962,10 @@
             .message-content {
                 max-width: 85%;
             }
+            
+            .emoji-picker {
+                max-width: 90%;
+            }
         }
     </style>
 </head>
@@ -781,7 +1012,7 @@
     <!-- Chat Container -->
     <div id="chatContainer" class="chat-container">
         <div class="chat-header">
-            <div class="header-left">
+            <div class="header-left" onclick="toggleMembersSidebar()">
                 <div class="group-avatar">CG</div>
                 <div class="group-info">
                     <h2>Class Group</h2>
@@ -825,6 +1056,18 @@
                     </svg>
                 </button>
             </div>
+        </div>
+    </div>
+
+    <!-- Members Sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMembersSidebar()"></div>
+    <div class="members-sidebar" id="membersSidebar">
+        <div class="members-header">
+            <h3>Class Members</h3>
+            <button class="members-close" onclick="toggleMembersSidebar()">×</button>
+        </div>
+        <div class="members-list" id="membersList">
+            <div class="loading">Loading members...</div>
         </div>
     </div>
 
@@ -886,9 +1129,9 @@
         <div class="context-menu-item" onclick="replyMessage()">
             <span>↩️</span> Reply
         </div>
-        <div class="context-menu-item" onclick="showEmojiPicker()">
+        <!-- <div class="context-menu-item" onclick="showEmojiPickerForReaction()">
             <span>😊</span> React
-        </div>
+        </div> -->
         <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption" style="display: none;">
             <span>🗑️</span> Delete
         </div>
@@ -902,39 +1145,54 @@
     <!-- Emoji Picker -->
     <div id="emojiPicker" class="emoji-picker"></div>
 
+    <!-- Reaction Viewer -->
+    <div id="reactionViewer" class="reaction-viewer">
+        <div class="reaction-viewer-header">
+            <div class="reaction-viewer-title">Reactions</div>
+            <button class="reaction-viewer-close" onclick="hideReactionViewer()">×</button>
+        </div>
+        <div class="reaction-viewer-content" id="reactionViewerContent"></div>
+    </div>
+
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
-        const SAD_URL = "https://script.google.com/macros/s/AKfycbyQX_0IeCrPXAxEuYw59TB1XNbIO8ABVzlN5y27JszcleEhp1Ki5IZghIFChu5oTbEi/exec";
+        const SAD_URL = "https://script.google.com/macros/s/AKfycbxjZ-NE9VF44H5sZXWAQhfB9JZ2-czsAGF9qmA0wcbIMox6oSiUg69aU92b7OYoI8T9/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbyoDtFkQztJn6RY0KhMeL7S_mRjwtq9MTrh3nywYRFB4n5Oa5ft4JsVcpg_5gluHCtp/exec";
 
         // ============ WALLPAPERS ============
-        const WALLPAPERS = {
-            boys: [
-                {name: 'Dark Abstract', url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=400'},
-                {name: 'Blue Waves', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400'},
-                {name: 'Gradient Dark', url: 'https://images.unsplash.com/photo-1557682224-5b8590cd9ec5?w=400'},
-                {name: 'Mountain', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400'},
-                {name: 'Space', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400'},
-                {name: 'Dark Blue', url: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=400'},
-                {name: 'Tech', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400'},
-                {name: 'Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400'},
-                {name: 'Night Sky', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400'},
-                {name: 'Purple Waves', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=400'}
-            ],
-            girls: [
-                {name: 'Pink Flowers', url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=400'},
-                {name: 'Pastel', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=400'},
-                {name: 'Lavender', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400'},
-                {name: 'Sunset', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400'},
-                {name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=400'},
-                {name: 'Rose Gold', url: 'https://images.unsplash.com/photo-1557264305-0e888ae48dff?w=400'},
-                {name: 'Purple Sky', url: 'https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=400'},
-                {name: 'Beach', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400'},
-                {name: 'Floral', url: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400'},
-                {name: 'Pink Gradient', url: 'https://images.unsplash.com/photo-1557672199-6171610c4f97?w=400'}
-            ]
-        };
+        const WALLPAPERS = [
+            {name: 'Abstract Dark', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=2400&q=100'},
+            {name: 'Blue Gradient', url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=2400&q=100'},
+            {name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=2400&q=100'},
+            {name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
+            {name: 'Neon City', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=2400&q=100'},
+            {name: 'Ocean Wave', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=2400&q=100'},
+            {name: 'Galaxy', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=2400&q=100'},
+            {name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2400&q=100'},
+            {name: 'Forest Path', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400&q=100'},
+            {name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=2400&q=100'},
+            {name: 'Aurora', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=2400&q=100'},
+            {name: 'Desert Dunes', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=2400&q=100'},
+            {name: 'Lavender Field', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=2400&q=100'},
+            {name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=2400&q=100'},
+            {name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=2400&q=100'},
+            {name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=2400&q=100'},
+            {name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
+            {name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=2400&q=100'},
+            {name: 'Autumn Forest', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=2400&q=100'},
+            {name: 'Blue Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=2400&q=100'},
+            {name: 'Purple Sunset', url: 'https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=2400&q=100'},
+            {name: 'Green Nature', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400&q=100'},
+            {name: 'Pink Flower', url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=2400&q=100'},
+            {name: 'Dark Tech', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=2400&q=100'},
+            {name: 'Snow Mountain', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
+            {name: 'Sunset Beach', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2400&q=100'},
+            {name: 'Night City', url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=2400&q=100'},
+            {name: 'Blue Abstract', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=2400&q=100'},
+            {name: 'Red Gradient', url: 'https://images.unsplash.com/photo-1557264305-0e888ae48dff?w=2400&q=100'},
+            {name: 'Green Aurora', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=2400&q=100'}
+        ];
 
         // ============ STATE MANAGEMENT ============
         let currentUser = null;
@@ -944,9 +1202,10 @@
         let lastMessageCount = 0;
         let isSending = false;
         let allUsers = {};
+        let currentMessages = [];
 
         // ============ EMOJIS ============
-        const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍'];
+        const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
 
         // ============ INITIALIZATION ============
         window.onload = function () {
@@ -958,44 +1217,29 @@
         async function checkAuth() {
             try {
                 const userDataString = localStorage.getItem('chatUser');
-                console.log('Checking localStorage for user data...');
-                console.log('Raw data:', userDataString);
                 
                 if (!userDataString || userDataString === 'null') {
-                    console.log('No user data found, showing signup');
                     showSignup();
                     return;
                 }
                 
                 const userData = JSON.parse(userDataString);
-                console.log('Parsed user data:', userData);
                 
                 if (userData && userData.name && userData.email && userData.photo) {
                     currentUser = userData;
-                    console.log('✅ User found in localStorage:', currentUser.name);
-                    
-                    // Show chat immediately - NO VALIDATION
                     showChat();
                     loadWallpapers();
                     startMessageRefresh();
                     loadOnlineCount();
-                    
                     return;
                 }
                 
-                console.log('User data incomplete, showing signup');
                 showSignup();
                 
             } catch (error) {
                 console.error('Error in checkAuth:', error);
                 showSignup();
             }
-        }
-
-        // Remove this validation function completely
-        async function validateUserAccount(userData) {
-            // Not needed - removed
-            return { isActive: true };
         }
 
         async function loadOnlineCount() {
@@ -1029,6 +1273,9 @@
                 }
                 if (!e.target.closest('.emoji-picker')) {
                     hideEmojiPicker();
+                }
+                if (!e.target.closest('.reaction-viewer') && !e.target.closest('.reaction-item')) {
+                    hideReactionViewer();
                 }
             });
 
@@ -1064,13 +1311,33 @@
             }
         }
 
-        // ============ SIGNUP ============
+        // ============ SIGNUP WITH VALIDATION ============
         async function handleSignup(e) {
             e.preventDefault();
 
             const code = document.getElementById('signupCode').value;
             if (code !== SECURITY_CODE) {
                 alert('❌ Invalid security code!');
+                return;
+            }
+
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('signupPhone').value.trim();
+
+            if (!name || name.length < 2) {
+                alert('❌ Please enter a valid name (minimum 2 characters)!');
+                return;
+            }
+
+            if (!email || !email.includes('@') || !email.endsWith('gmail.com')) {
+                alert('❌ Please use a valid Gmail address (e.g., yourname@gmail.com)!');
+                return;
+            }
+
+            const phoneRegex = /^\d{10}$/;
+            if (!phone || !phoneRegex.test(phone)) {
+                alert('❌ Please enter a valid 10-digit phone number!');
                 return;
             }
 
@@ -1081,40 +1348,70 @@
             }
 
             const btn = document.getElementById('signupBtn');
-            btn.textContent = 'Creating account...';
+            btn.textContent = 'Checking account...';
             btn.disabled = true;
 
             try {
+                console.log('STEP 1: Checking for duplicates BEFORE signup...');
+                const checkResponse = await fetch(`${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
+                const checkData = await checkResponse.json();
+                
+                console.log('Pre-signup duplicate check:', checkData);
+                
+                if (checkData.exists === true) {
+                    let fieldName = checkData.field;
+                    if (fieldName === 'name') fieldName = 'Name';
+                    if (fieldName === 'email') fieldName = 'Email';
+                    if (fieldName === 'phone') fieldName = 'Phone Number';
+                    
+                    alert('❌ This account already exists!\n\n' + fieldName + ' is already registered. Please use a different ' + fieldName.toLowerCase() + '.');
+                    btn.textContent = 'Sign Up';
+                    btn.disabled = false;
+                    return;
+                }
+
+                btn.textContent = 'Creating account...';
+                console.log('STEP 2: No duplicates found. Creating account...');
+
                 const photoBase64 = await fileToBase64(photoFile);
-                const name = document.getElementById('signupName').value;
-                const email = document.getElementById('signupEmail').value;
-                const phone = document.getElementById('signupPhone').value;
+
+                const signupData = {
+                    action: 'signup',
+                    name: name,
+                    email: email,
+                    phone: phone
+                };
+
+                console.log('Sending signup data to sheet:', signupData);
 
                 await fetch(SAD_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'signup',
-                        name: name,
-                        email: email,
-                        phone: phone
-                    })
+                    redirect: 'follow',
+                    headers: { 
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify(signupData)
+                }).catch(err => {
+                    console.log('CORS error (expected):', err.message);
                 });
 
+                console.log('STEP 3: Waiting for sheet to save data...');
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                console.log('STEP 4: Saving to localStorage and showing chat...');
                 currentUser = { name, email, phone, photo: photoBase64, timestamp: new Date().toISOString() };
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
-                console.log('✅ User saved to localStorage:', currentUser);
 
-                alert('✅ Account created successfully!');
+                alert('✅ Account created successfully!\n\nWelcome to Class Group Chat!');
                 
-                // Show chat and load everything
                 showChat();
                 loadWallpapers();
                 startMessageRefresh();
                 loadOnlineCount();
+
             } catch (error) {
-                alert('❌ Error creating account: ' + error.message);
+                console.error('Signup error:', error);
+                alert('❌ Error creating account: ' + error.message + '\n\nPlease check your internet connection and try again.');
             } finally {
                 btn.textContent = 'Sign Up';
                 btn.disabled = false;
@@ -1139,19 +1436,6 @@
                 replyToData = `${replyToMessage.sender}|||${replyToMessage.text}`;
             }
 
-            const tempMessage = {
-                studentName: currentUser.name,
-                message: messageText,
-                timestamp: new Date().toISOString(),
-                replyTo: replyToData,
-                reaction: ''
-            };
-
-            const container = document.getElementById('messagesArea');
-            const messageDiv = createMessageElement(tempMessage, -1);
-            container.appendChild(messageDiv);
-            container.scrollTop = container.scrollHeight;
-
             cancelReply();
 
             try {
@@ -1170,7 +1454,8 @@
                     body: JSON.stringify(messageData)
                 });
 
-                setTimeout(() => fetchMessages(), 1000);
+                setTimeout(() => fetchMessages(), 30);
+                scrollToBottom();
             } catch (error) {
                 console.error('Send error:', error);
                 alert('❌ Error sending message: ' + error.message);
@@ -1182,7 +1467,7 @@
         // ============ FETCH MESSAGES ============
         async function fetchMessages() {
             try {
-                const response = await fetch(`${SMD_URL}?action=fetchMessages`);
+                const response = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
                 const data = await response.json();
 
                 if (!data.success || !data.messages || data.messages.length === 0) {
@@ -1190,9 +1475,9 @@
                     return;
                 }
 
-                if (data.messages.length !== lastMessageCount) {
+                if (JSON.stringify(data.messages) !== JSON.stringify(currentMessages)) {
+                    currentMessages = data.messages;
                     displayMessages(data.messages);
-                    lastMessageCount = data.messages.length;
                 }
             } catch (error) {
                 console.error('Error fetching messages:', error);
@@ -1202,14 +1487,12 @@
         // ============ DISPLAY MESSAGES ============
         function displayMessages(messages) {
             const container = document.getElementById('messagesArea');
-            const wasAtBottom = container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+            const wasAtBottom = isScrolledToBottom();
             
             container.innerHTML = '';
             let currentDate = '';
 
             messages.forEach((msg, index) => {
-                if (msg.message === '❌') return;
-
                 const msgDate = new Date(msg.timestamp);
                 const dateStr = formatDate(msgDate);
 
@@ -1226,13 +1509,17 @@
             });
 
             if (wasAtBottom || lastMessageCount === 0) {
-                container.scrollTop = container.scrollHeight;
+                scrollToBottom();
             }
+            
+            lastMessageCount = messages.length;
         }
 
         function createMessageElement(msg, index) {
             const messageDiv = document.createElement('div');
             const isSent = msg.studentName.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
+            const isDeleted = msg.message === '❌ DELETED';
+            
             messageDiv.className = isSent ? 'message sent' : 'message received';
             messageDiv.setAttribute('data-index', index);
             messageDiv.setAttribute('data-message', msg.message);
@@ -1258,19 +1545,35 @@
                         `;
                     }
                 } catch (e) {
-                    console.error('Error parsing reply:', e, msg.replyTo);
+                    console.error('Error parsing reply:', e);
                 }
             }
 
             let reactionHTML = '';
             if (msg.reaction && msg.reaction !== '') {
-                reactionHTML = `<span class="emoji-reactions">${msg.reaction}</span>`;
+                const reactions = parseReactions(msg.reaction);
+                if (reactions.length > 0) {
+                    reactionHTML = '<div class="message-reactions">';
+                    reactions.forEach(r => {
+                        reactionHTML += `<div class="reaction-item" onclick="showReactionDetails(${index}, '${r.emoji}')">
+                            ${r.emoji} <span class="reaction-count">${r.count}</span>
+                        </div>`;
+                    });
+                    reactionHTML += '</div>';
+                }
             }
 
             let avatarHTML = `<div class="message-avatar">${firstLetter}</div>`;
             const userPhoto = getUserPhoto(msg.studentName);
             if (userPhoto) {
                 avatarHTML = `<div class="message-avatar"><img src="${userPhoto}" alt="${msg.studentName}"></div>`;
+            }
+
+            let messageTextHTML = '';
+            if (isDeleted) {
+                messageTextHTML = `<div class="message-text deleted">Message Deleted</div>`;
+            } else {
+                messageTextHTML = `<div class="message-text">${escapeHtml(msg.message)}</div>`;
             }
 
             messageDiv.innerHTML = `
@@ -1282,13 +1585,83 @@
                          ondblclick="replyMessageByIndex(${index})">
                         ${!isSent ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
                         ${replyHTML}
-                        <div class="message-text">${escapeHtml(msg.message)}${reactionHTML}</div>
+                        ${messageTextHTML}
                         <div class="message-time">${time}</div>
+                        ${reactionHTML}
                     </div>
                 </div>
             `;
 
             return messageDiv;
+        }
+
+        function parseReactions(reactionString) {
+            if (!reactionString || reactionString === '') return [];
+            
+            const reactionMap = {};
+            const parts = reactionString.split('|');
+            
+            parts.forEach(part => {
+                if (part.includes(':')) {
+                    const [user, emoji] = part.split(':');
+                    if (emoji) {
+                        reactionMap[emoji] = (reactionMap[emoji] || 0) + 1;
+                    }
+                }
+            });
+            
+            return Object.entries(reactionMap).map(([emoji, count]) => ({emoji, count}));
+        }
+
+        function showReactionDetails(messageIndex, emoji = null) {
+            const msg = currentMessages[messageIndex];
+            if (!msg || !msg.reaction) return;
+            
+            const viewer = document.getElementById('reactionViewer');
+            const content = document.getElementById('reactionViewerContent');
+            
+            const reactionData = {};
+            const parts = msg.reaction.split('|');
+            
+            parts.forEach(part => {
+                if (part.includes(':')) {
+                    const [user, reactionEmoji] = part.split(':');
+                    if (!reactionData[reactionEmoji]) {
+                        reactionData[reactionEmoji] = [];
+                    }
+                    reactionData[reactionEmoji].push(user);
+                }
+            });
+            
+            content.innerHTML = '';
+            
+            Object.entries(reactionData).forEach(([reactionEmoji, users]) => {
+                if (emoji && emoji !== reactionEmoji) return;
+                
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'reaction-group';
+                
+                let html = `<div class="reaction-group-header">${reactionEmoji} ${users.length}</div>`;
+                
+                users.forEach(user => {
+                    const firstLetter = user.charAt(0).toUpperCase();
+                    html += `
+                        <div class="reaction-user">
+                            <div class="reaction-user-avatar">${firstLetter}</div>
+                            <div>${escapeHtml(user)}</div>
+                        </div>
+                    `;
+                });
+                
+                groupDiv.innerHTML = html;
+                content.appendChild(groupDiv);
+            });
+            
+            viewer.classList.add('active');
+        }
+
+        function hideReactionViewer() {
+            document.getElementById('reactionViewer').classList.remove('active');
         }
 
         function getUserPhoto(name) {
@@ -1313,6 +1686,18 @@
             return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
+        function isScrolledToBottom() {
+            const container = document.getElementById('messagesArea');
+            return container.scrollHeight - container.scrollTop <= container.clientHeight + 100;
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById('messagesArea');
+            setTimeout(() => {
+                container.scrollTop = container.scrollHeight;
+            }, 100);
+        }
+
         // ============ CONTEXT MENU ============
         let touchTimer = null;
 
@@ -1335,12 +1720,15 @@
             const msgElement = document.querySelector(`[data-index="${index}"]`);
             if (msgElement) {
                 const sender = msgElement.getAttribute('data-sender');
+                const message = msgElement.getAttribute('data-message');
                 const isOwnMessage = sender.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
-                deleteOption.style.display = isOwnMessage ? 'flex' : 'none';
+                const isDeleted = message === '❌ DELETED';
+                
+                deleteOption.style.display = (isOwnMessage && !isDeleted) ? 'flex' : 'none';
             }
             
-            let x = e.pageX;
-            let y = e.pageY;
+            let x = e.pageX || e.touches[0].pageX;
+            let y = e.pageY || e.touches[0].pageY;
             
             const menuWidth = 150;
             const menuHeight = 180;
@@ -1383,7 +1771,7 @@
             toast.classList.add('show');
             setTimeout(() => {
                 toast.classList.remove('show');
-            }, 500);
+            }, 2000);
         }
 
         function replyMessage() {
@@ -1393,18 +1781,14 @@
 
         function replyMessageByIndex(index) {
             const msgElement = document.querySelector(`[data-index="${index}"]`);
-            if (!msgElement) {
-                console.log('Message element not found for index:', index);
-                return;
-            }
+            if (!msgElement) return;
             
             const sender = msgElement.getAttribute('data-sender');
             const text = msgElement.getAttribute('data-message');
             
-            replyToMessage = {
-                sender: sender,
-                text: text
-            };
+            if (text === '❌ DELETED') return;
+            
+            replyToMessage = { sender, text };
 
             document.getElementById('replyName').textContent = sender;
             const displayText = text.length > 50 ? text.substring(0, 50) + '...' : text;
@@ -1418,75 +1802,62 @@
             document.getElementById('replyBar').classList.remove('active');
         }
 
-        function showEmojiPicker() {
-            document.getElementById('emojiPicker').classList.add('active');
-            hideContextMenu();
-        }
+        function showEmojiPickerForReaction() {
+    const picker = document.getElementById('emojiPicker');
+    picker.classList.add('active');
+    hideContextMenu();
+    console.log('Emoji picker opened for message index:', selectedMessage);
+}
 
         function hideEmojiPicker() {
             document.getElementById('emojiPicker').classList.remove('active');
         }
 
         async function addReaction(emoji) {
-            try {
-                const messages = document.querySelectorAll('.message');
-                let targetMessageElement = null;
-                
-                messages.forEach((msg, idx) => {
-                    if (parseInt(msg.getAttribute('data-index')) === selectedMessage) {
-                        targetMessageElement = msg;
-                    }
-                });
+    if (selectedMessage === null || selectedMessage === undefined) {
+        console.log('No message selected');
+        hideEmojiPicker();
+        return;
+    }
 
-                if (targetMessageElement) {
-                    const messageText = targetMessageElement.querySelector('.message-text');
-                    let existingReaction = messageText.querySelector('.emoji-reactions');
-                    
-                    if (existingReaction) {
-                        existingReaction.textContent = emoji;
-                    } else {
-                        const reactionSpan = document.createElement('span');
-                        reactionSpan.className = 'emoji-reactions';
-                        reactionSpan.textContent = emoji;
-                        messageText.appendChild(reactionSpan);
-                    }
-                }
+    console.log('Adding reaction:', emoji, 'to message:', selectedMessage);
 
-                const reactionData = {
-                    action: 'addReaction',
-                    messageIndex: selectedMessage,
-                    emoji: emoji
-                };
+    try {
+        const reactionData = {
+            action: 'addReaction',
+            messageIndex: selectedMessage,
+            emoji: emoji,
+            userName: currentUser.name
+        };
 
-                await fetch(SMD_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify(reactionData)
-                });
+        console.log('Sending reaction data:', reactionData);
 
-                setTimeout(() => fetchMessages(), 1000);
-            } catch (error) {
-                console.error('Reaction error:', error);
-                alert('❌ Error adding reaction: ' + error.message);
-            }
-            hideEmojiPicker();
-        }
+        await fetch(SMD_URL, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'text/plain;charset=utf-8'
+            },
+            body: JSON.stringify(reactionData)
+        });
+
+        hideEmojiPicker();
+        
+        // Quick refresh
+        setTimeout(() => {
+            fetchMessages();
+        }, 200);
+        
+    } catch (error) {
+        console.error('Reaction error:', error);
+        alert('❌ Error adding reaction');
+        hideEmojiPicker();
+    }
+}
 
         async function deleteMessage() {
-            if (!confirm('Delete this message?')) return;
+            if (!confirm('Delete this message? It will show as deleted to everyone.')) return;
 
             try {
-                const msgElement = document.querySelector(`[data-index="${selectedMessage}"]`);
-                if (msgElement) {
-                    msgElement.style.transition = 'opacity 0.3s';
-                    msgElement.style.opacity = '0';
-                    setTimeout(() => {
-                        msgElement.remove();
-                    }, 300);
-                }
-
                 const deleteData = {
                     action: 'deleteMessage',
                     messageIndex: selectedMessage,
@@ -1503,33 +1874,84 @@
 
                 hideContextMenu();
                 
-                setTimeout(() => fetchMessages(), 1000);
+                setTimeout(() => fetchMessages(), 100);
             } catch (error) {
                 console.error('Delete error:', error);
-                alert('❌ Error deleting message: ' + error.message);
+                alert('❌ Error deleting message');
             }
         }
+
+        // ============ MEMBERS SIDEBAR ============
+        async function toggleMembersSidebar() {
+            const sidebar = document.getElementById('membersSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.add('active');
+                overlay.classList.add('active');
+                await loadMembers();
+            }
+        }
+
+        async function loadMembers() {
+    const membersList = document.getElementById('membersList');
+    membersList.innerHTML = '<div class="loading">Loading members...</div>';
+
+    try {
+        const response = await fetch(`${SAD_URL}?action=getAllStudents&t=${Date.now()}`);
+        const data = await response.json();
+
+        console.log('Members API Response:', data);
+
+        if (!data.success || !data.students || data.students.length === 0) {
+            membersList.innerHTML = '<div class="loading">No members found</div>';
+            return;
+        }
+
+        // Update header count
+        document.getElementById('onlineCount').textContent = `${data.students.length} members`;
+
+        membersList.innerHTML = '';
+
+        data.students.forEach(student => {
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'member-item';
+            
+            const firstLetter = student.name.charAt(0).toUpperCase();
+            
+            memberDiv.innerHTML = `
+                <div class="member-avatar">${firstLetter}</div>
+                <div class="member-info">
+                    <div class="member-name">${escapeHtml(student.name)}</div>
+                    <div class="member-email">${escapeHtml(student.email)}</div>
+                </div>
+            `;
+            
+            membersList.appendChild(memberDiv);
+        });
+
+    } catch (error) {
+        console.error('Error loading members:', error);
+        membersList.innerHTML = '<div class="loading">Error loading members. Check console.</div>';
+    }
+}
 
         // ============ WALLPAPER ============
         function loadWallpapers() {
             const grid = document.getElementById('wallpaperGrid');
+            grid.innerHTML = '';
             
             const noneItem = document.createElement('div');
             noneItem.className = 'wallpaper-item active';
             noneItem.onclick = () => setWallpaper('none', noneItem);
             noneItem.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            noneItem.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:20px;font-weight:bold;">None</div>';
+            noneItem.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:bold;">None</div>';
             grid.appendChild(noneItem);
 
-            WALLPAPERS.boys.forEach(wallpaper => {
-                const item = document.createElement('div');
-                item.className = 'wallpaper-item';
-                item.onclick = () => setWallpaper(wallpaper.url, item);
-                item.innerHTML = `<img src="${wallpaper.url}" alt="${wallpaper.name}">`;
-                grid.appendChild(item);
-            });
-
-            WALLPAPERS.girls.forEach(wallpaper => {
+            WALLPAPERS.forEach(wallpaper => {
                 const item = document.createElement('div');
                 item.className = 'wallpaper-item';
                 item.onclick = () => setWallpaper(wallpaper.url, item);
@@ -1592,7 +2014,7 @@
             refreshInterval = setInterval(() => {
                 fetchMessages();
                 loadOnlineCount();
-            }, 200);
+            }, 50);
         }
 
         // ============ PROFILE FUNCTIONS ============
@@ -1643,7 +2065,6 @@
         // ============ LOGOUT ============
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
-                console.log('Logging out user');
                 localStorage.removeItem('chatUser');
                 currentUser = null;
                 if (refreshInterval) {
@@ -1667,7 +2088,6 @@
 
         // ============ PAGE NAVIGATION ============
         function showSignup() {
-            console.log('📝 Showing signup page');
             const signupPage = document.getElementById('signupPage');
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
@@ -1681,7 +2101,6 @@
         }
 
         function showChat() {
-            console.log('💬 Showing chat page for user:', currentUser ? currentUser.name : 'Unknown');
             const signupPage = document.getElementById('signupPage');
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
@@ -1694,7 +2113,6 @@
             profilePage.style.display = 'none';
             
             if (currentUser && currentUser.photo) {
-                console.log('Setting profile photos in UI');
                 document.getElementById('headerProfilePhoto').src = currentUser.photo;
                 document.getElementById('inputProfilePhoto').src = currentUser.photo;
             }
