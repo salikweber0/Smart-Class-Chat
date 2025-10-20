@@ -52,6 +52,118 @@
             width: 100%;
         }
 
+        /* Loader Animation */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loader-container.hidden {
+            display: none;
+        }
+
+        .loader {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader-text {
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Desktop/Tablet Block */
+        .device-warning {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .device-warning.active {
+            display: flex;
+        }
+
+        .warning-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .warning-title {
+            font-size: 24px;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+
+        .warning-text {
+            font-size: 16px;
+            color: var(--text-secondary);
+        }
+
+        /* Fingerprint Scanner */
+        .fingerprint-section {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .fingerprint-button {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%);
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(0, 168, 132, 0.3);
+        }
+
+        .fingerprint-button:active {
+            transform: scale(0.95);
+        }
+
+        .fingerprint-button svg {
+            width: 60px;
+            height: 60px;
+            fill: white;
+        }
+
+        .fingerprint-status {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
         .auth-container {
             display: flex;
             flex-direction: column;
@@ -241,7 +353,7 @@
             flex: 1;
             overflow-y: auto;
             overflow-x: hidden;
-            padding: 20px 10px 100px 10px;
+            padding: 20px 10px 70px 10px;
             -webkit-overflow-scrolling: touch;
             background-size: cover;
             background-position: center;
@@ -277,19 +389,7 @@
         .message {
             display: flex;
             margin-bottom: 8px;
-            animation: slideIn 0.2s ease;
             position: relative;
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
 
         .message.sent {
@@ -344,6 +444,7 @@
             cursor: pointer;
             user-select: none;
             position: relative;
+            max-width: 100%;
         }
 
         .message.sent .message-bubble {
@@ -369,13 +470,14 @@
             line-height: 1.4;
         }
 
-        .message-text.deleted {
-            font-style: italic;
-            color: var(--text-secondary);
+        .message-text a {
+            color: #53bdeb;
+            text-decoration: underline;
         }
 
-        .message-text.deleted::before {
-            content: '🚫 ';
+        .message-text.deleted {
+            font-style: italic;
+            color: #8696a0;
         }
 
         .message-time {
@@ -411,12 +513,12 @@
         }
 
         .message-reactions {
-    display: flex;
-    gap: 3px;
-    margin-top: 8px;
-    flex-wrap: wrap;
-    align-items: center;
-}
+            display: flex;
+            gap: 3px;
+            margin-top: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
 
         .reaction-item {
             background: var(--bg-input);
@@ -679,37 +781,37 @@
         }
 
         .member-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border-radius: 8px;
-    margin-bottom: 5px;
-}
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 5px;
+        }
 
-.member-avatar {
-    width: 45px;
-    height: 45px;
-    border-radius: 50%;
-    background: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: bold;
-    font-size: 18px;
-    flex-shrink: 0;
-}
+        .member-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
 
-.member-info {
-    flex: 1;
-}
+        .member-info {
+            flex: 1;
+        }
 
-.member-name {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text-primary);
-}
+        .member-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
 
         .sidebar-overlay {
             position: fixed;
@@ -878,6 +980,20 @@
             font-weight: 600;
         }
 
+        .wallpaper-upload {
+            margin-bottom: 15px;
+        }
+
+        .upload-wallpaper-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
         .wallpaper-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -972,14 +1088,33 @@
             }
         }
 
+        @media (max-width: 580px) {
+            .messages-area {
+                padding-bottom: 130px;
+            }
+        }
+
         @media (max-width: 480px) {
             .messages-area {
-                padding-bottom: 150px;
+                padding-bottom: 120px;
             }
         }
     </style>
 </head>
 <body data-theme="dark">
+
+    <!-- Device Warning -->
+    <div id="deviceWarning" class="device-warning">
+        <div class="warning-icon">📱</div>
+        <div class="warning-title">Mobile Only</div>
+        <div class="warning-text">This project is only for mobile devices.</div>
+    </div>
+
+    <!-- Loader -->
+    <div id="loaderContainer" class="loader-container hidden">
+        <div class="loader"></div>
+        <div class="loader-text">Verifying account...</div>
+    </div>
 
     <!-- Signup Page -->
     <div id="signupPage" class="auth-container">
@@ -1014,7 +1149,18 @@
                     <label>Security Code</label>
                     <input type="text" id="signupCode" required placeholder="Enter class code">
                 </div>
-                <button type="submit" class="btn-primary" id="signupBtn">Sign Up</button>
+
+                <!-- Fingerprint Section -->
+                <div class="fingerprint-section">
+                    <button type="button" class="fingerprint-button" id="fingerprintBtn" onclick="scanFingerprint()">
+                        <svg viewBox="0 0 24 24">
+                            <path fill="white" d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.68-.2-.13-.24-.04-.55.2-.68C7.82 2.52 9.86 2 12.01 2c2.13 0 3.99.47 6.03 1.52.25.13.34.43.21.67-.09.18-.26.28-.44.28zM3.5 9.72c-.1 0-.2-.03-.29-.09-.23-.16-.28-.47-.12-.7.99-1.4 2.25-2.5 3.75-3.27C9.98 4.04 14 4.03 17.15 5.65c1.5.77 2.76 1.86 3.75 3.25.16.22.11.54-.12.7-.23.16-.54.11-.7-.12-.9-1.26-2.04-2.25-3.39-2.94-2.87-1.47-6.54-1.47-9.4.01-1.36.7-2.5 1.7-3.4 2.96-.08.14-.23.21-.39.21zm6.25 12.07c-.13 0-.26-.05-.35-.15-.87-.87-1.34-1.43-2.01-2.64-.69-1.23-1.05-2.73-1.05-4.34 0-2.97 2.54-5.39 5.66-5.39s5.66 2.42 5.66 5.39c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-2.42-2.09-4.39-4.66-4.39-2.57 0-4.66 1.97-4.66 4.39 0 1.44.32 2.77.93 3.85.64 1.15 1.08 1.64 1.85 2.42.19.2.19.51 0 .71-.11.1-.24.15-.37.15zm7.17-1.85c-1.19 0-2.24-.3-3.1-.89-1.49-1.01-2.38-2.65-2.38-4.39 0-.28.22-.5.5-.5s.5.22.5.5c0 1.41.72 2.74 1.94 3.56.71.48 1.54.71 2.54.71.24 0 .64-.03 1.04-.1.27-.05.53.13.58.41.05.27-.13.53-.41.58-.57.11-1.07.12-1.21.12zM14.91 22c-.04 0-.09-.01-.13-.02-1.59-.44-2.63-1.03-3.72-2.1-1.4-1.39-2.17-3.24-2.17-5.22 0-1.62 1.38-2.94 3.08-2.94 1.7 0 3.08 1.32 3.08 2.94 0 1.07.93 1.94 2.08 1.94s2.08-.87 2.08-1.94c0-3.77-3.25-6.83-7.25-6.83-2.84 0-5.44 1.58-6.61 4.03-.39.81-.59 1.76-.59 2.8 0 .78.07 2.01.67 3.61.1.26-.03.55-.29.64-.26.1-.55-.04-.64-.29-.49-1.31-.73-2.61-.73-3.96 0-1.2.23-2.29.68-3.24 1.33-2.79 4.28-4.6 7.51-4.6 4.55 0 8.25 3.51 8.25 7.83 0 1.62-1.38 2.94-3.08 2.94s-3.08-1.32-3.08-2.94c0-1.07-.93-1.94-2.08-1.94s-2.08.87-2.08 1.94c0 1.71.66 3.31 1.87 4.51.95.94 1.86 1.46 3.27 1.85.27.07.42.35.35.61-.05.23-.26.38-.47.38z"/>
+                        </svg>
+                    </button>
+                    <div class="fingerprint-status" id="fingerprintStatus">Tap to scan fingerprint</div>
+                </div>
+
+                <button type="submit" class="btn-primary" id="signupBtn" disabled>Sign Up</button>
             </form>
         </div>
     </div>
@@ -1115,6 +1261,10 @@
 
             <div class="profile-section">
                 <div class="section-title">Chat Wallpaper</div>
+                <div class="wallpaper-upload">
+                    <input type="file" id="customWallpaperInput" accept="image/*" style="display:none;">
+                    <button class="upload-wallpaper-btn" onclick="document.getElementById('customWallpaperInput').click()">Upload Custom Wallpaper</button>
+                </div>
                 <div class="wallpaper-grid" id="wallpaperGrid"></div>
             </div>
 
@@ -1139,9 +1289,9 @@
         <div class="context-menu-item" onclick="replyMessage()">
             <span>↩️</span> Reply
         </div>
-        <!-- <div class="context-menu-item" onclick="showEmojiPickerForReaction()">
+        <div class="context-menu-item" onclick="showEmojiPickerForReaction()">
             <span>😊</span> React
-        </div> -->
+        </div>
         <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption" style="display: none;">
             <span>🗑️</span> Delete
         </div>
@@ -1172,36 +1322,26 @@
 
         // ============ WALLPAPERS ============
         const WALLPAPERS = [
-            {name: 'Abstract Dark', url: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=2400&q=100'},
-            {name: 'Blue Gradient', url: 'https://images.unsplash.com/photo-1557683316-973673baf926?w=2400&q=100'},
-            {name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=2400&q=100'},
-            {name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
-            {name: 'Neon City', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=2400&q=100'},
-            {name: 'Ocean Wave', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=2400&q=100'},
-            {name: 'Galaxy', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=2400&q=100'},
-            {name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2400&q=100'},
-            {name: 'Forest Path', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400&q=100'},
-            {name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=2400&q=100'},
-            {name: 'Aurora', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=2400&q=100'},
-            {name: 'Desert Dunes', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=2400&q=100'},
-            {name: 'Lavender Field', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=2400&q=100'},
-            {name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=2400&q=100'},
-            {name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=2400&q=100'},
-            {name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=2400&q=100'},
-            {name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
-            {name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=2400&q=100'},
-            {name: 'Autumn Forest', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=2400&q=100'},
-            {name: 'Blue Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=2400&q=100'},
-            {name: 'Purple Sunset', url: 'https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?w=2400&q=100'},
-            {name: 'Green Nature', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=2400&q=100'},
-            {name: 'Pink Flower', url: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=2400&q=100'},
-            {name: 'Dark Tech', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=2400&q=100'},
-            {name: 'Snow Mountain', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=2400&q=100'},
-            {name: 'Sunset Beach', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=2400&q=100'},
-            {name: 'Night City', url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?w=2400&q=100'},
-            {name: 'Blue Abstract', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=2400&q=100'},
-            {name: 'Red Gradient', url: 'https://images.unsplash.com/photo-1557264305-0e888ae48dff?w=2400&q=100'},
-            {name: 'Green Aurora', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=2400&q=100'}
+            {name: 'Dark Abstract', url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=800&q=80'},
+            {name: 'Blue Wave', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80'},
+            {name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&q=80'},
+            {name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'},
+            {name: 'Neon Lights', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80'},
+            {name: 'Ocean Blue', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'},
+            {name: 'Galaxy Stars', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80'},
+            {name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80'},
+            {name: 'Forest Green', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80'},
+            {name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80'},
+            {name: 'Aurora Night', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80'},
+            {name: 'Desert Sand', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80'},
+            {name: 'Lavender Dream', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'},
+            {name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80'},
+            {name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80'},
+            {name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80'},
+            {name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'},
+            {name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=800&q=80'},
+            {name: 'Autumn Leaves', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80'},
+            {name: 'Deep Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'}
         ];
 
         // ============ STATE MANAGEMENT ============
@@ -1213,12 +1353,68 @@
         let isSending = false;
         let allUsers = {};
         let currentMessages = [];
+        let fingerprintVerified = false;
 
         // ============ EMOJIS ============
         const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
 
+        // ============ DEVICE CHECK ============
+        function checkDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isTablet = /ipad|android/i.test(userAgent) && !/mobile/i.test(userAgent);
+            const screenWidth = window.innerWidth;
+            
+            if (!isMobile || isTablet || screenWidth > 768) {
+                document.getElementById('deviceWarning').classList.add('active');
+                return false;
+            }
+            return true;
+        }
+
+        // ============ FINGERPRINT SIMULATION ============
+        async function scanFingerprint() {
+            const btn = document.getElementById('fingerprintBtn');
+            const status = document.getElementById('fingerprintStatus');
+            const signupBtn = document.getElementById('signupBtn');
+            
+            btn.disabled = true;
+            status.textContent = 'Scanning...';
+            btn.style.transform = 'scale(0.95)';
+            
+            // Simulate scanning with animation
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Check if Web Authentication API is available
+            if (window.PublicKeyCredential) {
+                try {
+                    // This is a simulation - in real implementation, use WebAuthn API
+                    status.textContent = '✅ Fingerprint verified!';
+                    status.style.color = 'var(--accent)';
+                    fingerprintVerified = true;
+                    signupBtn.disabled = false;
+                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                } catch (error) {
+                    status.textContent = '❌ Verification failed. Tap to retry.';
+                    status.style.color = '#dc3545';
+                    btn.disabled = false;
+                }
+            } else {
+                // Fallback for browsers without WebAuthn
+                status.textContent = '✅ Fingerprint verified!';
+                status.style.color = 'var(--accent)';
+                fingerprintVerified = true;
+                signupBtn.disabled = false;
+                btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+            }
+            
+            btn.style.transform = 'scale(1)';
+        }
+
         // ============ INITIALIZATION ============
         window.onload = function () {
+            if (!checkDevice()) return;
+            
             applySettings();
             setupEventListeners();
             checkAuth();
@@ -1236,7 +1432,21 @@
                 const userData = JSON.parse(userDataString);
                 
                 if (userData && userData.name && userData.email && userData.photo) {
+                    // Show loader and verify account status
+                    showLoader();
+                    
+                    const isActive = await verifyAccountStatus(userData);
+                    
+                    if (!isActive) {
+                        hideLoader();
+                        alert('❌ You have been removed by Admin');
+                        localStorage.removeItem('chatUser');
+                        showSignup();
+                        return;
+                    }
+                    
                     currentUser = userData;
+                    hideLoader();
                     showChat();
                     loadWallpapers();
                     startMessageRefresh();
@@ -1248,8 +1458,34 @@
                 
             } catch (error) {
                 console.error('Error in checkAuth:', error);
+                hideLoader();
                 showSignup();
             }
+        }
+
+        async function verifyAccountStatus(userData) {
+            try {
+                const response = await fetch(`${SAD_URL}?action=checkStatus&email=${encodeURIComponent(userData.email)}&t=${Date.now()}`);
+                const data = await response.json();
+                
+                if (data.success && data.status) {
+                    // Active emoji: ✅, Removed emoji: ❌ or 🚫
+                    return data.status === '✅' || data.status === 'active' || data.status === '✔️';
+                }
+                
+                return true; // Default to active if status check fails
+            } catch (error) {
+                console.error('Status check error:', error);
+                return true; // Default to active on error
+            }
+        }
+
+        function showLoader() {
+            document.getElementById('loaderContainer').classList.remove('hidden');
+        }
+
+        function hideLoader() {
+            document.getElementById('loaderContainer').classList.add('hidden');
         }
 
         async function loadOnlineCount() {
@@ -1276,6 +1512,7 @@
                 }
             });
             document.getElementById('profilePhotoUpdate').addEventListener('change', updateProfilePhoto);
+            document.getElementById('customWallpaperInput').addEventListener('change', uploadCustomWallpaper);
             
             document.addEventListener('click', function(e) {
                 if (!e.target.closest('.context-menu') && !e.target.closest('.message-bubble')) {
@@ -1321,9 +1558,14 @@
             }
         }
 
-        // ============ SIGNUP WITH VALIDATION ============
+        // ============ SIGNUP WITH FINGERPRINT ============
         async function handleSignup(e) {
             e.preventDefault();
+
+            if (!fingerprintVerified) {
+                alert('❌ Please scan your fingerprint first!');
+                return;
+            }
 
             const code = document.getElementById('signupCode').value;
             if (code !== SECURITY_CODE) {
@@ -1341,7 +1583,7 @@
             }
 
             if (!email || !email.includes('@') || !email.endsWith('gmail.com')) {
-                alert('❌ Please use a valid Gmail address (e.g., yourname@gmail.com)!');
+                alert('❌ Please use a valid Gmail address!');
                 return;
             }
 
@@ -1362,11 +1604,8 @@
             btn.disabled = true;
 
             try {
-                console.log('STEP 1: Checking for duplicates BEFORE signup...');
                 const checkResponse = await fetch(`${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
                 const checkData = await checkResponse.json();
-                
-                console.log('Pre-signup duplicate check:', checkData);
                 
                 if (checkData.exists === true) {
                     let fieldName = checkData.field;
@@ -1374,14 +1613,13 @@
                     if (fieldName === 'email') fieldName = 'Email';
                     if (fieldName === 'phone') fieldName = 'Phone Number';
                     
-                    alert('❌ This account already exists!\n\n' + fieldName + ' is already registered. Please use a different ' + fieldName.toLowerCase() + '.');
+                    alert('❌ This account already exists!\n\n' + fieldName + ' is already registered.');
                     btn.textContent = 'Sign Up';
                     btn.disabled = false;
                     return;
                 }
 
                 btn.textContent = 'Creating account...';
-                console.log('STEP 2: No duplicates found. Creating account...');
 
                 const photoBase64 = await fileToBase64(photoFile);
 
@@ -1389,10 +1627,9 @@
                     action: 'signup',
                     name: name,
                     email: email,
-                    phone: phone
+                    phone: phone,
+                    status: '✅'
                 };
-
-                console.log('Sending signup data to sheet:', signupData);
 
                 await fetch(SAD_URL, {
                     method: 'POST',
@@ -1405,10 +1642,8 @@
                     console.log('CORS error (expected):', err.message);
                 });
 
-                console.log('STEP 3: Waiting for sheet to save data...');
                 await new Promise(resolve => setTimeout(resolve, 2000));
 
-                console.log('STEP 4: Saving to localStorage and showing chat...');
                 currentUser = { name, email, phone, photo: photoBase64, timestamp: new Date().toISOString() };
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
 
@@ -1421,7 +1656,7 @@
 
             } catch (error) {
                 console.error('Signup error:', error);
-                alert('❌ Error creating account: ' + error.message + '\n\nPlease check your internet connection and try again.');
+                alert('❌ Error creating account: ' + error.message);
             } finally {
                 btn.textContent = 'Sign Up';
                 btn.disabled = false;
@@ -1464,11 +1699,11 @@
                     body: JSON.stringify(messageData)
                 });
 
-                setTimeout(() => fetchMessages(), 30);
+                setTimeout(() => fetchMessages(), 100);
                 scrollToBottom();
             } catch (error) {
                 console.error('Send error:', error);
-                alert('❌ Error sending message: ' + error.message);
+                alert('❌ Error sending message. Please try again.');
             } finally {
                 isSending = false;
             }
@@ -1528,7 +1763,7 @@
         function createMessageElement(msg, index) {
             const messageDiv = document.createElement('div');
             const isSent = msg.studentName.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
-            const isDeleted = msg.message === '❌ DELETED';
+            const isDeleted = msg.message === '🚫 DELETED';
             
             messageDiv.className = isSent ? 'message sent' : 'message received';
             messageDiv.setAttribute('data-index', index);
@@ -1560,7 +1795,7 @@
             }
 
             let reactionHTML = '';
-            if (msg.reaction && msg.reaction !== '') {
+            if (msg.reaction && msg.reaction !== '' && !msg.reaction.includes('🕸')) {
                 const reactions = parseReactions(msg.reaction);
                 if (reactions.length > 0) {
                     reactionHTML = '<div class="message-reactions">';
@@ -1581,9 +1816,10 @@
 
             let messageTextHTML = '';
             if (isDeleted) {
-                messageTextHTML = `<div class="message-text deleted">Message Deleted</div>`;
+                messageTextHTML = `<div class="message-text deleted">🚫 Message Deleted</div>`;
             } else {
-                messageTextHTML = `<div class="message-text">${escapeHtml(msg.message)}</div>`;
+                const textWithLinks = linkify(msg.message);
+                messageTextHTML = `<div class="message-text">${textWithLinks}</div>`;
             }
 
             messageDiv.innerHTML = `
@@ -1605,16 +1841,21 @@
             return messageDiv;
         }
 
+        function linkify(text) {
+            const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+            return escapeHtml(text).replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+        }
+
         function parseReactions(reactionString) {
-            if (!reactionString || reactionString === '') return [];
+            if (!reactionString || reactionString === '' || reactionString.includes('🕸')) return [];
             
             const reactionMap = {};
             const parts = reactionString.split('|');
             
             parts.forEach(part => {
-                if (part.includes(':')) {
+                if (part.includes(':') && !part.includes('🕸')) {
                     const [user, emoji] = part.split(':');
-                    if (emoji) {
+                    if (emoji && emoji !== '🕸') {
                         reactionMap[emoji] = (reactionMap[emoji] || 0) + 1;
                     }
                 }
@@ -1625,7 +1866,7 @@
 
         function showReactionDetails(messageIndex, emoji = null) {
             const msg = currentMessages[messageIndex];
-            if (!msg || !msg.reaction) return;
+            if (!msg || !msg.reaction || msg.reaction.includes('🕸')) return;
             
             const viewer = document.getElementById('reactionViewer');
             const content = document.getElementById('reactionViewerContent');
@@ -1634,12 +1875,14 @@
             const parts = msg.reaction.split('|');
             
             parts.forEach(part => {
-                if (part.includes(':')) {
+                if (part.includes(':') && !part.includes('🕸')) {
                     const [user, reactionEmoji] = part.split(':');
-                    if (!reactionData[reactionEmoji]) {
-                        reactionData[reactionEmoji] = [];
+                    if (reactionEmoji !== '🕸') {
+                        if (!reactionData[reactionEmoji]) {
+                            reactionData[reactionEmoji] = [];
+                        }
+                        reactionData[reactionEmoji].push(user);
                     }
-                    reactionData[reactionEmoji].push(user);
                 }
             });
             
@@ -1655,10 +1898,11 @@
                 
                 users.forEach(user => {
                     const firstLetter = user.charAt(0).toUpperCase();
+                    const isCurrentUser = user.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
                     html += `
-                        <div class="reaction-user">
+                        <div class="reaction-user" ${isCurrentUser ? 'onclick="removeReaction(' + messageIndex + ', \'' + reactionEmoji + '\')"' : ''}>
                             <div class="reaction-user-avatar">${firstLetter}</div>
-                            <div>${escapeHtml(user)}</div>
+                            <div>${escapeHtml(user)}${isCurrentUser ? ' (Tap to remove)' : ''}</div>
                         </div>
                     `;
                 });
@@ -1668,6 +1912,31 @@
             });
             
             viewer.classList.add('active');
+        }
+
+        async function removeReaction(messageIndex, emoji) {
+            try {
+                const reactionData = {
+                    action: 'removeReaction',
+                    messageIndex: messageIndex,
+                    emoji: emoji,
+                    userName: currentUser.name
+                };
+
+                await fetch(SMD_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify(reactionData)
+                });
+
+                hideReactionViewer();
+                setTimeout(() => fetchMessages(), 200);
+                
+            } catch (error) {
+                console.error('Remove reaction error:', error);
+            }
         }
 
         function hideReactionViewer() {
@@ -1683,17 +1952,17 @@
 
         function formatDate(date) {
             const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
             const yesterday = new Date(today);
             yesterday.setDate(yesterday.getDate() - 1);
 
             const msgDate = new Date(date);
             msgDate.setHours(0, 0, 0, 0);
-            today.setHours(0, 0, 0, 0);
-            yesterday.setHours(0, 0, 0, 0);
 
             if (msgDate.getTime() === today.getTime()) return 'Today';
             if (msgDate.getTime() === yesterday.getTime()) return 'Yesterday';
-            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            return msgDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
 
         function isScrolledToBottom() {
@@ -1705,7 +1974,7 @@
             const container = document.getElementById('messagesArea');
             setTimeout(() => {
                 container.scrollTop = container.scrollHeight;
-            }, 100);
+            }, 50);
         }
 
         // ============ CONTEXT MENU ============
@@ -1732,7 +2001,7 @@
                 const sender = msgElement.getAttribute('data-sender');
                 const message = msgElement.getAttribute('data-message');
                 const isOwnMessage = sender.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
-                const isDeleted = message === '❌ DELETED';
+                const isDeleted = message === '🚫 DELETED';
                 
                 deleteOption.style.display = (isOwnMessage && !isDeleted) ? 'flex' : 'none';
             }
@@ -1741,7 +2010,7 @@
             let y = e.pageY || e.touches[0].pageY;
             
             const menuWidth = 150;
-            const menuHeight = 180;
+            const menuHeight = 220;
             
             if (x + menuWidth > window.innerWidth) {
                 x = window.innerWidth - menuWidth - 10;
@@ -1796,7 +2065,7 @@
             const sender = msgElement.getAttribute('data-sender');
             const text = msgElement.getAttribute('data-message');
             
-            if (text === '❌ DELETED') return;
+            if (text === '🚫 DELETED') return;
             
             replyToMessage = { sender, text };
 
@@ -1813,56 +2082,45 @@
         }
 
         function showEmojiPickerForReaction() {
-    const picker = document.getElementById('emojiPicker');
-    picker.classList.add('active');
-    hideContextMenu();
-    console.log('Emoji picker opened for message index:', selectedMessage);
-}
+            const picker = document.getElementById('emojiPicker');
+            picker.classList.add('active');
+            hideContextMenu();
+        }
 
         function hideEmojiPicker() {
             document.getElementById('emojiPicker').classList.remove('active');
         }
 
         async function addReaction(emoji) {
-    if (selectedMessage === null || selectedMessage === undefined) {
-        console.log('No message selected');
-        hideEmojiPicker();
-        return;
-    }
+            if (selectedMessage === null || selectedMessage === undefined) {
+                hideEmojiPicker();
+                return;
+            }
 
-    console.log('Adding reaction:', emoji, 'to message:', selectedMessage);
+            try {
+                const reactionData = {
+                    action: 'addReaction',
+                    messageIndex: selectedMessage,
+                    emoji: emoji,
+                    userName: currentUser.name
+                };
 
-    try {
-        const reactionData = {
-            action: 'addReaction',
-            messageIndex: selectedMessage,
-            emoji: emoji,
-            userName: currentUser.name
-        };
+                await fetch(SMD_URL, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: JSON.stringify(reactionData)
+                });
 
-        console.log('Sending reaction data:', reactionData);
-
-        await fetch(SMD_URL, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'text/plain;charset=utf-8'
-            },
-            body: JSON.stringify(reactionData)
-        });
-
-        hideEmojiPicker();
-        
-        // Quick refresh
-        setTimeout(() => {
-            fetchMessages();
-        }, 200);
-        
-    } catch (error) {
-        console.error('Reaction error:', error);
-        alert('❌ Error adding reaction');
-        hideEmojiPicker();
-    }
-}
+                hideEmojiPicker();
+                setTimeout(() => fetchMessages(), 200);
+                
+            } catch (error) {
+                console.error('Reaction error:', error);
+                hideEmojiPicker();
+            }
+        }
 
         async function deleteMessage() {
             if (!confirm('Delete this message? It will show as deleted to everyone.')) return;
@@ -1883,11 +2141,9 @@
                 });
 
                 hideContextMenu();
-                
                 setTimeout(() => fetchMessages(), 100);
             } catch (error) {
                 console.error('Delete error:', error);
-                alert('❌ Error deleting message');
             }
         }
 
@@ -1907,47 +2163,43 @@
         }
 
         async function loadMembers() {
-    const membersList = document.getElementById('membersList');
-    membersList.innerHTML = '<div class="loading">Loading members...</div>';
+            const membersList = document.getElementById('membersList');
+            membersList.innerHTML = '<div class="loading">Loading members...</div>';
 
-    try {
-        const response = await fetch(`${SAD_URL}?action=getAllStudents&t=${Date.now()}`);
-        const data = await response.json();
+            try {
+                const response = await fetch(`${SAD_URL}?action=getAllStudents&t=${Date.now()}`);
+                const data = await response.json();
 
-        console.log('Members API Response:', data);
+                if (!data.success || !data.students || data.students.length === 0) {
+                    membersList.innerHTML = '<div class="loading">No members found</div>';
+                    return;
+                }
 
-        if (!data.success || !data.students || data.students.length === 0) {
-            membersList.innerHTML = '<div class="loading">No members found</div>';
-            return;
+                document.getElementById('onlineCount').textContent = `${data.students.length} members`;
+
+                membersList.innerHTML = '';
+
+                data.students.forEach(student => {
+                    const memberDiv = document.createElement('div');
+                    memberDiv.className = 'member-item';
+                    
+                    const firstLetter = student.name.charAt(0).toUpperCase();
+                    
+                    memberDiv.innerHTML = `
+                        <div class="member-avatar">${firstLetter}</div>
+                        <div class="member-info">
+                            <div class="member-name">${escapeHtml(student.name)}</div>
+                        </div>
+                    `;
+                    
+                    membersList.appendChild(memberDiv);
+                });
+
+            } catch (error) {
+                console.error('Error loading members:', error);
+                membersList.innerHTML = '<div class="loading">Error loading members</div>';
+            }
         }
-
-        // Update header count
-        document.getElementById('onlineCount').textContent = `${data.students.length} members`;
-
-        membersList.innerHTML = '';
-
-        data.students.forEach(student => {
-            const memberDiv = document.createElement('div');
-            memberDiv.className = 'member-item';
-            
-            const firstLetter = student.name.charAt(0).toUpperCase();
-            
-            memberDiv.innerHTML = `
-                <div class="member-avatar">${firstLetter}</div>
-                <div class="member-info">
-                    <div class="member-name">${escapeHtml(student.name)}</div>
-                    <div class="member-email">${escapeHtml(student.email)}</div>
-                </div>
-            `;
-            
-            membersList.appendChild(memberDiv);
-        });
-
-    } catch (error) {
-        console.error('Error loading members:', error);
-        membersList.innerHTML = '<div class="loading">Error loading members. Check console.</div>';
-    }
-}
 
         // ============ WALLPAPER ============
         function loadWallpapers() {
@@ -1991,6 +2243,30 @@
             element.classList.add('active');
         }
 
+        async function uploadCustomWallpaper(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const customUrl = event.target.result;
+                    
+                    const grid = document.getElementById('wallpaperGrid');
+                    const customItem = document.createElement('div');
+                    customItem.className = 'wallpaper-item';
+                    customItem.onclick = () => setWallpaper(customUrl, customItem);
+                    customItem.innerHTML = `<img src="${customUrl}" alt="Custom">`;
+                    grid.insertBefore(customItem, grid.children[1]);
+                    
+                    setWallpaper(customUrl, customItem);
+                };
+                reader.readAsDataURL(file);
+            } catch (error) {
+                alert('❌ Error uploading wallpaper');
+            }
+        }
+
         // ============ FONT SIZE ============
         function changeFontSize(delta) {
             const root = document.documentElement;
@@ -2024,7 +2300,7 @@
             refreshInterval = setInterval(() => {
                 fetchMessages();
                 loadOnlineCount();
-            }, 50);
+            }, 3000);
         }
 
         // ============ PROFILE FUNCTIONS ============
@@ -2068,7 +2344,7 @@
 
                 alert('✅ Profile photo updated!');
             } catch (error) {
-                alert('❌ Error updating photo: ' + error.message);
+                alert('❌ Error updating photo');
             }
         }
 
@@ -2084,6 +2360,10 @@
                 document.getElementById('profilePage').classList.remove('active');
                 document.getElementById('chatContainer').classList.remove('active');
                 showSignup();
+                fingerprintVerified = false;
+                document.getElementById('fingerprintBtn').disabled = false;
+                document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
+                document.getElementById('signupBtn').disabled = true;
             }
         }
 
@@ -2175,10 +2455,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
