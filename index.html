@@ -386,7 +386,7 @@
         }
 
         .date-badge {
-            width: 200px;
+            width: 150px;
             text-align: center;
             display: inline-block;
             background: var(--bg-input);
@@ -1440,13 +1440,14 @@
                 userData.status = sheetStatus;
                 localStorage.setItem('chatUser', JSON.stringify(userData));
 
-                if (sheetStatus === 'No') {
-                    alert('⚠️ You are blocked by Admin');
-                    localStorage.removeItem('chatUser');
-                    currentUser = null;
-                    showSignup();
-                    return;
-                }
+                if (sheetStatus === 'blocked') {
+    alert('⚠️ Your account has been removed by Admin.');
+    localStorage.removeItem('chatUser');
+    currentUser = null;
+    showSignup();
+    return;
+}
+
 
 
 
