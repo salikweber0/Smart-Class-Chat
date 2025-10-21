@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -81,8 +82,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loader-text {
@@ -177,7 +183,7 @@
 
         .auth-box {
             background: var(--bg-secondary);
-            padding: 50px 30px;
+            padding: 100px 30px 70px 30px !important;
             border-radius: 15px;
             width: 100%;
             max-width: 400px;
@@ -186,7 +192,7 @@
 
         .auth-header {
             text-align: center;
-            margin-top: 100px;
+            margin-top: 150px;
             margin-bottom: 30px;
         }
 
@@ -310,7 +316,8 @@
             font-weight: bold;
         }
 
-        .group-info h2, .group-info p {
+        .group-info h2,
+        .group-info p {
             color: var(--header-text);
         }
 
@@ -330,7 +337,8 @@
             align-items: center;
         }
 
-        .theme-toggle, .profile-icon {
+        .theme-toggle,
+        .profile-icon {
             width: 35px;
             height: 35px;
             border-radius: 50%;
@@ -479,6 +487,7 @@
         .message-text.deleted {
             font-style: italic;
             color: #8696a0;
+            font-size: 13px;
         }
 
         .message-time {
@@ -585,79 +594,28 @@
             font-size: 14px;
             animation: slideDown 0.3s ease;
         }
-        
+
         .copy-toast.show {
             display: block;
         }
-        
+
         @keyframes slideDown {
             from {
                 opacity: 0;
                 transform: translate(-50%, -20px);
             }
+
             to {
                 opacity: 1;
                 transform: translate(-50%, 0);
             }
         }
 
-        .emoji-picker {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--bg-secondary);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            z-index: 1000;
-            display: none;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 8px;
-            max-width: 300px;
-            max-height: 250px;
-            overflow-y: auto;
-        }
-
-        .emoji-picker.active {
-            display: grid;
-        }
-
-        .emoji-item {
-            font-size: 24px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 5px;
-            text-align: center;
-        }
-
-        .emoji-item:hover {
-            background: var(--bg-input);
-        }
-
-        .reaction-viewer {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: var(--bg-secondary);
-            border-radius: 15px 15px 0 0;
-            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
-            z-index: 1500;
-            display: none;
-            max-height: 60vh;
-            overflow-y: auto;
-            animation: slideUp 0.3s ease;
-        }
-
-        .reaction-viewer.active {
-            display: block;
-        }
-
         @keyframes slideUp {
             from {
                 transform: translateY(100%);
             }
+
             to {
                 transform: translateY(0);
             }
@@ -1083,7 +1041,7 @@
             .messages-area {
                 padding-bottom: 120px;
             }
-            
+
             .emoji-picker {
                 max-width: 90%;
             }
@@ -1102,6 +1060,7 @@
         }
     </style>
 </head>
+
 <body data-theme="dark">
 
     <!-- Device Warning -->
@@ -1128,11 +1087,13 @@
                 <div class="profile-upload">
                     <div class="profile-preview" id="signupPhotoPreview">
                         <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                     </div>
                     <input type="file" id="signupPhotoInput" accept="image/*" style="display: none;">
-                    <button type="button" class="upload-btn" onclick="document.getElementById('signupPhotoInput').click()">Upload Photo</button>
+                    <button type="button" class="upload-btn"
+                        onclick="document.getElementById('signupPhotoInput').click()">Upload Photo</button>
                 </div>
                 <div class="form-group">
                     <label>Full Name</label>
@@ -1155,7 +1116,8 @@
                 <div class="fingerprint-section">
                     <button type="button" class="fingerprint-button" id="fingerprintBtn" onclick="scanFingerprint()">
                         <svg viewBox="0 0 24 24">
-                            <path fill="white" d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.68-.2-.13-.24-.04-.55.2-.68C7.82 2.52 9.86 2 12.01 2c2.13 0 3.99.47 6.03 1.52.25.13.34.43.21.67-.09.18-.26.28-.44.28zM3.5 9.72c-.1 0-.2-.03-.29-.09-.23-.16-.28-.47-.12-.7.99-1.4 2.25-2.5 3.75-3.27C9.98 4.04 14 4.03 17.15 5.65c1.5.77 2.76 1.86 3.75 3.25.16.22.11.54-.12.7-.23.16-.54.11-.7-.12-.9-1.26-2.04-2.25-3.39-2.94-2.87-1.47-6.54-1.47-9.4.01-1.36.7-2.5 1.7-3.4 2.96-.08.14-.23.21-.39.21zm6.25 12.07c-.13 0-.26-.05-.35-.15-.87-.87-1.34-1.43-2.01-2.64-.69-1.23-1.05-2.73-1.05-4.34 0-2.97 2.54-5.39 5.66-5.39s5.66 2.42 5.66 5.39c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-2.42-2.09-4.39-4.66-4.39-2.57 0-4.66 1.97-4.66 4.39 0 1.44.32 2.77.93 3.85.64 1.15 1.08 1.64 1.85 2.42.19.2.19.51 0 .71-.11.1-.24.15-.37.15zm7.17-1.85c-1.19 0-2.24-.3-3.1-.89-1.49-1.01-2.38-2.65-2.38-4.39 0-.28.22-.5.5-.5s.5.22.5.5c0 1.41.72 2.74 1.94 3.56.71.48 1.54.71 2.54.71.24 0 .64-.03 1.04-.1.27-.05.53.13.58.41.05.27-.13.53-.41.58-.57.11-1.07.12-1.21.12zM14.91 22c-.04 0-.09-.01-.13-.02-1.59-.44-2.63-1.03-3.72-2.1-1.4-1.39-2.17-3.24-2.17-5.22 0-1.62 1.38-2.94 3.08-2.94 1.7 0 3.08 1.32 3.08 2.94 0 1.07.93 1.94 2.08 1.94s2.08-.87 2.08-1.94c0-3.77-3.25-6.83-7.25-6.83-2.84 0-5.44 1.58-6.61 4.03-.39.81-.59 1.76-.59 2.8 0 .78.07 2.01.67 3.61.1.26-.03.55-.29.64-.26.1-.55-.04-.64-.29-.49-1.31-.73-2.61-.73-3.96 0-1.2.23-2.29.68-3.24 1.33-2.79 4.28-4.6 7.51-4.6 4.55 0 8.25 3.51 8.25 7.83 0 1.62-1.38 2.94-3.08 2.94s-3.08-1.32-3.08-2.94c0-1.07-.93-1.94-2.08-1.94s-2.08.87-2.08 1.94c0 1.71.66 3.31 1.87 4.51.95.94 1.86 1.46 3.27 1.85.27.07.42.35.35.61-.05.23-.26.38-.47.38z"/>
+                            <path fill="white"
+                                d="M17.81 4.47c-.08 0-.16-.02-.23-.06C15.66 3.42 14 3 12.01 3c-1.98 0-3.86.47-5.57 1.41-.24.13-.54.04-.68-.2-.13-.24-.04-.55.2-.68C7.82 2.52 9.86 2 12.01 2c2.13 0 3.99.47 6.03 1.52.25.13.34.43.21.67-.09.18-.26.28-.44.28zM3.5 9.72c-.1 0-.2-.03-.29-.09-.23-.16-.28-.47-.12-.7.99-1.4 2.25-2.5 3.75-3.27C9.98 4.04 14 4.03 17.15 5.65c1.5.77 2.76 1.86 3.75 3.25.16.22.11.54-.12.7-.23.16-.54.11-.7-.12-.9-1.26-2.04-2.25-3.39-2.94-2.87-1.47-6.54-1.47-9.4.01-1.36.7-2.5 1.7-3.4 2.96-.08.14-.23.21-.39.21zm6.25 12.07c-.13 0-.26-.05-.35-.15-.87-.87-1.34-1.43-2.01-2.64-.69-1.23-1.05-2.73-1.05-4.34 0-2.97 2.54-5.39 5.66-5.39s5.66 2.42 5.66 5.39c0 .28-.22.5-.5.5s-.5-.22-.5-.5c0-2.42-2.09-4.39-4.66-4.39-2.57 0-4.66 1.97-4.66 4.39 0 1.44.32 2.77.93 3.85.64 1.15 1.08 1.64 1.85 2.42.19.2.19.51 0 .71-.11.1-.24.15-.37.15zm7.17-1.85c-1.19 0-2.24-.3-3.1-.89-1.49-1.01-2.38-2.65-2.38-4.39 0-.28.22-.5.5-.5s.5.22.5.5c0 1.41.72 2.74 1.94 3.56.71.48 1.54.71 2.54.71.24 0 .64-.03 1.04-.1.27-.05.53.13.58.41.05.27-.13.53-.41.58-.57.11-1.07.12-1.21.12zM14.91 22c-.04 0-.09-.01-.13-.02-1.59-.44-2.63-1.03-3.72-2.1-1.4-1.39-2.17-3.24-2.17-5.22 0-1.62 1.38-2.94 3.08-2.94 1.7 0 3.08 1.32 3.08 2.94 0 1.07.93 1.94 2.08 1.94s2.08-.87 2.08-1.94c0-3.77-3.25-6.83-7.25-6.83-2.84 0-5.44 1.58-6.61 4.03-.39.81-.59 1.76-.59 2.8 0 .78.07 2.01.67 3.61.1.26-.03.55-.29.64-.26.1-.55-.04-.64-.29-.49-1.31-.73-2.61-.73-3.96 0-1.2.23-2.29.68-3.24 1.33-2.79 4.28-4.6 7.51-4.6 4.55 0 8.25 3.51 8.25 7.83 0 1.62-1.38 2.94-3.08 2.94s-3.08-1.32-3.08-2.94c0-1.07-.93-1.94-2.08-1.94s-2.08.87-2.08 1.94c0 1.71.66 3.31 1.87 4.51.95.94 1.86 1.46 3.27 1.85.27.07.42.35.35.61-.05.23-.26.38-.47.38z" />
                         </svg>
                     </button>
                     <div class="fingerprint-status" id="fingerprintStatus">Tap to scan fingerprint</div>
@@ -1179,7 +1141,8 @@
             <div class="header-right">
                 <div class="theme-toggle" onclick="toggleTheme()">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+                        <path
+                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </div>
                 <div class="profile-icon" onclick="showProfile()">
@@ -1198,7 +1161,8 @@
                     <div class="reply-name" id="replyName"></div>
                     <div class="reply-text" id="replyText"></div>
                 </div>
-                <button onclick="cancelReply()" style="background:none;border:none;color:var(--text-primary);cursor:pointer;">✕</button>
+                <button onclick="cancelReply()"
+                    style="background:none;border:none;color:var(--text-primary);cursor:pointer;">✕</button>
             </div>
             <div class="input-row">
                 <div class="input-wrapper">
@@ -1209,7 +1173,7 @@
                 </div>
                 <button class="send-btn" onclick="sendMessage()">
                     <svg viewBox="0 0 24 24" width="20" height="20" fill="white">
-                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
                     </svg>
                 </button>
             </div>
@@ -1237,11 +1201,13 @@
         <div class="profile-content">
             <div class="profile-section">
                 <div style="text-align:center;padding:20px 0;">
-                    <div style="width:150px;height:150px;border-radius:50%;margin:0 auto 20px;overflow:hidden;border:4px solid var(--accent);">
+                    <div
+                        style="width:150px;height:150px;border-radius:50%;margin:0 auto 20px;overflow:hidden;border:4px solid var(--accent);">
                         <img id="profilePhotoLarge" src="" style="width:100%;height:100%;object-fit:cover;">
                     </div>
                     <input type="file" id="profilePhotoUpdate" accept="image/*" style="display:none;">
-                    <button class="upload-btn" onclick="document.getElementById('profilePhotoUpdate').click()">Change Photo</button>
+                    <button class="upload-btn" onclick="document.getElementById('profilePhotoUpdate').click()">Change
+                        Photo</button>
                 </div>
             </div>
 
@@ -1264,7 +1230,9 @@
                 <div class="section-title">Chat Wallpaper</div>
                 <div class="wallpaper-upload">
                     <input type="file" id="customWallpaperInput" accept="image/*" style="display:none;">
-                    <button class="upload-wallpaper-btn" onclick="document.getElementById('customWallpaperInput').click()">Upload Custom Wallpaper</button>
+                    <button class="upload-wallpaper-btn"
+                        onclick="document.getElementById('customWallpaperInput').click()">Upload Custom
+                        Wallpaper</button>
                 </div>
                 <div class="wallpaper-grid" id="wallpaperGrid"></div>
             </div>
@@ -1290,9 +1258,6 @@
         <div class="context-menu-item" onclick="replyMessage()">
             <span>↩️</span> Reply
         </div>
-        <div class="context-menu-item" onclick="showEmojiPickerForReaction()">
-            <span>😊</span> React
-        </div>
         <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption" style="display: none;">
             <span>🗑️</span> Delete
         </div>
@@ -1303,46 +1268,35 @@
         ✅ Message copied
     </div>
 
-    <!-- Emoji Picker -->
-    <div id="emojiPicker" class="emoji-picker"></div>
-
-    <!-- Reaction Viewer -->
-    <div id="reactionViewer" class="reaction-viewer">
-        <div class="reaction-viewer-header">
-            <div class="reaction-viewer-title">Reactions</div>
-            <button class="reaction-viewer-close" onclick="hideReactionViewer()">×</button>
-        </div>
-        <div class="reaction-viewer-content" id="reactionViewerContent"></div>
-    </div>
-
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
         const SAD_URL = "https://script.google.com/macros/s/AKfycbxjZ-NE9VF44H5sZXWAQhfB9JZ2-czsAGF9qmA0wcbIMox6oSiUg69aU92b7OYoI8T9/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbyoDtFkQztJn6RY0KhMeL7S_mRjwtq9MTrh3nywYRFB4n5Oa5ft4JsVcpg_5gluHCtp/exec";
+        const MAX_CUSTOM_WALLPAPERS = 5;
 
         // ============ WALLPAPERS ============
         const WALLPAPERS = [
-            {name: 'Dark Abstract', url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=800&q=80'},
-            {name: 'Blue Wave', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80'},
-            {name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&q=80'},
-            {name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'},
-            {name: 'Neon Lights', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80'},
-            {name: 'Ocean Blue', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'},
-            {name: 'Galaxy Stars', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80'},
-            {name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80'},
-            {name: 'Forest Green', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80'},
-            {name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80'},
-            {name: 'Aurora Night', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80'},
-            {name: 'Desert Sand', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80'},
-            {name: 'Lavender Dream', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80'},
-            {name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80'},
-            {name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80'},
-            {name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80'},
-            {name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'},
-            {name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=800&q=80'},
-            {name: 'Autumn Leaves', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80'},
-            {name: 'Deep Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80'}
+            { name: 'Dark Abstract', url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=800&q=80' },
+            { name: 'Blue Wave', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80' },
+            { name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&q=80' },
+            { name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
+            { name: 'Neon Lights', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80' },
+            { name: 'Ocean Blue', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' },
+            { name: 'Galaxy Stars', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80' },
+            { name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80' },
+            { name: 'Forest Green', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80' },
+            { name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80' },
+            { name: 'Aurora Night', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80' },
+            { name: 'Desert Sand', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80' },
+            { name: 'Lavender Dream', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80' },
+            { name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80' },
+            { name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80' },
+            { name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80' },
+            { name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
+            { name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=800&q=80' },
+            { name: 'Autumn Leaves', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80' },
+            { name: 'Deep Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' }
         ];
 
         // ============ STATE MANAGEMENT ============
@@ -1355,6 +1309,8 @@
         let allUsers = {};
         let currentMessages = [];
         let fingerprintVerified = false;
+        let lastScrollPosition = 0;
+        let customWallpaperCount = 0;
 
         // ============ EMOJIS ============
         const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
@@ -1362,10 +1318,17 @@
         // ============ DEVICE CHECK ============
         function checkDevice() {
             const userAgent = navigator.userAgent.toLowerCase();
+            const currentHost = window.location.hostname;
+
+            // Allow localhost/127.0.0.1 to bypass device check
+            if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+                return true;
+            }
+
             const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
             const isTablet = /ipad|android/i.test(userAgent) && !/mobile/i.test(userAgent);
             const screenWidth = window.innerWidth;
-            
+
             if (!isMobile || isTablet || screenWidth > 768) {
                 document.getElementById('deviceWarning').classList.add('active');
                 return false;
@@ -1373,90 +1336,110 @@
             return true;
         }
 
-        // ============ FINGERPRINT SIMULATION ============
+        // ============ FINGERPRINT BIOMETRIC AUTHENTICATION ============
         async function scanFingerprint() {
             const btn = document.getElementById('fingerprintBtn');
             const status = document.getElementById('fingerprintStatus');
             const signupBtn = document.getElementById('signupBtn');
-            
+
             btn.disabled = true;
-            status.textContent = 'Scanning...';
+            status.textContent = 'Scanning fingerprint...';
             btn.style.transform = 'scale(0.95)';
-            
-            // Simulate scanning with animation
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            
-            // Check if Web Authentication API is available
-            if (window.PublicKeyCredential) {
-                try {
-                    // This is a simulation - in real implementation, use WebAuthn API
-                    status.textContent = '✅ Fingerprint verified!';
-                    status.style.color = 'var(--accent)';
-                    fingerprintVerified = true;
-                    signupBtn.disabled = false;
-                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                } catch (error) {
-                    status.textContent = '❌ Verification failed. Tap to retry.';
-                    status.style.color = '#dc3545';
-                    btn.disabled = false;
+
+            try {
+                if (window.PublicKeyCredential) {
+                    const challenge = new Uint8Array(32);
+                    crypto.getRandomValues(challenge);
+
+                    await navigator.credentials.create({
+                        publicKey: {
+                            challenge,
+                            rp: { name: "Class Group Chat" },
+                            user: {
+                                id: new Uint8Array(16),
+                                name: "student@classgroup.com",
+                                displayName: "Student"
+                            },
+                            pubKeyCredParams: [{ alg: -7, type: "public-key" }],
+                            authenticatorSelection: {
+                                authenticatorAttachment: "platform",
+                                userVerification: "required"
+                            },
+                            timeout: 60000,
+                            attestation: "none"
+                        }
+                    });
                 }
-            } else {
-                // Fallback for browsers without WebAuthn
-                status.textContent = '✅ Fingerprint verified!';
+
+                // ✅ Success
+                status.textContent = '✅ Fingerprint verified';
                 status.style.color = 'var(--accent)';
                 fingerprintVerified = true;
                 signupBtn.disabled = false;
                 btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+            } catch (err) {
+                console.warn('Biometric not available, fallback simulation');
+                await new Promise(res => setTimeout(res, 1500));
+                status.textContent = '✅ Fingerprint verified (simulated)';
+                status.style.color = 'var(--accent)';
+                fingerprintVerified = true;
+                signupBtn.disabled = false;
+            } finally {
+                btn.style.transform = 'scale(1)';
+                btn.disabled = false;
             }
-            
-            btn.style.transform = 'scale(1)';
         }
+
 
         // ============ INITIALIZATION ============
         window.onload = function () {
             if (!checkDevice()) return;
-            
+
             applySettings();
             setupEventListeners();
             checkAuth();
+            loadCustomWallpaperCount();
         };
 
         async function checkAuth() {
             try {
                 const userDataString = localStorage.getItem('chatUser');
-                
+
                 if (!userDataString || userDataString === 'null') {
                     showSignup();
                     return;
                 }
-                
+
                 const userData = JSON.parse(userDataString);
-                
+
                 if (userData && userData.name && userData.email && userData.photo) {
-                    // Show loader and verify account status
                     showLoader();
-                    
+
+                    // Verify account status from sheet
+                    // Verify account status from sheet   
+
                     const isActive = await verifyAccountStatus(userData);
-                    
+
                     if (!isActive) {
-                        hideLoader();
-                        alert('❌ You have been removed by Admin');
+                        alert('❌ Your account has been removed by Admin.');
                         localStorage.removeItem('chatUser');
+                        currentUser = null;
+                        hideLoader();
                         showSignup();
                         return;
                     }
-                    
+
+
                     currentUser = userData;
-                    hideLoader();
                     showChat();
                     loadWallpapers();
                     startMessageRefresh();
                     loadOnlineCount();
                     return;
                 }
-                
+
                 showSignup();
-                
+
             } catch (error) {
                 console.error('Error in checkAuth:', error);
                 hideLoader();
@@ -1468,16 +1451,16 @@
             try {
                 const response = await fetch(`${SAD_URL}?action=checkStatus&email=${encodeURIComponent(userData.email)}&t=${Date.now()}`);
                 const data = await response.json();
-                
+
                 if (data.success && data.status) {
-                    // Active emoji: ✅, Removed emoji: ❌ or 🚫
+                    // Check if status is active (✅) or blocked (❌)
                     return data.status === '✅' || data.status === 'active' || data.status === '✔️';
                 }
-                
-                return true; // Default to active if status check fails
+
+                return true;
             } catch (error) {
                 console.error('Status check error:', error);
-                return true; // Default to active on error
+                return true;
             }
         }
 
@@ -1491,7 +1474,7 @@
 
         async function loadOnlineCount() {
             try {
-                const response = await fetch(`${SAD_URL}?action=getOnlineCount`);
+                const response = await fetch(`${SAD_URL}?action=getOnlineCount&t=${Date.now()}`);
                 const data = await response.json();
                 if (data.success) {
                     const count = data.count || 0;
@@ -1506,28 +1489,52 @@
             document.getElementById('signupForm').addEventListener('submit', handleSignup);
             document.getElementById('signupPhotoInput').addEventListener('change', previewSignupPhoto);
             document.getElementById('messageInput').addEventListener('input', autoResize);
-            document.getElementById('messageInput').addEventListener('keypress', function(e) {
+            document.getElementById('messageInput').addEventListener('keydown', function (e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
+                    // Allow Enter key for line breaks
+                    return true;
                 }
             });
             document.getElementById('profilePhotoUpdate').addEventListener('change', updateProfilePhoto);
             document.getElementById('customWallpaperInput').addEventListener('change', uploadCustomWallpaper);
-            
-            document.addEventListener('click', function(e) {
+
+            document.addEventListener('click', function (e) {
                 if (!e.target.closest('.context-menu') && !e.target.closest('.message-bubble')) {
                     hideContextMenu();
                 }
-                if (!e.target.closest('.emoji-picker')) {
-                    hideEmojiPicker();
+            });
+
+            // Scroll event for date badge visibility
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.addEventListener('scroll', handleScroll);
+
+        }
+
+        function handleScroll() {
+            const messagesArea = document.getElementById('messagesArea');
+            const currentScroll = messagesArea.scrollTop;
+            const dateBadges = document.querySelectorAll('.message-date');
+
+            dateBadges.forEach((badge, index) => {
+                const rect = badge.getBoundingClientRect();
+                const messagesRect = messagesArea.getBoundingClientRect();
+
+                // Hide "Today" badge if not at top
+                if (badge.querySelector('.date-badge').textContent === 'Today') {
+                    if (currentScroll > 100) {
+                        badge.style.display = 'none';
+                    } else {
+                        badge.style.display = 'block';
+                    }
                 }
-                if (!e.target.closest('.reaction-viewer') && !e.target.closest('.reaction-item')) {
-                    hideReactionViewer();
+
+                // Show/hide other date badges based on scroll position
+                if (rect.top >= messagesRect.top && rect.top <= messagesRect.top + 100) {
+                    badge.style.display = 'block';
                 }
             });
 
-            initEmojiPicker();
+            lastScrollPosition = currentScroll;
         }
 
         function autoResize() {
@@ -1536,23 +1543,13 @@
             textarea.style.height = Math.min(textarea.scrollHeight, 100) + 'px';
         }
 
-        function initEmojiPicker() {
-            const picker = document.getElementById('emojiPicker');
-            REACTION_EMOJIS.forEach(emoji => {
-                const item = document.createElement('div');
-                item.className = 'emoji-item';
-                item.textContent = emoji;
-                item.onclick = () => addReaction(emoji);
-                picker.appendChild(item);
-            });
-        }
 
         // ============ PHOTO PREVIEW ============
         function previewSignupPhoto(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     document.getElementById('signupPhotoPreview').innerHTML = `<img src="${event.target.result}" alt="Preview">`;
                 };
                 reader.readAsDataURL(file);
@@ -1605,15 +1602,15 @@
             btn.disabled = true;
 
             try {
-                const checkResponse = await fetch(`${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}`);
+                const checkResponse = await fetch(`${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&t=${Date.now()}`);
                 const checkData = await checkResponse.json();
-                
+
                 if (checkData.exists === true) {
                     let fieldName = checkData.field;
                     if (fieldName === 'name') fieldName = 'Name';
                     if (fieldName === 'email') fieldName = 'Email';
                     if (fieldName === 'phone') fieldName = 'Phone Number';
-                    
+
                     alert('❌ This account already exists!\n\n' + fieldName + ' is already registered.');
                     btn.textContent = 'Sign Up';
                     btn.disabled = false;
@@ -1635,7 +1632,7 @@
                 await fetch(SAD_URL, {
                     method: 'POST',
                     redirect: 'follow',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify(signupData)
@@ -1649,7 +1646,7 @@
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
 
                 alert('✅ Account created successfully!\n\nWelcome to Class Group Chat!');
-                
+
                 showChat();
                 loadWallpapers();
                 startMessageRefresh();
@@ -1667,22 +1664,32 @@
         // ============ SEND MESSAGE ============
         async function sendMessage() {
             if (isSending) return;
-            
+
             const input = document.getElementById('messageInput');
             const text = input.value.trim();
             if (!text) return;
 
             isSending = true;
             const messageText = text;
+
             input.value = '';
             autoResize();
 
             let replyToData = '';
-            if (replyToMessage) {
-                replyToData = `${replyToMessage.sender}|||${replyToMessage.text}`;
-            }
-
+            if (replyToMessage) replyToData = `${replyToMessage.sender}|||${replyToMessage.text}`;
             cancelReply();
+
+            // ✅ Immediately show message locally
+            const tempMessage = {
+                studentName: currentUser.name,
+                message: messageText,
+                timestamp: new Date().toISOString(),
+                replyTo: replyToData,
+                reaction: ''
+            };
+            currentMessages.push(tempMessage);
+            displayMessages(currentMessages);
+            scrollToBottom();
 
             try {
                 const messageData = {
@@ -1694,14 +1701,12 @@
 
                 await fetch(SMD_URL, {
                     method: 'POST',
-                    headers: { 
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(messageData)
                 });
 
-                setTimeout(() => fetchMessages(), 100);
-                scrollToBottom();
+                // Refresh latest from sheet quietly
+                setTimeout(fetchMessages, 1000);
             } catch (error) {
                 console.error('Send error:', error);
                 alert('❌ Error sending message. Please try again.');
@@ -1709,6 +1714,7 @@
                 isSending = false;
             }
         }
+
 
         // ============ FETCH MESSAGES ============
         async function fetchMessages() {
@@ -1734,9 +1740,11 @@
         function displayMessages(messages) {
             const container = document.getElementById('messagesArea');
             const wasAtBottom = isScrolledToBottom();
-            
+            const currentScroll = container.scrollTop;
+
             container.innerHTML = '';
             let currentDate = '';
+            let todayBadgeShown = false;
 
             messages.forEach((msg, index) => {
                 const msgDate = new Date(msg.timestamp);
@@ -1746,8 +1754,16 @@
                     currentDate = dateStr;
                     const dateBadge = document.createElement('div');
                     dateBadge.className = 'message-date';
+
+                    // Hide "Today" badge if scrolled down
+                    if (dateStr === 'Today' && currentScroll > 100) {
+                        dateBadge.style.display = 'none';
+                    }
+
                     dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
                     container.appendChild(dateBadge);
+
+                    if (dateStr === 'Today') todayBadgeShown = true;
                 }
 
                 const messageDiv = createMessageElement(msg, index);
@@ -1757,7 +1773,7 @@
             if (wasAtBottom || lastMessageCount === 0) {
                 scrollToBottom();
             }
-            
+
             lastMessageCount = messages.length;
         }
 
@@ -1765,7 +1781,7 @@
             const messageDiv = document.createElement('div');
             const isSent = msg.studentName.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
             const isDeleted = msg.message === '🚫 DELETED';
-            
+
             messageDiv.className = isSent ? 'message sent' : 'message received';
             messageDiv.setAttribute('data-index', index);
             messageDiv.setAttribute('data-message', msg.message);
@@ -1784,11 +1800,11 @@
                         const replyText = replyParts[1];
                         const replyTextShort = replyText.length > 30 ? replyText.substring(0, 30) + '...' : replyText;
                         replyHTML = `
-                            <div class="reply-preview">
-                                <div class="reply-name">${escapeHtml(replySender)}</div>
-                                <div class="reply-text">${escapeHtml(replyTextShort)}</div>
-                            </div>
-                        `;
+                    <div class="reply-preview">
+                        <div class="reply-name">${escapeHtml(replySender)}</div>
+                        <div class="reply-text">${escapeHtml(replyTextShort)}</div>
+                    </div>
+                `;
                     }
                 } catch (e) {
                     console.error('Error parsing reply:', e);
@@ -1801,9 +1817,9 @@
                 if (reactions.length > 0) {
                     reactionHTML = '<div class="message-reactions">';
                     reactions.forEach(r => {
-                        reactionHTML += `<div class="reaction-item" onclick="showReactionDetails(${index}, '${r.emoji}')">
-                            ${r.emoji} <span class="reaction-count">${r.count}</span>
-                        </div>`;
+                        reactionHTML += `<div class="reaction-item" onclick="event.stopPropagation(); showReactionDetails(${index}, '${r.emoji}')">
+                    ${r.emoji} <span class="reaction-count">${r.count}</span>
+                </div>`;
                     });
                     reactionHTML += '</div>';
                 }
@@ -1817,42 +1833,44 @@
 
             let messageTextHTML = '';
             if (isDeleted) {
-                messageTextHTML = `<div class="message-text deleted">🚫 Message Deleted</div>`;
+                messageTextHTML = `<div class="message-text deleted">Deleted</div>`;
             } else {
-                const textWithLinks = linkify(msg.message);
+                // Preserve line breaks and formatting
+                const formattedText = msg.message.replace(/\n/g, '<br>');
+                const textWithLinks = linkify(formattedText);
                 messageTextHTML = `<div class="message-text">${textWithLinks}</div>`;
             }
 
             messageDiv.innerHTML = `
-                <div class="message-content">
-                    ${avatarHTML}
-                    <div class="message-bubble" oncontextmenu="showContextMenu(event, ${index}); return false;" 
-                         ontouchstart="handleTouchStart(event, ${index})" 
-                         ontouchend="handleTouchEnd(event)"
-                         ondblclick="replyMessageByIndex(${index})">
-                        ${!isSent ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
-                        ${replyHTML}
-                        ${messageTextHTML}
-                        <div class="message-time">${time}</div>
-                        ${reactionHTML}
-                    </div>
-                </div>
-            `;
+        <div class="message-content">
+            ${avatarHTML}
+            <div class="message-bubble" oncontextmenu="showContextMenu(event, ${index}); return false;" 
+                 ontouchstart="handleTouchStart(event, ${index})" 
+                 ontouchend="handleTouchEnd(event)"
+                 ondblclick="replyMessageByIndex(${index})">
+                ${!isSent ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
+                ${replyHTML}
+                ${messageTextHTML}
+                <div class="message-time">${time}</div>
+                ${reactionHTML}
+            </div>
+        </div>
+    `;
 
             return messageDiv;
         }
 
         function linkify(text) {
             const urlPattern = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-            return escapeHtml(text).replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
+            return text.replace(urlPattern, '<a href="$1" target="_blank">$1</a>');
         }
 
         function parseReactions(reactionString) {
             if (!reactionString || reactionString === '' || reactionString.includes('🕸')) return [];
-            
+
             const reactionMap = {};
             const parts = reactionString.split('|');
-            
+
             parts.forEach(part => {
                 if (part.includes(':') && !part.includes('🕸')) {
                     const [user, emoji] = part.split(':');
@@ -1861,20 +1879,20 @@
                     }
                 }
             });
-            
-            return Object.entries(reactionMap).map(([emoji, count]) => ({emoji, count}));
+
+            return Object.entries(reactionMap).map(([emoji, count]) => ({ emoji, count }));
         }
 
         function showReactionDetails(messageIndex, emoji = null) {
             const msg = currentMessages[messageIndex];
             if (!msg || !msg.reaction || msg.reaction.includes('🕸')) return;
-            
+
             const viewer = document.getElementById('reactionViewer');
             const content = document.getElementById('reactionViewerContent');
-            
+
             const reactionData = {};
             const parts = msg.reaction.split('|');
-            
+
             parts.forEach(part => {
                 if (part.includes(':') && !part.includes('🕸')) {
                     const [user, reactionEmoji] = part.split(':');
@@ -1886,32 +1904,32 @@
                     }
                 }
             });
-            
+
             content.innerHTML = '';
-            
+
             Object.entries(reactionData).forEach(([reactionEmoji, users]) => {
                 if (emoji && emoji !== reactionEmoji) return;
-                
+
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'reaction-group';
-                
+
                 let html = `<div class="reaction-group-header">${reactionEmoji} ${users.length}</div>`;
-                
+
                 users.forEach(user => {
                     const firstLetter = user.charAt(0).toUpperCase();
                     const isCurrentUser = user.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
                     html += `
-                        <div class="reaction-user" ${isCurrentUser ? 'onclick="removeReaction(' + messageIndex + ', \'' + reactionEmoji + '\')"' : ''}>
-                            <div class="reaction-user-avatar">${firstLetter}</div>
-                            <div>${escapeHtml(user)}${isCurrentUser ? ' (Tap to remove)' : ''}</div>
-                        </div>
-                    `;
+                <div class="reaction-user" ${isCurrentUser ? 'onclick="removeReaction(' + messageIndex + ', \'' + reactionEmoji + '\')"' : ''}>
+                    <div class="reaction-user-avatar">${firstLetter}</div>
+                    <div>${escapeHtml(user)}${isCurrentUser ? ' (Tap to remove)' : ''}</div>
+                </div>
+            `;
                 });
-                
+
                 groupDiv.innerHTML = html;
                 content.appendChild(groupDiv);
             });
-            
+
             viewer.classList.add('active');
         }
 
@@ -1926,7 +1944,7 @@
 
                 await fetch(SMD_URL, {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify(reactionData)
@@ -1934,7 +1952,7 @@
 
                 hideReactionViewer();
                 setTimeout(() => fetchMessages(), 200);
-                
+
             } catch (error) {
                 console.error('Remove reaction error:', error);
             }
@@ -1951,20 +1969,21 @@
             return null;
         }
 
-        function formatDate(date) {
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            
-            const yesterday = new Date(today);
-            yesterday.setDate(yesterday.getDate() - 1);
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
 
-            const msgDate = new Date(date);
-            msgDate.setHours(0, 0, 0, 0);
+            // Convert both to local midnight for comparison
+            const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(today.getDate() - 1);
 
             if (msgDate.getTime() === today.getTime()) return 'Today';
             if (msgDate.getTime() === yesterday.getTime()) return 'Yesterday';
             return msgDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
+
 
         function isScrolledToBottom() {
             const container = document.getElementById('messagesArea');
@@ -1996,37 +2015,37 @@
             const menu = document.getElementById('contextMenu');
             const deleteOption = document.getElementById('deleteOption');
             selectedMessage = index;
-            
+
             const msgElement = document.querySelector(`[data-index="${index}"]`);
             if (msgElement) {
                 const sender = msgElement.getAttribute('data-sender');
                 const message = msgElement.getAttribute('data-message');
                 const isOwnMessage = sender.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
                 const isDeleted = message === '🚫 DELETED';
-                
+
                 deleteOption.style.display = (isOwnMessage && !isDeleted) ? 'flex' : 'none';
             }
-            
-            let x = e.pageX || e.touches[0].pageX;
-            let y = e.pageY || e.touches[0].pageY;
-            
+
+            let x = e.pageX || (e.touches && e.touches[0] ? e.touches[0].pageX : 0);
+            let y = e.pageY || (e.touches && e.touches[0] ? e.touches[0].pageY : 0);
+
             const menuWidth = 150;
             const menuHeight = 220;
-            
+
             if (x + menuWidth > window.innerWidth) {
                 x = window.innerWidth - menuWidth - 10;
             }
             if (x < 10) {
                 x = 10;
             }
-            
+
             if (y + menuHeight > window.innerHeight) {
                 y = window.innerHeight - menuHeight - 10;
             }
             if (y < 10) {
                 y = 10;
             }
-            
+
             menu.style.left = x + 'px';
             menu.style.top = y + 'px';
             menu.classList.add('active');
@@ -2036,16 +2055,25 @@
             document.getElementById('contextMenu').classList.remove('active');
         }
 
+        // REPLACE WITH:
         function copyMessage() {
             const msgElement = document.querySelector(`[data-index="${selectedMessage}"]`);
             const text = msgElement.getAttribute('data-message');
-            
+
+            if (text === '🚫 DELETED' || text === 'Deleted') {
+                alert('Cannot copy deleted messages');
+                hideContextMenu();
+                return;
+            }
+
             navigator.clipboard.writeText(text).then(() => {
                 showCopyToast();
+            }).catch(err => {
+                console.error('Copy failed:', err);
             });
             hideContextMenu();
         }
-        
+
         function showCopyToast() {
             const toast = document.getElementById('copyToast');
             toast.classList.add('show');
@@ -2062,12 +2090,12 @@
         function replyMessageByIndex(index) {
             const msgElement = document.querySelector(`[data-index="${index}"]`);
             if (!msgElement) return;
-            
+
             const sender = msgElement.getAttribute('data-sender');
             const text = msgElement.getAttribute('data-message');
-            
+
             if (text === '🚫 DELETED') return;
-            
+
             replyToMessage = { sender, text };
 
             document.getElementById('replyName').textContent = sender;
@@ -2082,46 +2110,7 @@
             document.getElementById('replyBar').classList.remove('active');
         }
 
-        function showEmojiPickerForReaction() {
-            const picker = document.getElementById('emojiPicker');
-            picker.classList.add('active');
-            hideContextMenu();
-        }
 
-        function hideEmojiPicker() {
-            document.getElementById('emojiPicker').classList.remove('active');
-        }
-
-        async function addReaction(emoji) {
-            if (selectedMessage === null || selectedMessage === undefined) {
-                hideEmojiPicker();
-                return;
-            }
-
-            try {
-                const reactionData = {
-                    action: 'addReaction',
-                    messageIndex: selectedMessage,
-                    emoji: emoji,
-                    userName: currentUser.name
-                };
-
-                await fetch(SMD_URL, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify(reactionData)
-                });
-
-                hideEmojiPicker();
-                setTimeout(() => fetchMessages(), 200);
-                
-            } catch (error) {
-                console.error('Reaction error:', error);
-                hideEmojiPicker();
-            }
-        }
 
         async function deleteMessage() {
             if (!confirm('Delete this message? It will show as deleted to everyone.')) return;
@@ -2135,7 +2124,7 @@
 
                 await fetch(SMD_URL, {
                     method: 'POST',
-                    headers: { 
+                    headers: {
                         'Content-Type': 'text/plain;charset=utf-8'
                     },
                     body: JSON.stringify(deleteData)
@@ -2152,7 +2141,7 @@
         async function toggleMembersSidebar() {
             const sidebar = document.getElementById('membersSidebar');
             const overlay = document.getElementById('sidebarOverlay');
-            
+
             if (sidebar.classList.contains('active')) {
                 sidebar.classList.remove('active');
                 overlay.classList.remove('active');
@@ -2183,16 +2172,16 @@
                 data.students.forEach(student => {
                     const memberDiv = document.createElement('div');
                     memberDiv.className = 'member-item';
-                    
+
                     const firstLetter = student.name.charAt(0).toUpperCase();
-                    
+
                     memberDiv.innerHTML = `
-                        <div class="member-avatar">${firstLetter}</div>
-                        <div class="member-info">
-                            <div class="member-name">${escapeHtml(student.name)}</div>
-                        </div>
-                    `;
-                    
+                <div class="member-avatar">${firstLetter}</div>
+                <div class="member-info">
+                    <div class="member-name">${escapeHtml(student.name)}</div>
+                </div>
+            `;
+
                     membersList.appendChild(memberDiv);
                 });
 
@@ -2206,7 +2195,7 @@
         function loadWallpapers() {
             const grid = document.getElementById('wallpaperGrid');
             grid.innerHTML = '';
-            
+
             const noneItem = document.createElement('div');
             noneItem.className = 'wallpaper-item active';
             noneItem.onclick = () => setWallpaper('none', noneItem);
@@ -2222,10 +2211,25 @@
                 grid.appendChild(item);
             });
 
+            // Load custom wallpapers from localStorage
+            const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+            customWallpapers.forEach(wallpaperUrl => {
+                const item = document.createElement('div');
+                item.className = 'wallpaper-item';
+                item.onclick = () => setWallpaper(wallpaperUrl, item);
+                item.innerHTML = `<img src="${wallpaperUrl}" alt="Custom">`;
+                grid.appendChild(item);
+            });
+
             const savedWallpaper = localStorage.getItem('chatWallpaper');
             if (savedWallpaper && savedWallpaper !== 'none') {
                 document.getElementById('messagesArea').style.backgroundImage = `url(${savedWallpaper})`;
             }
+        }
+
+        function loadCustomWallpaperCount() {
+            const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+            customWallpaperCount = customWallpapers.length;
         }
 
         function setWallpaper(url, element) {
@@ -2248,24 +2252,45 @@
             const file = e.target.files[0];
             if (!file) return;
 
+            // Check if max custom wallpapers limit reached
+            const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+
+            if (customWallpapers.length >= MAX_CUSTOM_WALLPAPERS) {
+                alert(`❌ You cannot upload more wallpapers!\n\nMaximum limit: ${MAX_CUSTOM_WALLPAPERS} custom wallpapers`);
+                e.target.value = ''; // Reset file input
+                return;
+            }
+
             try {
                 const reader = new FileReader();
-                reader.onload = function(event) {
+                reader.onload = function (event) {
                     const customUrl = event.target.result;
-                    
+
+                    // Save to localStorage
+                    customWallpapers.push(customUrl);
+                    localStorage.setItem('customWallpapers', JSON.stringify(customWallpapers));
+                    customWallpaperCount = customWallpapers.length;
+
+                    // Add to grid
                     const grid = document.getElementById('wallpaperGrid');
                     const customItem = document.createElement('div');
                     customItem.className = 'wallpaper-item';
                     customItem.onclick = () => setWallpaper(customUrl, customItem);
                     customItem.innerHTML = `<img src="${customUrl}" alt="Custom">`;
-                    grid.insertBefore(customItem, grid.children[1]);
-                    
+                    grid.appendChild(customItem);
+
+                    // Set as active wallpaper
                     setWallpaper(customUrl, customItem);
+
+                    alert(`✅ Wallpaper uploaded successfully!\n\nCustom wallpapers: ${customWallpaperCount}/${MAX_CUSTOM_WALLPAPERS}`);
                 };
                 reader.readAsDataURL(file);
             } catch (error) {
                 alert('❌ Error uploading wallpaper');
             }
+
+            // Reset file input
+            e.target.value = '';
         }
 
         // ============ FONT SIZE ============
@@ -2298,17 +2323,28 @@
         function startMessageRefresh() {
             fetchMessages();
             if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(() => {
+            refreshInterval = setInterval(async () => {
+                // Har refresh pe status check karo
+                if (currentUser) {
+                    const isActive = await verifyAccountStatus(currentUser);
+                    if (!isActive) {
+                        alert('❌ Your account has been blocked by Admin');
+                        localStorage.removeItem('chatUser');
+                        clearInterval(refreshInterval);
+                        window.location.reload();
+                        return;
+                    }
+                }
                 fetchMessages();
                 loadOnlineCount();
-            }, 3000);
+            }, 2000); // 2 seconds - blink nahi hoga
         }
 
         // ============ PROFILE FUNCTIONS ============
         function showProfile() {
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
-            
+
             chatContainer.classList.remove('active');
             chatContainer.style.display = 'none';
             profilePage.classList.add('active');
@@ -2323,7 +2359,7 @@
         function hideProfile() {
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
-            
+
             profilePage.classList.remove('active');
             profilePage.style.display = 'none';
             chatContainer.classList.add('active');
@@ -2363,8 +2399,16 @@
                 showSignup();
                 fingerprintVerified = false;
                 document.getElementById('fingerprintBtn').disabled = false;
+                document.getElementById('fingerprintBtn').style.background = 'linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%)';
                 document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
+                document.getElementById('fingerprintStatus').style.color = 'var(--text-secondary)';
                 document.getElementById('signupBtn').disabled = true;
+                document.getElementById('signupForm').reset();
+                document.getElementById('signupPhotoPreview').innerHTML = `
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        `;
             }
         }
 
@@ -2382,7 +2426,7 @@
             const signupPage = document.getElementById('signupPage');
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
-            
+
             signupPage.style.display = 'flex';
             signupPage.classList.remove('hidden');
             chatContainer.classList.remove('active');
@@ -2395,14 +2439,14 @@
             const signupPage = document.getElementById('signupPage');
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
-            
+
             signupPage.style.display = 'none';
             signupPage.classList.add('hidden');
             chatContainer.classList.add('active');
             chatContainer.style.display = 'flex';
             profilePage.classList.remove('active');
             profilePage.style.display = 'none';
-            
+
             if (currentUser && currentUser.photo) {
                 document.getElementById('headerProfilePhoto').src = currentUser.photo;
                 document.getElementById('inputProfilePhoto').src = currentUser.photo;
@@ -2455,4 +2499,5 @@
         }
     </script>
 </body>
+
 </html>
