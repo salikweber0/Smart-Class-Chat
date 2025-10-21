@@ -1440,13 +1440,14 @@
                 userData.status = sheetStatus;
                 localStorage.setItem('chatUser', JSON.stringify(userData));
 
-                if (sheetStatus === '❌') {
+                if (sheetStatus === 'No' || sheetStatus === '❌') {
                     alert('⚠️ You are blocked by Admin');
                     localStorage.removeItem('chatUser');
                     currentUser = null;
                     showSignup();
                     return;
                 }
+
 
                 currentUser = userData;
                 showChat();
