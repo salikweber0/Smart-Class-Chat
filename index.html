@@ -386,7 +386,7 @@
         }
 
         .date-badge {
-            width: 150px;
+            width: 130px;
             text-align: center;
             display: inline-block;
             background: var(--bg-input);
@@ -750,7 +750,7 @@
         .members-list {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 10px 10px 50px 10px;
         }
 
         .member-item {
@@ -936,7 +936,7 @@
         .profile-content {
             flex: 1;
             overflow-y: auto;
-            padding: 20px;
+            padding: 20px 20px 40px 20px;
         }
 
         .profile-section {
@@ -1011,17 +1011,6 @@
         .font-size-value {
             font-size: 16px;
             color: var(--text-primary);
-        }
-
-        .logout-btn {
-            width: 100%;
-            padding: 15px;
-            background: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
         }
 
         .hidden {
@@ -1259,8 +1248,6 @@
                     <button class="font-size-btn" onclick="changeFontSize(1)">A+</button>
                 </div>
             </div>
-
-            <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
 
@@ -1408,42 +1395,42 @@
         // ============ INITIALIZATION ============
         window.onload = function () {
             if (!checkDevice()) return;
-
             applySettings();
             setupEventListeners();
             checkAuth();
+            setInterval(recheckUserStatus, 5000); // har 5 sec me verify karega
+            fetchMessages(); // 🟢 first load
+            setInterval(fetchMessages, 2000);
             loadCustomWallpaperCount();
         };
 
-        async function checkAuth() {
-            try {
-                const userDataString = localStorage.getItem('chatUser');
-                if (!userDataString) {
-                    console.log("No local data found → show signup");
-                    showSignup();
-                    return;
-                }
+        // 🔁 Every 3 seconds recheck active/block status live
+setInterval(async () => {
+  const userDataString = localStorage.getItem('chatUser');
+  const isBlocked = localStorage.getItem('blockedUser');
+  if (!userDataString) return;
 
-                const userData = JSON.parse(userDataString);
-                if (!userData.name || !userData.email || !userData.phone) {
-                    console.log("Incomplete local data → show signup");
-                    showSignup();
-                    return;
-                }
+  const userData = JSON.parse(userDataString);
 
-                showLoader();
+  try {
+    const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
+    const res = await fetch(verifyUrl);
+    const data = await res.json();
 
-                // 🔹 Verify from Sheet
-                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email.toLowerCase())}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
-                const res = await fetch(verifyUrl);
-                const data = await res.json();
+    // ✅ Active → continue chat normally
+    if (data.status === 'active') {
+      if (isBlocked === 'true') {
+        // Unblocked recently — refresh chat instantly
+        localStorage.removeItem('blockedUser');
+        location.reload();
+      }
+      return;
+    }
 
-                console.log("Verification response:", data);
-                hideLoader();
-
-                // ❌ If student blocked or email missing in Sheet
-                if (data.status === 'blocked') {
-                    document.body.innerHTML = `
+    // ❌ Blocked → show immediately
+    if (data.status === 'blocked' && isBlocked !== 'true') {
+      localStorage.setItem('blockedUser', 'true');
+      document.body.innerHTML = `
         <div style="
           background:#111;
           color:#ff4c4c;
@@ -1458,31 +1445,96 @@
           <div style="font-size:80px;">⛔</div>
           <p><strong>You are Blocked by Admin</strong></p>
         </div>`;
-                    localStorage.removeItem('chatUser');
-                    return;
-                }
+    }
+  } catch (err) {
+    console.error('Live check error:', err);
+  }
+}, 3000);
 
-                // ✅ If user verified (name, email, phone match, and email not empty)
-                if (data.status === 'active') {
-                    console.log("User verified → Opening chat");
-                    currentUser = userData;
-                    showChat();
-                    loadWallpapers();
-                    startMessageRefresh();
-                    loadOnlineCount();
-                    return;
-                }
 
-                // ❌ Default fallback: show signup
-                console.log("No match found → show signup");
-                showSignup();
+        async function checkAuth() {
+  try {
+    const userDataString = localStorage.getItem('chatUser');
 
-            } catch (err) {
-                console.error("checkAuth Error:", err);
-                hideLoader();
-                showSignup();
-            }
-        }
+    // 🔹 Agar localStorage hi nahi hai → show signup
+    if (!userDataString) {
+      console.log("No local data found → show signup");
+      showSignup();
+      return;
+    }
+
+    const userData = JSON.parse(userDataString);
+    if (!userData.name || !userData.email || !userData.phone) {
+      console.log("Incomplete local data → show signup");
+      showSignup();
+      return;
+    }
+
+    showLoader();
+
+    // 🔹 Verify from Sheet
+    const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email.toLowerCase())}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
+    const res = await fetch(verifyUrl);
+    const data = await res.json();
+
+    console.log("Verification response:", data);
+    hideLoader();
+
+    // 🔴 If student blocked → don’t delete localStorage, just mark blocked
+    if (data.status === 'blocked') {
+      localStorage.setItem('blockedUser', 'true'); // save flag
+      document.body.innerHTML = `
+        <div style="
+          background:#111;
+          color:#ff4c4c;
+          font-size:20px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          height:100vh;
+          text-align:center;
+          flex-direction:column;
+        ">
+          <div style="font-size:80px;">⛔</div>
+          <p><strong>You are Blocked by Admin</strong></p>
+        </div>`;
+      return;
+    }
+
+    // ✅ If active → remove block flag & open chat
+    localStorage.removeItem('blockedUser');
+    currentUser = userData;
+    showChat();
+    loadWallpapers();
+    startMessageRefresh();
+    loadOnlineCount();
+
+  } catch (err) {
+    console.error("checkAuth Error:", err);
+    hideLoader();
+    showSignup();
+  }
+}
+
+
+        // 🔁 Every 5 seconds check if user unblocked by admin
+setInterval(async () => {
+  const isBlocked = localStorage.getItem('blockedUser');
+  if (isBlocked === 'true') {
+    const userDataString = localStorage.getItem('chatUser');
+    if (!userDataString) return;
+    const userData = JSON.parse(userDataString);
+    const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
+    const res = await fetch(verifyUrl);
+    const data = await res.json();
+    if (data.status === 'active') {
+      // ✅ Unblocked → reopen chat
+      localStorage.removeItem('blockedUser');
+      location.reload(); // refresh & open chat
+    }
+  }
+}, 5000);
+
 
         async function verifyAccountStatus(userData) {
             try {
@@ -1673,80 +1725,263 @@
         }
 
 
-        // ============ SEND MESSAGE ============
-        async function sendMessage() {
-            if (isSending) return;
+        // ============ SEND MESSAGE (INSTANT DISPLAY) ============
+async function sendMessage() {
+  const msgInput = document.getElementById('messageInput');
+  const messageText = msgInput.value.trim();
+  
+  if (!messageText) return;
+  if (isSending) return;
 
-            const input = document.getElementById('messageInput');
-            const text = input.value.trim();
-            if (!text) return;
+  isSending = true;
+  const sendBtn = document.querySelector('.send-btn');
+  sendBtn.disabled = true;
 
-            isSending = true;
-            const messageText = text;
+  try {
+    // ✅ STEP 1: Instantly show in chatbox (optimistic update)
+    const msgTimestamp = new Date();
+    const tempMessage = {
+      studentName: currentUser.name,
+      message: messageText,
+      timestamp: msgTimestamp.toISOString(),
+      replyTo: replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : ''
+    };
 
-            input.value = '';
-            autoResize();
+    // Add to display immediately
+    const messagesArea = document.getElementById('messagesArea');
+    const messageDiv = createMessageElement(tempMessage, currentMessages.length);
+    messagesArea.appendChild(messageDiv);
 
-            let replyToData = '';
-            if (replyToMessage) replyToData = `${replyToMessage.sender}|||${replyToMessage.text}`;
-            cancelReply();
+    // Clear input aur reply bar
+    msgInput.value = '';
+    msgInput.style.height = 'auto';
+    if (replyToMessage) {
+      cancelReply();
+    }
 
-            // ✅ Immediately show message locally
-            const tempMessage = {
-                studentName: currentUser.name,
-                message: messageText,
-                timestamp: new Date().toISOString(),
-                replyTo: replyToData,
-                reaction: ''
-            };
-            currentMessages.push(tempMessage);
-            displayMessages(currentMessages);
-            scrollToBottom();
+    // Scroll to bottom
+    scrollToBottom();
 
-            try {
-                const messageData = {
-                    action: 'saveMessage',
-                    studentName: currentUser.name,
-                    message: messageText,
-                    replyTo: replyToData
-                };
+    // ✅ STEP 2: Save to Google Sheets (background me)
+    const messageData = {
+      action: 'saveMessage',
+      studentName: currentUser.name,
+      message: messageText,
+      timestamp: msgTimestamp.toISOString(),
+      replyTo: replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : ''
+    };
 
-                await fetch(SMD_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(messageData)
-                });
+    // Fire and forget - don't wait
+    fetch(SMD_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=utf-8'
+      },
+      body: JSON.stringify(messageData)
+    }).then(res => res.json())
+      .then(data => {
+        console.log('Message saved to sheet:', data);
+      })
+      .catch(err => console.error('Save error:', err));
 
-                // Refresh latest from sheet quietly
-                // setTimeout(fetchMessages, 1000);
-            } catch (error) {
-                console.error('Send error:', error);
-                alert('❌ Error sending message. Please try again.');
-            } finally {
-                isSending = false;
-            }
+    // ✅ STEP 3: After 1 second, fetch all messages to sync
+    // (This will show other students' messages aur filter out duplicates)
+    setTimeout(() => {
+      fetchMessagesWithFilter();
+    }, 1500);
+
+  } catch (err) {
+    console.error('Send error:', err);
+    alert('Error: ' + err.message);
+  } finally {
+    isSending = false;
+    sendBtn.disabled = false;
+  }
+}
+
+// ============ FETCH MESSAGES WITH FILTER ============
+async function fetchMessagesWithFilter() {
+  try {
+    const res = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
+    const result = await res.json();
+    const messages = result.messages || result.data || [];
+
+    if (!Array.isArray(messages)) return;
+
+    currentMessages = messages;
+
+    const messagesArea = document.getElementById('messagesArea');
+    const myName = currentUser.name.toLowerCase().trim();
+
+    // Clear existing messages
+    messagesArea.innerHTML = '';
+    let currentDate = '';
+
+    messages.forEach((msg, index) => {
+      if (!msg.studentName || !msg.message) return;
+
+      // Add date badge if needed
+      const msgDate = new Date(msg.timestamp);
+      const dateStr = formatDate(msgDate);
+
+      if (dateStr !== currentDate) {
+        currentDate = dateStr;
+        const dateBadge = document.createElement('div');
+        dateBadge.className = 'message-date';
+        dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
+        messagesArea.appendChild(dateBadge);
+      }
+
+      const messageDiv = createMessageElement(msg, index);
+      messagesArea.appendChild(messageDiv);
+    });
+
+    scrollToBottom();
+
+  } catch (err) {
+    console.error('Fetch error:', err);
+  }
+}
+
+// ============ MESSAGE REFRESH (BACKGROUND) ============
+function startMessageRefresh() {
+  fetchMessagesWithFilter(); // Initial load
+  
+  if (refreshInterval) clearInterval(refreshInterval);
+  
+  refreshInterval = setInterval(async () => {
+    if (currentUser) {
+      const isActive = await verifyAccountStatus(currentUser);
+      if (!isActive) {
+        alert('Your account has been blocked by Admin');
+        localStorage.removeItem('chatUser');
+        clearInterval(refreshInterval);
+        window.location.reload();
+        return;
+      }
+    }
+    fetchMessagesWithFilter(); // Refresh messages
+    loadOnlineCount();
+  }, 3000); // 3 seconds
+}
+// ============ SMART FETCH MESSAGES (NO BLINKING) ============
+let lastMessageIds = []; // Track which messages we've already shown
+
+async function fetchMessages() {
+  try {
+    const res = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
+    const result = await res.json();
+
+    const messages = result.messages || result.data || [];
+    const messagesArea = document.getElementById("messagesArea");
+    
+    if (!messagesArea) return;
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      if (messagesArea.innerHTML === '<div class="loading">No messages yet 💬</div>') {
+        return; // Already showing, don't refresh
+      }
+      messagesArea.innerHTML = '<div class="loading">No messages yet 💬</div>';
+      return;
+    }
+
+    // Store messages globally
+    currentMessages = messages;
+
+    // ✅ SMART LOGIC: Sirf naye messages add karo, scroll mat karo
+    const currentMessageCount = document.querySelectorAll('[data-index]').length;
+    const newMessageCount = messages.length;
+
+    // Agar same number of messages hain to mat reload karo
+    if (currentMessageCount === newMessageCount) {
+      // Check if any message was modified (deleted/reacted)
+      const allBubbles = document.querySelectorAll('.message-bubble[data-index]');
+      let hasChanges = false;
+
+      allBubbles.forEach((bubble, i) => {
+        if (i < messages.length) {
+          const oldText = bubble.getAttribute('data-message');
+          const newText = messages[i].message;
+          if (oldText !== newText) {
+            hasChanges = true;
+          }
+        }
+      });
+
+      if (!hasChanges) {
+        return; // No new messages, no changes - don't refresh!
+      }
+    }
+
+    // ⚠️ If new messages exist, rebuild only once
+    if (newMessageCount > currentMessageCount) {
+      const wasAtBottom = isScrolledToBottom();
+      
+      // Remove old date badges first
+      document.querySelectorAll('.message-date').forEach(el => el.remove());
+      
+      // Remove old messages
+      document.querySelectorAll('[data-index]').forEach(el => el.remove());
+
+      let currentDate = '';
+
+      messages.forEach((msg, index) => {
+        if (!msg.studentName || !msg.message) return;
+
+        // Add date badge if needed
+        const msgDate = new Date(msg.timestamp);
+        const dateStr = formatDate(msgDate);
+
+        if (dateStr !== currentDate) {
+          currentDate = dateStr;
+          const dateBadge = document.createElement('div');
+          dateBadge.className = 'message-date';
+          dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
+          messagesArea.appendChild(dateBadge);
         }
 
+        const messageDiv = createMessageElement(msg, index);
+        messagesArea.appendChild(messageDiv);
+      });
 
-        // ============ FETCH MESSAGES ============
-        async function fetchMessages() {
-            try {
-                const response = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
-                const data = await response.json();
+      // Only scroll if was at bottom
+      if (wasAtBottom) {
+        scrollToBottom();
+      }
 
-                if (!data.success || !data.messages || data.messages.length === 0) {
-                    document.getElementById('messagesArea').innerHTML = '<div class="loading">No messages yet. Start chatting!</div>';
-                    return;
-                }
+      lastMessageCount = newMessageCount;
+    }
 
-                if (JSON.stringify(data.messages) !== JSON.stringify(currentMessages)) {
-                    currentMessages = data.messages;
-                    displayMessages(data.messages);
-                }
-            } catch (error) {
-                console.error('Error fetching messages:', error);
-            }
-        }
+  } catch (err) {
+    console.error("Fetch error:", err);
+  }
+}
+
+// ============ MESSAGE REFRESH ============
+function startMessageRefresh() {
+  fetchMessages(); // Initial load
+  
+  if (refreshInterval) clearInterval(refreshInterval);
+  
+  // ✅ Change to 3 seconds aur smarter logic
+  refreshInterval = setInterval(async () => {
+    if (currentUser) {
+      const isActive = await verifyAccountStatus(currentUser);
+      if (!isActive) {
+        alert('Your account has been blocked by Admin');
+        localStorage.removeItem('chatUser');
+        clearInterval(refreshInterval);
+        window.location.reload();
+        return;
+      }
+    }
+    fetchMessages(); // Smart fetch - sirf changes refresh hote hain
+    loadOnlineCount();
+  }, 3000); // 3 seconds - zyada smooth
+}
+
+
+
 
         // ============ DISPLAY MESSAGES ============
         function displayMessages(messages) {
@@ -1981,20 +2216,28 @@
             return null;
         }
 
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
+        function formatDate(date) {
+  const localDate = new Date(date);
 
-            // Convert both to local midnight for comparison
-            const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1);
+  // 🕒 Fix timezone offset (convert UTC to local time)
+  const localTime = new Date(localDate.getTime() + (localDate.getTimezoneOffset() * 60000 * -1));
 
-            if (msgDate.getTime() === today.getTime()) return 'Today';
-            if (msgDate.getTime() === yesterday.getTime()) return 'Yesterday';
-            return msgDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-        }
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const msgDate = new Date(localTime.getFullYear(), localTime.getMonth(), localTime.getDate());
+
+  const diffDays = Math.floor((today - msgDate) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) return "Today";
+  if (diffDays === 1) return "Yesterday";
+
+  return localTime.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric"
+  });
+}
+
 
 
         function isScrolledToBottom() {
@@ -2124,30 +2367,80 @@
 
 
 
-        async function deleteMessage() {
-            if (!confirm('Delete this message? It will show as deleted to everyone.')) return;
+     // ================= DELETE MESSAGE FIX ===================
 
-            try {
-                const deleteData = {
-                    action: 'deleteMessage',
-                    messageIndex: selectedMessage,
-                    studentName: currentUser.name
-                };
+// Variable to store which message is selected for delete
+let selectedMessage = null;
 
-                await fetch(SMD_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
-                    body: JSON.stringify(deleteData)
-                });
+// Detect right click on message (to open context menu)
+document.addEventListener('contextmenu', function (e) {
+  const msgEl = e.target.closest('.message');
+  if (msgEl) {
+    e.preventDefault();
+    selectedMessage = msgEl;
 
-                hideContextMenu();
-                setTimeout(() => fetchMessages(), 100);
-            } catch (error) {
-                console.error('Delete error:', error);
-            }
-        }
+    const contextMenu = document.getElementById('contextMenu');
+    if (contextMenu) {
+      contextMenu.style.top = e.pageY + 'px';
+      contextMenu.style.left = e.pageX + 'px';
+      contextMenu.style.display = 'block';
+    }
+  }
+});
+
+// Hide menu when clicking outside
+document.addEventListener('click', function (e) {
+  const contextMenu = document.getElementById('contextMenu');
+  if (contextMenu && !contextMenu.contains(e.target)) {
+    contextMenu.style.display = 'none';
+  }
+});
+
+// Actual delete function
+async function deleteMessage() {
+  if (!selectedMessage) {
+    alert("❌ Please select a message first!");
+    return;
+  }
+
+  const index = selectedMessage.getAttribute('data-index');
+  const sender = selectedMessage.getAttribute('data-sender');
+
+  if (sender.trim().toLowerCase() !== currentUser.name.trim().toLowerCase()) {
+    alert('❌ You can delete only your messages.');
+    return;
+  }
+
+  if (!confirm('🗑️ Delete this message for everyone?')) return;
+
+  try {
+    selectedMessage.querySelector('.message-text').textContent = 'Deleted';
+    selectedMessage.querySelector('.message-text').classList.add('deleted');
+
+    const deleteData = {
+      action: 'deleteMessage',
+      index: index,
+      studentName: currentUser.name,
+      message: '🚫 DELETED',
+      timestamp: new Date().toISOString()
+    };
+
+    await fetch(SMD_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(deleteData)
+    });
+
+    // Refresh messages after 1s
+    setTimeout(fetchMessagesWithFilter, 1000);
+
+  } catch (err) {
+    console.error('Delete error:', err);
+    alert('⚠️ Failed to delete message!');
+  }
+}
+
+
 
         // ============ MEMBERS SIDEBAR ============
         async function toggleMembersSidebar() {
@@ -2349,7 +2642,7 @@
                 }
                 fetchMessages();
                 loadOnlineCount();
-            }, 2000); // 2 seconds - blink nahi hoga
+            }, 1500); // 1.5 seconds - blink nahi hoga
         }
 
         // ============ PROFILE FUNCTIONS ============
