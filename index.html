@@ -1419,26 +1419,30 @@
             try {
                 const userDataString = localStorage.getItem('chatUser');
                 if (!userDataString) {
+                    console.log("No local data found → show signup");
                     showSignup();
                     return;
                 }
 
                 const userData = JSON.parse(userDataString);
-                if (!userData.email) {
+                if (!userData.name || !userData.email || !userData.phone) {
+                    console.log("Incomplete local data → show signup");
                     showSignup();
                     return;
                 }
 
                 showLoader();
 
-                // 🔹 Use verifyUser action
-                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
+                // 🔹 Verify from Sheet
+                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email.toLowerCase())}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
                 const res = await fetch(verifyUrl);
                 const data = await res.json();
+
+                console.log("Verification response:", data);
                 hideLoader();
 
-                if (!data.success || data.status === 'blocked') {
-                    // ❌ User blocked
+                // ❌ If student blocked or email missing in Sheet
+                if (data.status === 'blocked') {
                     document.body.innerHTML = `
         <div style="
           background:#111;
@@ -1458,15 +1462,23 @@
                     return;
                 }
 
-                // ✅ User verified
-                currentUser = userData;
-                showChat();
-                loadWallpapers();
-                startMessageRefresh();
-                loadOnlineCount();
+                // ✅ If user verified (name, email, phone match, and email not empty)
+                if (data.status === 'active') {
+                    console.log("User verified → Opening chat");
+                    currentUser = userData;
+                    showChat();
+                    loadWallpapers();
+                    startMessageRefresh();
+                    loadOnlineCount();
+                    return;
+                }
+
+                // ❌ Default fallback: show signup
+                console.log("No match found → show signup");
+                showSignup();
 
             } catch (err) {
-                console.error('checkAuth Error:', err);
+                console.error("checkAuth Error:", err);
                 hideLoader();
                 showSignup();
             }
@@ -2501,4 +2513,3 @@
 </body>
 
 </html>
-
