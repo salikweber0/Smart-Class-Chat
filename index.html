@@ -1431,26 +1431,34 @@
 
                 showLoader();
 
-                // ✅ Always re-check status from Sheet
-                const res = await fetch(`${SAD_URL}?action=checkStatus&email=${encodeURIComponent(userData.email)}&t=${Date.now()}`);
+                // 🔹 Use verifyUser action
+                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
+                const res = await fetch(verifyUrl);
                 const data = await res.json();
                 hideLoader();
 
-                const sheetStatus = (data.status || '✅').trim();
-                userData.status = sheetStatus;
-                localStorage.setItem('chatUser', JSON.stringify(userData));
+                if (!data.success || data.status === 'blocked') {
+                    // ❌ User blocked
+                    document.body.innerHTML = `
+        <div style="
+          background:#111;
+          color:#ff4c4c;
+          font-size:20px;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          height:100vh;
+          text-align:center;
+          flex-direction:column;
+        ">
+          <div style="font-size:80px;">⛔</div>
+          <p><strong>You are Blocked by Admin</strong></p>
+        </div>`;
+                    localStorage.removeItem('chatUser');
+                    return;
+                }
 
-                if (sheetStatus === 'blocked') {
-    alert('⚠️ Your account has been removed by Admin.');
-    localStorage.removeItem('chatUser');
-    currentUser = null;
-    showSignup();
-    return;
-}
-
-
-
-
+                // ✅ User verified
                 currentUser = userData;
                 showChat();
                 loadWallpapers();
@@ -1463,8 +1471,6 @@
                 showSignup();
             }
         }
-
-
 
         async function verifyAccountStatus(userData) {
             try {
