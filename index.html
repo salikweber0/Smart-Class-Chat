@@ -1337,6 +1337,7 @@
 
         // ============ UPDATED FINGERPRINT BIOMETRIC AUTHENTICATION ============
         // Simulates verification on localhost (http://127.0.0.1:5500) with an alert, uses real biometric scanner on HTTPS
+        // Replace the existing scanFingerprint() with this improved version
         async function scanFingerprint() {
             const btn = document.getElementById('fingerprintBtn');
             const status = document.getElementById('fingerprintStatus');
@@ -1350,65 +1351,98 @@
 
             try {
                 if (isLocalhost) {
-                    // Simulate fingerprint verification for localhost
-                    await new Promise(res => setTimeout(res, 1000));
+                    // Local simulation (dev)
+                    await new Promise(res => setTimeout(res, 800));
                     status.textContent = '✅ Fingerprint verified (simulated)';
                     status.style.color = 'var(--accent)';
                     fingerprintVerified = true;
                     signupBtn.disabled = false;
                     btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                    alert('Your browser does not support this function.');
-                } else {
-                    // Real biometric authentication for HTTPS
-                    if (!window.PublicKeyCredential) {
-                        throw new Error('Biometric authentication not supported in this browser.');
-                    }
+                    alert('Localhost: simulated fingerprint (WebAuthn needs HTTPS in real world).');
+                    return;
+                }
 
-                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                    if (!available) {
-                        throw new Error('No biometric sensor available on this device.');
-                    }
+                // Ensure WebAuthn available
+                if (!window.PublicKeyCredential) {
+                    throw new Error('Biometric authentication not supported in this browser.');
+                }
 
-                    const challenge = crypto.getRandomValues(new Uint8Array(32));
-                    const userId = crypto.getRandomValues(new Uint8Array(16));
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (!available) {
+                    throw new Error('No platform biometric authenticator available on this device.');
+                }
 
-                    const publicKey = {
-                        challenge: challenge,
-                        rp: { name: window.location.hostname || "Class Group Chat" },
-                        user: {
-                            id: userId,
-                            name: "student@classgroup.com",
-                            displayName: "Student"
-                        },
-                        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-                        authenticatorSelection: {
-                            authenticatorAttachment: "platform",
-                            userVerification: "required",
-                            requireResidentKey: false
-                        },
-                        timeout: 60000,
-                        attestation: "none"
-                    };
+                // Create random challenge and user id as ArrayBuffer (browser expects ArrayBufferView)
+                const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+                const userId = window.crypto.getRandomValues(new Uint8Array(16));
 
-                    const credential = await navigator.credentials.create({ publicKey });
+                // PUBLIC KEY options for registration - keep rp minimal (do NOT set rp.id unless you know exact eTLD+1)
+                const publicKeyCreate = {
+                    challenge: challenge.buffer,
+                    rp: { name: "Class Group Chat" }, // do NOT set rp.id here for GitHub Pages
+                    user: {
+                        id: userId.buffer,
+                        name: "student@" + window.location.hostname,
+                        displayName: "Student"
+                    },
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform", // use device built-in sensor
+                        userVerification: "required",
+                        requireResidentKey: false
+                    },
+                    timeout: 60000,
+                    attestation: "none"
+                };
 
+                // Try registration (create). Some browsers may allow prompt here and return a credential.
+                try {
+                    const credential = await navigator.credentials.create({ publicKey: publicKeyCreate });
                     if (credential) {
-                        status.textContent = '✅ Fingerprint verified successfully';
+                        console.log('WebAuthn create credential:', credential);
+                        status.textContent = '✅ Fingerprint verified (registered)';
                         status.style.color = 'var(--accent)';
                         fingerprintVerified = true;
                         signupBtn.disabled = false;
                         btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                        return;
                     }
+                } catch (createErr) {
+                    console.warn('create() failed, trying get() as fallback:', createErr);
+                    // fallback to get() — try to prompt platform authenticator for assertion
                 }
+
+                // Fallback: try an assertion (get). Note: without server-saved credential IDs behavior may vary.
+                const publicKeyGet = {
+                    challenge: window.crypto.getRandomValues(new Uint8Array(32)).buffer,
+                    timeout: 60000,
+                    userVerification: "required",
+                    // allowCredentials: [] // if you have stored credential IDs, put them here as ArrayBuffers
+                };
+
+                const assertion = await navigator.credentials.get({ publicKey: publicKeyGet });
+                if (assertion) {
+                    console.log('WebAuthn assertion:', assertion);
+                    status.textContent = '✅ Fingerprint verified';
+                    status.style.color = 'var(--accent)';
+                    fingerprintVerified = true;
+                    signupBtn.disabled = false;
+                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                    return;
+                } else {
+                    throw new Error('No credential returned by authenticator.');
+                }
+
             } catch (err) {
                 console.error('Biometric verification error:', err);
-                status.textContent = `❌ Failed: ${err.message || 'Unknown error. Try again or check device settings.'}`;
+                status.textContent = `❌ Failed: ${err.message || 'Unknown error. Check console for details.'}`;
                 status.style.color = '#ff4c4c';
             } finally {
                 btn.style.transform = 'scale(1)';
                 btn.disabled = false;
             }
         }
+
 
 
         // ============ INITIALIZATION ============
