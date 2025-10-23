@@ -1100,6 +1100,10 @@
                     <input type="tel" id="signupPhone" required>
                 </div>
                 <div class="form-group">
+                    <label>Roll Number</label>
+                    <input type="text" id="signupRollNo" required>
+                </div>
+                <div class="form-group">
                     <label>Security Code</label>
                     <input type="text" id="signupCode" required placeholder="Enter class code">
                 </div>
@@ -1216,6 +1220,10 @@
                     <div style="font-size:13px;color:var(--text-secondary);margin-bottom:5px;">Phone</div>
                     <div id="profilePhone" style="font-size:16px;">-</div>
                 </div>
+                <div style="padding:15px 0;">
+                    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:5px;">Roll Number</div>
+                    <div id="profileRollNo" style="font-size:16px;">-</div>
+                </div>
             </div>
 
             <div class="profile-section">
@@ -1248,7 +1256,8 @@
         <div class="context-menu-item" onclick="replyMessage()">
             <span>↩️</span> Reply
         </div>
-        <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption" style="display: none; opacity: 0; visibility: hidden;">
+        <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption"
+            style="display: none; opacity: 0; visibility: hidden;">
             <span>🗑️</span> Delete
         </div>
     </div>
@@ -1261,8 +1270,8 @@
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
-        const SAD_URL = "https://script.google.com/macros/s/AKfycbz9a50o7sLDbxLLAJSlh5T13zQ5YenRU5uTJpItKypaDPQdxY9oZcjFjlF9vIPk9uON/exec";
-        const SMD_URL = "https://script.google.com/macros/s/AKfycbyoDtFkQztJn6RY0KhMeL7S_mRjwtq9MTrh3nywYRFB4n5Oa5ft4JsVcpg_5gluHCtp/exec";
+        const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
+        const SMD_URL = "https://script.google.com/macros/s/AKfycbwjW2PwdcFGZULOBHYem8hVQ2YK3dKCiyaKZt2kOdVOwXS8Zl1zp2werZSCtZzWE359/exec";
         const MAX_CUSTOM_WALLPAPERS = 5;
 
         // ============ WALLPAPERS ============
@@ -1326,54 +1335,75 @@
             return true;
         }
 
-        // ============ FINGERPRINT BIOMETRIC AUTHENTICATION ============
+        // ============ UPDATED FINGERPRINT BIOMETRIC AUTHENTICATION ============
+        // Simulates verification on localhost (http://127.0.0.1:5500) with an alert, uses real biometric scanner on HTTPS
         async function scanFingerprint() {
             const btn = document.getElementById('fingerprintBtn');
             const status = document.getElementById('fingerprintStatus');
             const signupBtn = document.getElementById('signupBtn');
+            const currentHost = window.location.hostname;
+            const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
 
             btn.disabled = true;
             status.textContent = 'Scanning fingerprint...';
             btn.style.transform = 'scale(0.95)';
 
             try {
-                if (window.PublicKeyCredential) {
-                    const challenge = new Uint8Array(32);
-                    crypto.getRandomValues(challenge);
+                if (isLocalhost) {
+                    // Simulate fingerprint verification for localhost
+                    await new Promise(res => setTimeout(res, 1000));
+                    status.textContent = '✅ Fingerprint verified (simulated)';
+                    status.style.color = 'var(--accent)';
+                    fingerprintVerified = true;
+                    signupBtn.disabled = false;
+                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                    alert('Your browser does not support this function.');
+                } else {
+                    // Real biometric authentication for HTTPS
+                    if (!window.PublicKeyCredential) {
+                        throw new Error('Biometric authentication not supported in this browser.');
+                    }
 
-                    await navigator.credentials.create({
-                        publicKey: {
-                            challenge,
-                            rp: { name: "Class Group Chat" },
-                            user: {
-                                id: new Uint8Array(16),
-                                name: "student@classgroup.com",
-                                displayName: "Student"
-                            },
-                            pubKeyCredParams: [{ alg: -7, type: "public-key" }],
-                            authenticatorSelection: {
-                                authenticatorAttachment: "platform",
-                                userVerification: "required"
-                            },
-                            timeout: 60000,
-                            attestation: "none"
-                        }
-                    });
+                    const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                    if (!available) {
+                        throw new Error('No biometric sensor available on this device.');
+                    }
+
+                    const challenge = crypto.getRandomValues(new Uint8Array(32));
+                    const userId = crypto.getRandomValues(new Uint8Array(16));
+
+                    const publicKey = {
+                        challenge: challenge,
+                        rp: { name: window.location.hostname || "Class Group Chat" },
+                        user: {
+                            id: userId,
+                            name: "student@classgroup.com",
+                            displayName: "Student"
+                        },
+                        pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                        authenticatorSelection: {
+                            authenticatorAttachment: "platform",
+                            userVerification: "required",
+                            requireResidentKey: false
+                        },
+                        timeout: 60000,
+                        attestation: "none"
+                    };
+
+                    const credential = await navigator.credentials.create({ publicKey });
+
+                    if (credential) {
+                        status.textContent = '✅ Fingerprint verified successfully';
+                        status.style.color = 'var(--accent)';
+                        fingerprintVerified = true;
+                        signupBtn.disabled = false;
+                        btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                    }
                 }
-
-                // ✅ Success
-                status.textContent = '✅ Fingerprint verified';
-                status.style.color = 'var(--accent)';
-                fingerprintVerified = true;
-                signupBtn.disabled = false;
-                btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
             } catch (err) {
-                console.warn('Biometric not available, fallback simulation');
-                await new Promise(res => setTimeout(res, 1000));
-                status.textContent = '✅ Fingerprint verified (simulated)';
-                status.style.color = 'var(--accent)';
-                fingerprintVerified = true;
-                signupBtn.disabled = false;
+                console.error('Biometric verification error:', err);
+                status.textContent = `❌ Failed: ${err.message || 'Unknown error. Try again or check device settings.'}`;
+                status.style.color = '#ff4c4c';
             } finally {
                 btn.style.transform = 'scale(1)';
                 btn.disabled = false;
@@ -1402,6 +1432,7 @@
             const userData = JSON.parse(userDataString);
 
             try {
+                // ✅ rollNo parameter remove kar diya
                 const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
                 const res = await fetch(verifyUrl);
                 const data = await res.json();
@@ -1409,7 +1440,6 @@
                 // ✅ Active → continue chat normally
                 if (data.status === 'active') {
                     if (isBlocked === 'true') {
-                        // Unblocked recently — refresh chat instantly
                         localStorage.removeItem('blockedUser');
                         location.reload();
                     }
@@ -1420,20 +1450,10 @@
                 if (data.status === 'blocked' && isBlocked !== 'true') {
                     localStorage.setItem('blockedUser', 'true');
                     document.body.innerHTML = `
-        <div style="
-          background:#111;
-          color:#ff4c4c;
-          font-size:20px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          height:100vh;
-          text-align:center;
-          flex-direction:column;
-        ">
-          <div style="font-size:80px;">⛔</div>
-          <p><strong>You are Blocked by Admin</strong></p>
-        </div>`;
+                <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
+                    <div style="font-size:80px;">⛔</div>
+                    <p><strong>You are Blocked by Admin</strong></p>
+                </div>`;
                 }
             } catch (err) {
                 console.error('Live check error:', err);
@@ -1525,20 +1545,15 @@
         }, 5000);
 
 
-        async function verifyAccountStatus(userData) {
+        async function verifyAccountStatus(user) {
             try {
-                const response = await fetch(`${SAD_URL}?action=checkStatus&email=${encodeURIComponent(userData.email)}&t=${Date.now()}`);
+                const response = await fetch(`${SAD_URL}?action=verifyUser&name=${encodeURIComponent(user.name)}&email=${encodeURIComponent(user.email)}&phone=${encodeURIComponent(user.phone)}&rollNo=${encodeURIComponent(user.rollNo)}`);
                 const data = await response.json();
-
-                if (data.success && data.status) {
-                    // Check if status is active (✅) or blocked (❌)
-                    return data.status === '✅' || data.status === 'active' || data.status === '✔️';
-                }
-
-                return true;
+                console.log('Verify User Response:', data); // Add this line for debugging
+                return data.status === 'active';
             } catch (error) {
-                console.error('Status check error:', error);
-                return true;
+                console.error('Verification error:', error);
+                return false;
             }
         }
 
@@ -1634,7 +1649,12 @@
             }
         }
 
-        // ============ SIGNUP WITH FINGERPRINT + ACTIVE STATUS ============
+        // ============ COPY PURA YEH ============
+        // Tera HTML file me search kar: "async function handleSignup"
+        // DELETE SARE 4 VERSIONS - chahe kahin bhi likhe hon!
+
+        // FIR YEH PASTE KAR:
+
         async function handleSignup(e) {
             e.preventDefault();
 
@@ -1652,10 +1672,13 @@
             const name = document.getElementById('signupName').value.trim();
             const email = document.getElementById('signupEmail').value.trim().toLowerCase();
             const phone = document.getElementById('signupPhone').value.trim();
+            const rollNo = document.getElementById('signupRollNo').value.trim();
 
+            // Validation
             if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
             if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
             if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
+            if (!rollNo) return alert('❌ Please enter Roll Number!');
 
             const photoFile = document.getElementById('signupPhotoInput').files[0];
             if (!photoFile) return alert('❌ Please upload a profile photo!');
@@ -1665,8 +1688,9 @@
             btn.disabled = true;
 
             try {
-                // Check for duplicates first
-                const checkResponse = await fetch(`${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&t=${Date.now()}`);
+                // Step 1: Check for duplicates
+                const checkUrl = `${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&rollNo=${encodeURIComponent(rollNo)}&t=${Date.now()}`;
+                const checkResponse = await fetch(checkUrl);
                 const checkData = await checkResponse.json();
 
                 if (checkData.exists === true) {
@@ -1677,26 +1701,45 @@
                 }
 
                 btn.textContent = 'Creating account...';
+
+                // Step 2: Convert photo to base64
                 const photoBase64 = await fileToBase64(photoFile);
 
+                // Step 3: Send to Apps Script (SAD_URL)
                 const signupData = {
                     action: 'signup',
                     name,
                     email,
                     phone,
-                    status: '✅' // ✅ force add this line
+                    rollNo,
+                    status: '✅'
                 };
 
-                await fetch(SAD_URL, {
+                const response = await fetch(SAD_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(signupData)
                 });
 
-                await new Promise(res => setTimeout(res, 1000));
+                const result = await response.json();
+                console.log('Signup response:', result);
 
-                // ✅ Save with status locally
-                currentUser = { name, email, phone, status: '✅', photo: photoBase64, timestamp: new Date().toISOString() };
+                if (!result.success) {
+                    alert('❌ Signup failed: ' + result.message);
+                    btn.textContent = 'Sign Up';
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Step 4: Save locally
+                currentUser = {
+                    name,
+                    email,
+                    phone,
+                    rollNo,
+                    photo: photoBase64,
+                    timestamp: new Date().toISOString()
+                };
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
 
                 alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
@@ -1704,10 +1747,10 @@
                 loadWallpapers();
                 startMessageRefresh();
                 loadOnlineCount();
+
             } catch (error) {
                 console.error('Signup error:', error);
-                alert('❌ Error creating account: ' + error.message);
-            } finally {
+                alert('❌ Error: ' + error.message);
                 btn.textContent = 'Sign Up';
                 btn.disabled = false;
             }
@@ -1759,6 +1802,7 @@
                     timestamp: msgTimestamp.toISOString(),
                     replyTo: replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : ''
                 };
+
 
                 // Fire and forget - don't wait
                 fetch(SMD_URL, {
@@ -1834,24 +1878,29 @@
 
         // ============ MESSAGE REFRESH (BACKGROUND) ============
         function startMessageRefresh() {
-            fetchMessagesWithFilter(); // Initial load
-
+            fetchMessages();
             if (refreshInterval) clearInterval(refreshInterval);
-
-            refreshInterval = setInterval(async () => {
-                if (currentUser) {
-                    const isActive = await verifyAccountStatus(currentUser);
-                    if (!isActive) {
-                        alert('Your account has been blocked by Admin');
-                        localStorage.removeItem('chatUser');
-                        clearInterval(refreshInterval);
-                        window.location.reload();
-                        return;
+            // Add a 3-second delay for the first verification after signup
+            setTimeout(() => {
+                refreshInterval = setInterval(async () => {
+                    if (currentUser) {
+                        const isActive = await verifyAccountStatus(currentUser);
+                        if (!isActive) {
+                            // ✅ Alert removed - seedha block screen dikhao
+                            localStorage.setItem('blockedUser', 'true');
+                            clearInterval(refreshInterval);
+                            document.body.innerHTML = `
+                <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
+                    <div style="font-size:80px;">⛔</div>
+                    <p><strong>You are Blocked by Admin</strong></p>
+                </div>`;
+                            return;
+                        }
                     }
-                }
-                fetchMessagesWithFilter(); // Refresh messages
-                loadOnlineCount();
-            }, 3000); // 3 seconds
+                    fetchMessages();
+                    loadOnlineCount();
+                }, 1000); // 1-second interval for subsequent checks
+            }, 3000); // Initial 3-second delay
         }
         // ============ SMART FETCH MESSAGES (NO BLINKING) ============
         let lastMessageIds = []; // Track which messages we've already shown
@@ -2036,11 +2085,11 @@
                         const replyText = replyParts[1];
                         const replyTextShort = replyText.length > 30 ? replyText.substring(0, 30) + '...' : replyText;
                         replyHTML = `
-                    <div class="reply-preview">
-                        <div class="reply-name">${escapeHtml(replySender)}</div>
-                        <div class="reply-text">${escapeHtml(replyTextShort)}</div>
-                    </div>
-                `;
+        <div class="reply-preview">
+          <div class="reply-name">${escapeHtml(replySender)}</div>
+          <div class="reply-text">${escapeHtml(replyTextShort)}</div>
+        </div>
+      `;
                     }
                 } catch (e) {
                     console.error('Error parsing reply:', e);
@@ -2596,10 +2645,13 @@
                 if (currentUser) {
                     const isActive = await verifyAccountStatus(currentUser);
                     if (!isActive) {
-                        alert('❌ Your account has been blocked by Admin');
-                        localStorage.removeItem('chatUser');
+                        localStorage.setItem('blockedUser', 'true');
                         clearInterval(refreshInterval);
-                        window.location.reload();
+                        document.body.innerHTML = `
+        <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
+            <div style="font-size:80px;">⛔</div>
+            <p><strong>You are Blocked by Admin</strong></p>
+        </div>`;
                         return;
                     }
                 }
@@ -2621,6 +2673,7 @@
             document.getElementById('profileName').textContent = currentUser.name;
             document.getElementById('profileEmail').textContent = currentUser.email;
             document.getElementById('profilePhone').textContent = currentUser.phone;
+            document.getElementById('profileRollNo').textContent = currentUser.rollNo; // Added Roll Number
             document.getElementById('profilePhotoLarge').src = currentUser.photo;
         }
 
