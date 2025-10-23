@@ -1056,11 +1056,11 @@
 <body data-theme="dark">
 
     <!-- Device Warning -->
-    <!-- <div id="deviceWarning" class="device-warning">
+    <div id="deviceWarning" class="device-warning">
         <div class="warning-icon">📱</div>
         <div class="warning-title">Mobile Only</div>
         <div class="warning-text">This project is only for mobile devices.</div>
-    </div>  -->
+    </div> 
 
     <!-- Loader -->
     <div id="loaderContainer" class="loader-container hidden">
@@ -1315,25 +1315,25 @@
         const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
 
         // // ============ DEVICE CHECK ============
-        // function checkDevice() {
-        //     const userAgent = navigator.userAgent.toLowerCase();
-        //     const currentHost = window.location.hostname;
+        function checkDevice() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            const currentHost = window.location.hostname;
 
-        //     // Allow localhost/127.0.0.1 to bypass device check
-        //     if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
-        //         return true;
-        //     }
+            // Allow localhost/127.0.0.1 to bypass device check
+            if (currentHost === 'localhost' || currentHost === '127.0.0.1') {
+                return true;
+            }
 
-        //     const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
-        //     const isTablet = /ipad|android/i.test(userAgent) && !/mobile/i.test(userAgent);
-        //     const screenWidth = window.innerWidth;
+            const isMobile = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+            const isTablet = /ipad|android/i.test(userAgent) && !/mobile/i.test(userAgent);
+            const screenWidth = window.innerWidth;
 
-        //     if (!isMobile || isTablet || screenWidth > 768) {
-        //         document.getElementById('deviceWarning').classList.add('active');
-        //         return false;
-        //     }
-        //     return true;
-        // }
+            if (!isMobile || isTablet || screenWidth > 768) {
+                document.getElementById('deviceWarning').classList.add('active');
+                return false;
+            }
+            return true;
+        }
 
         // ============ UPDATED FINGERPRINT BIOMETRIC AUTHENTICATION ============
         // Simulates verification on localhost (http://127.0.0.1:5500) with an alert, uses real biometric scanner on HTTPS
