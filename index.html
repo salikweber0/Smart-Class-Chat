@@ -1050,6 +1050,36 @@
                 padding-bottom: 120px;
             }
         }
+
+        .password-section {
+    display: none;
+    margin: 20px 0;
+}
+
+.password-section.active {
+    display: block;
+}
+
+.password-section .form-group {
+    margin-bottom: 15px;
+}
+
+.password-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.password-section input {
+    width: 100%;
+    padding: 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
     </style>
 </head>
 
@@ -1107,6 +1137,13 @@
                     <label>Security Code</label>
                     <input type="text" id="signupCode" required placeholder="Enter class code">
                 </div>
+                <!-- Password Section (Fallback for unsupported browsers) -->
+<div class="password-section" id="passwordSection">
+    <div class="form-group">
+        <label>Create Password</label>
+        <input type="password" id="signupPassword" placeholder="Enter your password" minlength="6">
+    </div>
+</div>
 
                 <!-- Fingerprint Section -->
                 <div class="fingerprint-section">
@@ -1338,110 +1375,115 @@
         // ============ UPDATED FINGERPRINT BIOMETRIC AUTHENTICATION ============
         // Simulates verification on localhost (http://127.0.0.1:5500) with an alert, uses real biometric scanner on HTTPS
         // Replace the existing scanFingerprint() with this improved version
-        async function scanFingerprint() {
-            const btn = document.getElementById('fingerprintBtn');
-            const status = document.getElementById('fingerprintStatus');
-            const signupBtn = document.getElementById('signupBtn');
-            const currentHost = window.location.hostname;
-            const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
+       async function scanFingerprint() {
+    const btn = document.getElementById('fingerprintBtn');
+    const status = document.getElementById('fingerprintStatus');
+    const signupBtn = document.getElementById('signupBtn');
+    const passwordSection = document.getElementById('passwordSection');
+    const currentHost = window.location.hostname;
+    const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
 
-            btn.disabled = true;
-            status.textContent = 'Scanning fingerprint...';
-            btn.style.transform = 'scale(0.95)';
+    btn.disabled = true;
+    status.textContent = 'Scanning fingerprint...';
+    btn.style.transform = 'scale(0.95)';
 
-            try {
-                if (isLocalhost) {
-                    // Local simulation (dev)
-                    await new Promise(res => setTimeout(res, 800));
-                    status.textContent = '✅ Fingerprint verified (simulated)';
-                    status.style.color = 'var(--accent)';
-                    fingerprintVerified = true;
-                    signupBtn.disabled = false;
-                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                    alert('Localhost: simulated fingerprint (WebAuthn needs HTTPS in real world).');
-                    return;
-                }
-
-                // Ensure WebAuthn available
-                if (!window.PublicKeyCredential) {
-                    throw new Error('Biometric authentication not supported in this browser.');
-                }
-
-                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-                if (!available) {
-                    throw new Error('No platform biometric authenticator available on this device.');
-                }
-
-                // Create random challenge and user id as ArrayBuffer (browser expects ArrayBufferView)
-                const challenge = window.crypto.getRandomValues(new Uint8Array(32));
-                const userId = window.crypto.getRandomValues(new Uint8Array(16));
-
-                // PUBLIC KEY options for registration - keep rp minimal (do NOT set rp.id unless you know exact eTLD+1)
-                const publicKeyCreate = {
-                    challenge: challenge.buffer,
-                    rp: { name: "Class Group Chat" }, // do NOT set rp.id here for GitHub Pages
-                    user: {
-                        id: userId.buffer,
-                        name: "student@" + window.location.hostname,
-                        displayName: "Student"
-                    },
-                    pubKeyCredParams: [{ type: "public-key", alg: -7 }], // ES256
-                    authenticatorSelection: {
-                        authenticatorAttachment: "platform", // use device built-in sensor
-                        userVerification: "required",
-                        requireResidentKey: false
-                    },
-                    timeout: 60000,
-                    attestation: "none"
-                };
-
-                // Try registration (create). Some browsers may allow prompt here and return a credential.
-                try {
-                    const credential = await navigator.credentials.create({ publicKey: publicKeyCreate });
-                    if (credential) {
-                        console.log('WebAuthn create credential:', credential);
-                        status.textContent = '✅ Fingerprint verified (registered)';
-                        status.style.color = 'var(--accent)';
-                        fingerprintVerified = true;
-                        signupBtn.disabled = false;
-                        btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                        return;
-                    }
-                } catch (createErr) {
-                    console.warn('create() failed, trying get() as fallback:', createErr);
-                    // fallback to get() — try to prompt platform authenticator for assertion
-                }
-
-                // Fallback: try an assertion (get). Note: without server-saved credential IDs behavior may vary.
-                const publicKeyGet = {
-                    challenge: window.crypto.getRandomValues(new Uint8Array(32)).buffer,
-                    timeout: 60000,
-                    userVerification: "required",
-                    // allowCredentials: [] // if you have stored credential IDs, put them here as ArrayBuffers
-                };
-
-                const assertion = await navigator.credentials.get({ publicKey: publicKeyGet });
-                if (assertion) {
-                    console.log('WebAuthn assertion:', assertion);
-                    status.textContent = '✅ Fingerprint verified';
-                    status.style.color = 'var(--accent)';
-                    fingerprintVerified = true;
-                    signupBtn.disabled = false;
-                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                    return;
-                } else {
-                    throw new Error('No credential returned by authenticator.');
-                }
-
-            } catch (err) {
-                console.error('Biometric verification error:', err);
-                status.textContent = `❌ Failed: ${err.message || 'Unknown error. Check console for details.'}`;
-                status.style.color = '#ff4c4c';
-            } finally {
-                btn.style.transform = 'scale(1)';
-                btn.disabled = false;
-            }
+    try {
+        if (isLocalhost) {
+            // Local simulation (dev)
+            await new Promise(res => setTimeout(res, 800));
+            status.textContent = '✅ Fingerprint verified (simulated)';
+            status.style.color = 'var(--accent)';
+            fingerprintVerified = true;
+            signupBtn.disabled = false;
+            btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+            return;
         }
+
+        // Ensure WebAuthn available
+        if (!window.PublicKeyCredential) {
+            throw new Error('Biometric authentication not supported in this browser.');
+        }
+
+        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        if (!available) {
+            throw new Error('No platform biometric authenticator available on this device.');
+        }
+
+        // Create random challenge and user id as ArrayBuffer
+        const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+        const userId = window.crypto.getRandomValues(new Uint8Array(16));
+
+        const publicKeyCreate = {
+            challenge: challenge.buffer,
+            rp: { name: "Class Group Chat" },
+            user: {
+                id: userId.buffer,
+                name: "student@" + window.location.hostname,
+                displayName: "Student"
+            },
+            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+            authenticatorSelection: {
+                authenticatorAttachment: "platform",
+                userVerification: "required",
+                requireResidentKey: false
+            },
+            timeout: 60000,
+            attestation: "none"
+        };
+
+        try {
+            const credential = await navigator.credentials.create({ publicKey: publicKeyCreate });
+            if (credential) {
+                console.log('WebAuthn create credential:', credential);
+                status.textContent = '✅ Fingerprint verified';
+                status.style.color = 'var(--accent)';
+                fingerprintVerified = true;
+                signupBtn.disabled = false;
+                btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                return;
+            }
+        } catch (createErr) {
+            console.warn('create() failed, trying get() as fallback:', createErr);
+        }
+
+        const publicKeyGet = {
+            challenge: window.crypto.getRandomValues(new Uint8Array(32)).buffer,
+            timeout: 60000,
+            userVerification: "required",
+        };
+
+        const assertion = await navigator.credentials.get({ publicKey: publicKeyGet });
+        if (assertion) {
+            console.log('WebAuthn assertion:', assertion);
+            status.textContent = '✅ Fingerprint verified';
+            status.style.color = 'var(--accent)';
+            fingerprintVerified = true;
+            signupBtn.disabled = false;
+            btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+            return;
+        } else {
+            throw new Error('No credential returned by authenticator.');
+        }
+
+    } catch (err) {
+        console.error('Biometric verification error:', err);
+        status.textContent = '❌ Fingerprint not supported';
+        status.style.color = '#ff4c4c';
+        
+        // 🔥 YE HAI TERA PASSWORD FALLBACK - 2 seconds baad show hoga
+        setTimeout(() => {
+            passwordSection.classList.add('active');
+            status.textContent = '🔑 Use password instead';
+            fingerprintVerified = true; // Password mode enable
+            signupBtn.disabled = false;
+            btn.style.display = 'none'; // Fingerprint button hide
+        }, 2000);
+        
+    } finally {
+        btn.style.transform = 'scale(1)';
+        btn.disabled = false;
+    }
+}
 
 
 
@@ -1689,107 +1731,119 @@
 
         // FIR YEH PASTE KAR:
 
-        async function handleSignup(e) {
-            e.preventDefault();
+      async function handleSignup(e) {
+    e.preventDefault();
 
-            if (!fingerprintVerified) {
-                alert('❌ Please scan your fingerprint first!');
-                return;
-            }
+    if (!fingerprintVerified) {
+        alert('❌ Please scan your fingerprint first!');
+        return;
+    }
 
-            const code = document.getElementById('signupCode').value.trim();
-            if (code !== SECURITY_CODE) {
-                alert('❌ Invalid security code!');
-                return;
-            }
+    const code = document.getElementById('signupCode').value.trim();
+    if (code !== SECURITY_CODE) {
+        alert('❌ Invalid security code!');
+        return;
+    }
 
-            const name = document.getElementById('signupName').value.trim();
-            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-            const phone = document.getElementById('signupPhone').value.trim();
-            const rollNo = document.getElementById('signupRollNo').value.trim();
+    const name = document.getElementById('signupName').value.trim();
+    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+    const phone = document.getElementById('signupPhone').value.trim();
+    const rollNo = document.getElementById('signupRollNo').value.trim();
+    
+    // 🔥 PASSWORD CHECK - agar password section visible hai to password mandatory hai
+    const passwordSection = document.getElementById('passwordSection');
+    let userPassword = null;
+    
+    if (passwordSection.classList.contains('active')) {
+        userPassword = document.getElementById('signupPassword').value.trim();
+        if (!userPassword || userPassword.length < 6) {
+            alert('❌ Password must be at least 6 characters!');
+            return;
+        }
+    }
 
-            // Validation
-            if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
-            if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
-            if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
-            if (!rollNo) return alert('❌ Please enter Roll Number!');
+    // Validation
+    if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
+    if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
+    if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
+    if (!rollNo) return alert('❌ Please enter Roll Number!');
 
-            const photoFile = document.getElementById('signupPhotoInput').files[0];
-            if (!photoFile) return alert('❌ Please upload a profile photo!');
+    const photoFile = document.getElementById('signupPhotoInput').files[0];
+    if (!photoFile) return alert('❌ Please upload a profile photo!');
 
-            const btn = document.getElementById('signupBtn');
-            btn.textContent = 'Checking account...';
-            btn.disabled = true;
+    const btn = document.getElementById('signupBtn');
+    btn.textContent = 'Checking account...';
+    btn.disabled = true;
 
-            try {
-                // Step 1: Check for duplicates
-                const checkUrl = `${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&rollNo=${encodeURIComponent(rollNo)}&t=${Date.now()}`;
-                const checkResponse = await fetch(checkUrl);
-                const checkData = await checkResponse.json();
+    try {
+        // Step 1: Check for duplicates
+        const checkUrl = `${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&rollNo=${encodeURIComponent(rollNo)}&t=${Date.now()}`;
+        const checkResponse = await fetch(checkUrl);
+        const checkData = await checkResponse.json();
 
-                if (checkData.exists === true) {
-                    alert(`❌ This ${checkData.field} already exists!`);
-                    btn.textContent = 'Sign Up';
-                    btn.disabled = false;
-                    return;
-                }
-
-                btn.textContent = 'Creating account...';
-
-                // Step 2: Convert photo to base64
-                const photoBase64 = await fileToBase64(photoFile);
-
-                // Step 3: Send to Apps Script (SAD_URL)
-                const signupData = {
-                    action: 'signup',
-                    name,
-                    email,
-                    phone,
-                    rollNo,
-                    status: '✅'
-                };
-
-                const response = await fetch(SAD_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(signupData)
-                });
-
-                const result = await response.json();
-                console.log('Signup response:', result);
-
-                if (!result.success) {
-                    alert('❌ Signup failed: ' + result.message);
-                    btn.textContent = 'Sign Up';
-                    btn.disabled = false;
-                    return;
-                }
-
-                // Step 4: Save locally
-                currentUser = {
-                    name,
-                    email,
-                    phone,
-                    rollNo,
-                    photo: photoBase64,
-                    timestamp: new Date().toISOString()
-                };
-                localStorage.setItem('chatUser', JSON.stringify(currentUser));
-
-                alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
-                showChat();
-                loadWallpapers();
-                startMessageRefresh();
-                loadOnlineCount();
-
-            } catch (error) {
-                console.error('Signup error:', error);
-                alert('❌ Error: ' + error.message);
-                btn.textContent = 'Sign Up';
-                btn.disabled = false;
-            }
+        if (checkData.exists === true) {
+            alert(`❌ This ${checkData.field} already exists!`);
+            btn.textContent = 'Sign Up';
+            btn.disabled = false;
+            return;
         }
 
+        btn.textContent = 'Creating account...';
+
+        // Step 2: Convert photo to base64
+        const photoBase64 = await fileToBase64(photoFile);
+
+        // Step 3: Send to Apps Script
+        const signupData = {
+            action: 'signup',
+            name,
+            email,
+            phone,
+            rollNo,
+            status: '✅'
+        };
+
+        const response = await fetch(SAD_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(signupData)
+        });
+
+        const result = await response.json();
+        console.log('Signup response:', result);
+
+        if (!result.success) {
+            alert('❌ Signup failed: ' + result.message);
+            btn.textContent = 'Sign Up';
+            btn.disabled = false;
+            return;
+        }
+
+        // Step 4: Save locally WITH PASSWORD (if used)
+        currentUser = {
+            name,
+            email,
+            phone,
+            rollNo,
+            photo: photoBase64,
+            password: userPassword, // 🔥 PASSWORD SAVE HOGA AGAR HAI TO
+            timestamp: new Date().toISOString()
+        };
+        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+
+        alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
+        showChat();
+        loadWallpapers();
+        startMessageRefresh();
+        loadOnlineCount();
+
+    } catch (error) {
+        console.error('Signup error:', error);
+        alert('❌ Error: ' + error.message);
+        btn.textContent = 'Sign Up';
+        btn.disabled = false;
+    }
+}
 
         // ============ SEND MESSAGE (INSTANT DISPLAY) ============
         async function sendMessage() {
