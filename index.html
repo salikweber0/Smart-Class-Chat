@@ -1714,16 +1714,74 @@
 
 
         // ============ PHOTO PREVIEW ============
-        function previewSignupPhoto(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    document.getElementById('signupPhotoPreview').innerHTML = `<img src="${event.target.result}" alt="Preview">`;
-                };
-                reader.readAsDataURL(file);
-            }
+        // ============ CROSS-BROWSER PHOTO UPLOAD ============
+function triggerPhotoUpload() {
+    const input = document.getElementById('signupPhotoInput');
+    
+    // Reset input to allow same file selection
+    input.value = '';
+    
+    // Try multiple methods for different browsers
+    try {
+        // Method 1: Standard click (works on most browsers)
+        input.click();
+    } catch (e) {
+        console.error('Click method failed:', e);
+        
+        // Method 2: Create temporary event
+        try {
+            const event = new MouseEvent('click', {
+                view: window,
+                bubbles: true,
+                cancelable: true
+            });
+            input.dispatchEvent(event);
+        } catch (e2) {
+            console.error('Event dispatch failed:', e2);
+            alert('⚠️ Please try again or use a different browser');
         }
+    }
+}
+
+// ============ PREVIEW WITH NO SIZE LIMIT ============
+// ============ HIGH QUALITY PREVIEW ============
+// ============ FULL QUALITY PREVIEW ============
+function previewSignupPhoto(e) {
+    const file = e.target.files[0];
+    const preview = document.getElementById('signupPhotoPreview');
+    
+    if (!file) {
+        console.log('No file selected');
+        return;
+    }
+    
+    if (!file.type.startsWith('image/')) {
+        alert('❌ Please select an image file');
+        e.target.value = '';
+        return;
+    }
+    
+    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+    preview.innerHTML = `<div style="color:var(--accent);font-size:12px;padding:20px;text-align:center;">📸 Loading...<br>${fileSizeMB}MB</div>`;
+    
+    const reader = new FileReader();
+    
+    reader.onload = function(event) {
+        preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+        console.log(`✅ Photo loaded: ${fileSizeMB}MB - Original Quality`);
+    };
+    
+    reader.onerror = function() {
+        alert('❌ Error loading photo. Try again!');
+        preview.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        `;
+    };
+    
+    reader.readAsDataURL(file);
+}
 
         // ============ COPY PURA YEH ============
         // Tera HTML file me search kar: "async function handleSignup"
@@ -2774,25 +2832,37 @@
             chatContainer.classList.add('active');
             chatContainer.style.display = 'flex';
         }
+async function updateProfilePhoto(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    
+    // Validate file
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+    if (!validTypes.includes(file.type)) {
+        alert('❌ Please upload a valid image');
+        return;
+    }
+    
+    if (file.size > 5 * 1024 * 1024) {
+        alert('❌ Image size should be less than 5MB');
+        return;
+    }
 
-        async function updateProfilePhoto(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+    try {
+        const photoBase64 = await fileToBase64(file);
+        currentUser.photo = photoBase64;
+        localStorage.setItem('chatUser', JSON.stringify(currentUser));
 
-            try {
-                const photoBase64 = await fileToBase64(file);
-                currentUser.photo = photoBase64;
-                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+        document.getElementById('profilePhotoLarge').src = photoBase64;
+        document.getElementById('headerProfilePhoto').src = photoBase64;
+        document.getElementById('inputProfilePhoto').src = photoBase64;
 
-                document.getElementById('profilePhotoLarge').src = photoBase64;
-                document.getElementById('headerProfilePhoto').src = photoBase64;
-                document.getElementById('inputProfilePhoto').src = photoBase64;
-
-                alert('✅ Profile photo updated!');
-            } catch (error) {
-                alert('❌ Error updating photo');
-            }
-        }
+        alert('✅ Profile photo updated!');
+    } catch (error) {
+        console.error('Update photo error:', error);
+        alert('❌ Error updating photo. Please try again.');
+    }
+}
 
         // ============ LOGOUT ============
         function logout() {
@@ -2863,49 +2933,37 @@
         }
 
         // ============ HELPER FUNCTIONS ============
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ctx = canvas.getContext('2d');
-                        const MAX_SIZE = 200;
-
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > height) {
-                            if (width > MAX_SIZE) {
-                                height *= MAX_SIZE / width;
-                                width = MAX_SIZE;
-                            }
-                        } else {
-                            if (height > MAX_SIZE) {
-                                width *= MAX_SIZE / height;
-                                height = MAX_SIZE;
-                            }
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.7));
-                    };
-                    img.onerror = reject;
-                    img.src = e.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
+       // ============ IMPROVED FILE TO BASE64 WITH FALLBACK ============
+// ============ AUTO COMPRESS ANY SIZE IMAGE ============
+// ============ HIGH QUALITY COMPRESSION ============
+// ============ ORIGINAL QUALITY - NO COMPRESSION ============
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            reject(new Error('No file provided'));
+            return;
         }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
+        
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            // 🔥 DIRECT BASE64 - NO CANVAS, NO COMPRESSION!
+            const base64 = e.target.result;
+            
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            console.log(`✅ Original Quality Saved: ${fileSizeMB}MB - NO compression applied!`);
+            
+            resolve(base64);
+        };
+        
+        reader.onerror = () => {
+            console.error('File read failed');
+            reject(new Error('File read failed'));
+        };
+        
+        reader.readAsDataURL(file);
+    });
+}
 
         document.getElementById("contextMenuDelete").onclick = deleteMessage;
 
