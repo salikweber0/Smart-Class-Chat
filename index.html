@@ -72,10 +72,13 @@
             align-items: center;
             justify-content: center;
             z-index: 9999;
+            transition: opacity 0.3s ease;
+            /* ✅ Smooth fade */
         }
 
         .loader-container.hidden {
             display: none;
+            opacity: 0;
         }
 
         .loader {
@@ -185,6 +188,13 @@
             padding: 20px;
             background: var(--bg-primary);
             overflow-y: auto;
+            transition: opacity 0.2s ease;
+            /* ✅ Smooth fade */
+        }
+
+        .auth-container.hidden {
+            display: none !important;
+            opacity: 0;
         }
 
         .auth-box {
@@ -385,10 +395,10 @@
 
         .message-date {
             text-align: center;
-            margin: 20px 0 10px 0;
+            margin: 0px 0 10px 0;
             position: sticky;
             top: 10px;
-            z-index: 10;
+            z-index: 1;
         }
 
         .date-badge {
@@ -423,10 +433,12 @@
 
         .message.sent {
             justify-content: flex-end;
+            z-index: 2;
         }
 
         .message.received {
             justify-content: flex-start;
+            z-index: 2;
         }
 
         .message-content {
@@ -803,6 +815,7 @@
             right: 0;
             flex-shrink: 0;
             flex-direction: column;
+            z-index: 3;
         }
 
         .reply-bar {
@@ -1008,7 +1021,7 @@
 
         .loading {
             text-align: center;
-            padding: 20px;
+            padding: 0px 20px;
             color: var(--text-secondary);
         }
 
@@ -1047,39 +1060,39 @@
 
         @media (max-width: 480px) {
             .messages-area {
-                padding-bottom: 120px;
+                padding-bottom: 130px;
             }
         }
 
         .password-section {
-    display: none;
-    margin: 20px 0;
-}
+            display: none;
+            margin: 20px 0;
+        }
 
-.password-section.active {
-    display: block;
-}
+        .password-section.active {
+            display: block;
+        }
 
-.password-section .form-group {
-    margin-bottom: 15px;
-}
+        .password-section .form-group {
+            margin-bottom: 15px;
+        }
 
-.password-section label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-secondary);
-    font-size: 14px;
-}
+        .password-section label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
 
-.password-section input {
-    width: 100%;
-    padding: 12px;
-    background: var(--bg-input);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    color: var(--text-primary);
-    font-size: 14px;
-}
+        .password-section input {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
     </style>
 </head>
 
@@ -1090,7 +1103,7 @@
         <div class="warning-icon">📱</div>
         <div class="warning-title">Mobile Only</div>
         <div class="warning-text">This project is only for mobile devices.</div>
-    </div> 
+    </div>
 
     <!-- Loader -->
     <div id="loaderContainer" class="loader-container hidden">
@@ -1099,7 +1112,7 @@
     </div>
 
     <!-- Signup Page -->
-    <div id="signupPage" class="auth-container">
+    <div id="signupPage" class="auth-container hidden">
         <div class="auth-box">
             <div class="auth-header">
                 <h1>📚 Class Group Chat</h1>
@@ -1138,12 +1151,12 @@
                     <input type="text" id="signupCode" required placeholder="Enter class code">
                 </div>
                 <!-- Password Section (Fallback for unsupported browsers) -->
-<div class="password-section" id="passwordSection">
-    <div class="form-group">
-        <label>Create Password</label>
-        <input type="password" id="signupPassword" placeholder="Enter your password" minlength="6">
-    </div>
-</div>
+                <div class="password-section" id="passwordSection">
+                    <div class="form-group">
+                        <label>Create Password</label>
+                        <input type="password" id="signupPassword" placeholder="Enter your password" minlength="6">
+                    </div>
+                </div>
 
                 <!-- Fingerprint Section -->
                 <div class="fingerprint-section">
@@ -1268,8 +1281,9 @@
                 <div class="wallpaper-upload">
                     <input type="file" id="customWallpaperInput" accept="image/*" style="display:none;">
                     <button class="upload-wallpaper-btn"
-                        onclick="document.getElementById('customWallpaperInput').click()">Upload Custom
-                        Wallpaper</button>
+                        onclick="document.getElementById('customWallpaperInput').click()">
+                        📸 Upload Custom Wallpaper (1 Max)
+                    </button>
                 </div>
                 <div class="wallpaper-grid" id="wallpaperGrid"></div>
             </div>
@@ -1347,6 +1361,9 @@
         let fingerprintVerified = false;
         let lastScrollPosition = 0;
         let customWallpaperCount = 0;
+        let lastMessageSentTime = 0;
+        let isFirstMessage = true;
+        let pendingMessageId = null;
 
         // ============ EMOJIS ============
         const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
@@ -1375,115 +1392,115 @@
         // ============ UPDATED FINGERPRINT BIOMETRIC AUTHENTICATION ============
         // Simulates verification on localhost (http://127.0.0.1:5500) with an alert, uses real biometric scanner on HTTPS
         // Replace the existing scanFingerprint() with this improved version
-       async function scanFingerprint() {
-    const btn = document.getElementById('fingerprintBtn');
-    const status = document.getElementById('fingerprintStatus');
-    const signupBtn = document.getElementById('signupBtn');
-    const passwordSection = document.getElementById('passwordSection');
-    const currentHost = window.location.hostname;
-    const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
+        async function scanFingerprint() {
+            const btn = document.getElementById('fingerprintBtn');
+            const status = document.getElementById('fingerprintStatus');
+            const signupBtn = document.getElementById('signupBtn');
+            const passwordSection = document.getElementById('passwordSection');
+            const currentHost = window.location.hostname;
+            const isLocalhost = currentHost === 'localhost' || currentHost === '127.0.0.1';
 
-    btn.disabled = true;
-    status.textContent = 'Scanning fingerprint...';
-    btn.style.transform = 'scale(0.95)';
+            btn.disabled = true;
+            status.textContent = 'Scanning fingerprint...';
+            btn.style.transform = 'scale(0.95)';
 
-    try {
-        if (isLocalhost) {
-            // Local simulation (dev)
-            await new Promise(res => setTimeout(res, 800));
-            status.textContent = '✅ Fingerprint verified (simulated)';
-            status.style.color = 'var(--accent)';
-            fingerprintVerified = true;
-            signupBtn.disabled = false;
-            btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-            return;
-        }
+            try {
+                if (isLocalhost) {
+                    // Local simulation (dev)
+                    await new Promise(res => setTimeout(res, 800));
+                    status.textContent = '✅ Fingerprint verified (simulated)';
+                    status.style.color = 'var(--accent)';
+                    fingerprintVerified = true;
+                    signupBtn.disabled = false;
+                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                    return;
+                }
 
-        // Ensure WebAuthn available
-        if (!window.PublicKeyCredential) {
-            throw new Error('Biometric authentication not supported in this browser.');
-        }
+                // Ensure WebAuthn available
+                if (!window.PublicKeyCredential) {
+                    throw new Error('Biometric authentication not supported in this browser.');
+                }
 
-        const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
-        if (!available) {
-            throw new Error('No platform biometric authenticator available on this device.');
-        }
+                const available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+                if (!available) {
+                    throw new Error('No platform biometric authenticator available on this device.');
+                }
 
-        // Create random challenge and user id as ArrayBuffer
-        const challenge = window.crypto.getRandomValues(new Uint8Array(32));
-        const userId = window.crypto.getRandomValues(new Uint8Array(16));
+                // Create random challenge and user id as ArrayBuffer
+                const challenge = window.crypto.getRandomValues(new Uint8Array(32));
+                const userId = window.crypto.getRandomValues(new Uint8Array(16));
 
-        const publicKeyCreate = {
-            challenge: challenge.buffer,
-            rp: { name: "Class Group Chat" },
-            user: {
-                id: userId.buffer,
-                name: "student@" + window.location.hostname,
-                displayName: "Student"
-            },
-            pubKeyCredParams: [{ type: "public-key", alg: -7 }],
-            authenticatorSelection: {
-                authenticatorAttachment: "platform",
-                userVerification: "required",
-                requireResidentKey: false
-            },
-            timeout: 60000,
-            attestation: "none"
-        };
+                const publicKeyCreate = {
+                    challenge: challenge.buffer,
+                    rp: { name: "Class Group Chat" },
+                    user: {
+                        id: userId.buffer,
+                        name: "student@" + window.location.hostname,
+                        displayName: "Student"
+                    },
+                    pubKeyCredParams: [{ type: "public-key", alg: -7 }],
+                    authenticatorSelection: {
+                        authenticatorAttachment: "platform",
+                        userVerification: "required",
+                        requireResidentKey: false
+                    },
+                    timeout: 60000,
+                    attestation: "none"
+                };
 
-        try {
-            const credential = await navigator.credentials.create({ publicKey: publicKeyCreate });
-            if (credential) {
-                console.log('WebAuthn create credential:', credential);
-                status.textContent = '✅ Fingerprint verified';
-                status.style.color = 'var(--accent)';
-                fingerprintVerified = true;
-                signupBtn.disabled = false;
-                btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-                return;
+                try {
+                    const credential = await navigator.credentials.create({ publicKey: publicKeyCreate });
+                    if (credential) {
+                        console.log('WebAuthn create credential:', credential);
+                        status.textContent = '✅ Fingerprint verified';
+                        status.style.color = 'var(--accent)';
+                        fingerprintVerified = true;
+                        signupBtn.disabled = false;
+                        btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                        return;
+                    }
+                } catch (createErr) {
+                    console.warn('create() failed, trying get() as fallback:', createErr);
+                }
+
+                const publicKeyGet = {
+                    challenge: window.crypto.getRandomValues(new Uint8Array(32)).buffer,
+                    timeout: 60000,
+                    userVerification: "required",
+                };
+
+                const assertion = await navigator.credentials.get({ publicKey: publicKeyGet });
+                if (assertion) {
+                    console.log('WebAuthn assertion:', assertion);
+                    status.textContent = '✅ Fingerprint verified';
+                    status.style.color = 'var(--accent)';
+                    fingerprintVerified = true;
+                    signupBtn.disabled = false;
+                    btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                    return;
+                } else {
+                    throw new Error('No credential returned by authenticator.');
+                }
+
+            } catch (err) {
+                console.error('Biometric verification error:', err);
+                status.textContent = '❌ Fingerprint not supported';
+                status.style.color = '#ff4c4c';
+
+                // 🔥 YE HAI TERA PASSWORD FALLBACK - 2 seconds baad show hoga
+                setTimeout(() => {
+                    passwordSection.classList.add('active');
+                    status.textContent = '🔑 Use password instead';
+                    fingerprintVerified = true; // Password mode enable
+                    signupBtn.disabled = false;
+                    btn.style.display = 'none'; // Fingerprint button hide
+                }, 2000);
+
+            } finally {
+                btn.style.transform = 'scale(1)';
+                btn.disabled = false;
             }
-        } catch (createErr) {
-            console.warn('create() failed, trying get() as fallback:', createErr);
         }
-
-        const publicKeyGet = {
-            challenge: window.crypto.getRandomValues(new Uint8Array(32)).buffer,
-            timeout: 60000,
-            userVerification: "required",
-        };
-
-        const assertion = await navigator.credentials.get({ publicKey: publicKeyGet });
-        if (assertion) {
-            console.log('WebAuthn assertion:', assertion);
-            status.textContent = '✅ Fingerprint verified';
-            status.style.color = 'var(--accent)';
-            fingerprintVerified = true;
-            signupBtn.disabled = false;
-            btn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
-            return;
-        } else {
-            throw new Error('No credential returned by authenticator.');
-        }
-
-    } catch (err) {
-        console.error('Biometric verification error:', err);
-        status.textContent = '❌ Fingerprint not supported';
-        status.style.color = '#ff4c4c';
-        
-        // 🔥 YE HAI TERA PASSWORD FALLBACK - 2 seconds baad show hoga
-        setTimeout(() => {
-            passwordSection.classList.add('active');
-            status.textContent = '🔑 Use password instead';
-            fingerprintVerified = true; // Password mode enable
-            signupBtn.disabled = false;
-            btn.style.display = 'none'; // Fingerprint button hide
-        }, 2000);
-        
-    } finally {
-        btn.style.transform = 'scale(1)';
-        btn.disabled = false;
-    }
-}
 
 
 
@@ -1493,133 +1510,176 @@
             applySettings();
             setupEventListeners();
             checkAuth();
-            setInterval(recheckUserStatus, 5000); // har 5 sec me verify karega
-            fetchMessages(); // 🟢 first load
-            setInterval(fetchMessages, 2000);
             loadCustomWallpaperCount();
         };
 
-        // 🔁 Every 3 seconds recheck active/block status live
-        setInterval(async () => {
-            const userDataString = localStorage.getItem('chatUser');
-            const isBlocked = localStorage.getItem('blockedUser');
-            if (!userDataString) return;
-
-            const userData = JSON.parse(userDataString);
-
-            try {
-                // ✅ rollNo parameter remove kar diya
-                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
-                const res = await fetch(verifyUrl);
-                const data = await res.json();
-
-                // ✅ Active → continue chat normally
-                if (data.status === 'active') {
-                    if (isBlocked === 'true') {
-                        localStorage.removeItem('blockedUser');
-                        location.reload();
-                    }
-                    return;
-                }
-
-                // ❌ Blocked → show immediately
-                if (data.status === 'blocked' && isBlocked !== 'true') {
-                    localStorage.setItem('blockedUser', 'true');
-                    document.body.innerHTML = `
-                <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
-                    <div style="font-size:80px;">⛔</div>
-                    <p><strong>You are Blocked by Admin</strong></p>
-                </div>`;
-                }
-            } catch (err) {
-                console.error('Live check error:', err);
-            }
-        }, 3000);
-
-
+        // ============ 🔥 CLEAN CHECKAUTH - NO ISSUES ============
         async function checkAuth() {
             try {
                 const userDataString = localStorage.getItem('chatUser');
+                const isBlocked = localStorage.getItem('blockedUser');
 
-                // 🔹 Agar localStorage hi nahi hai → show signup
+                // CASE 1: No user data
                 if (!userDataString) {
-                    console.log("No local data found → show signup");
-                    showSignup();
+                    hideLoader();
+                    setTimeout(() => showSignup(), 30);
                     return;
                 }
 
                 const userData = JSON.parse(userDataString);
                 if (!userData.name || !userData.email || !userData.phone) {
-                    console.log("Incomplete local data → show signup");
-                    showSignup();
+                    hideLoader();
+                    setTimeout(() => showSignup(), 30);
                     return;
                 }
 
+                // 🔥 Always show loader first
                 showLoader();
 
-                // 🔹 Verify from Sheet
-                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email.toLowerCase())}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
-                const res = await fetch(verifyUrl);
-                const data = await res.json();
+                // 🔥 API call to check current status
+                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
 
-                console.log("Verification response:", data);
-                hideLoader();
+                try {
+                    const res = await fetch(verifyUrl);
+                    const data = await res.json();
 
-                // 🔴 If student blocked → don’t delete localStorage, just mark blocked
-                if (data.status === 'blocked') {
-                    localStorage.setItem('blockedUser', 'true'); // save flag
-                    document.body.innerHTML = `
-        <div style="
-          background:#111;
-          color:#ff4c4c;
-          font-size:20px;
-          display:flex;
-          align-items:center;
-          justify-content:center;
-          height:100vh;
-          text-align:center;
-          flex-direction:column;
-        ">
-          <div style="font-size:80px;">⛔</div>
-          <p><strong>You are Blocked by Admin</strong></p>
-        </div>`;
-                    return;
+                    hideLoader();
+
+                    if (data.status === 'blocked') {
+                        // User is blocked
+                        localStorage.setItem('blockedUser', 'true');
+                        showBlockedScreen();
+                        return;
+                    }
+
+                    if (data.status === 'active') {
+                        // User is active
+                        localStorage.removeItem('blockedUser');
+                        currentUser = userData;
+                        showChat();
+                        loadWallpapers();
+                        startStatusMonitoring(); // 🔥 ADD THIS LINE
+                        console.log('✅ Monitoring started for:', currentUser.name);
+                        startMessageRefresh();
+                        loadOnlineCount();
+                        return;
+                    }
+
+                } catch (err) {
+                    console.error('API Error:', err);
+                    hideLoader();
+
+                    // Network error - check local flag
+                    if (isBlocked === 'true') {
+                        showBlockedScreen();
+                    } else {
+                        // Allow access on network error
+                        currentUser = userData;
+                        showChat();
+                        loadWallpapers();
+                        startMessageRefresh();
+                        loadOnlineCount();
+                        startStatusMonitoring();
+                    }
                 }
-
-                // ✅ If active → remove block flag & open chat
-                localStorage.removeItem('blockedUser');
-                currentUser = userData;
-                showChat();
-                loadWallpapers();
-                startMessageRefresh();
-                loadOnlineCount();
 
             } catch (err) {
                 console.error("checkAuth Error:", err);
                 hideLoader();
-                showSignup();
+                setTimeout(() => showSignup(), 50);
             }
         }
 
+        // 🔥 NEW: Blocked Screen Function
+        function showBlockedScreen() {
+            document.body.innerHTML = `
+        <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
+            <div style="font-size:80px;">⛔</div>
+            <p><strong>You are Blocked by Admin</strong></p>
+        </div>`;
+        }
 
-        // 🔁 Every 5 seconds check if user unblocked by admin
-        setInterval(async () => {
-            const isBlocked = localStorage.getItem('blockedUser');
-            if (isBlocked === 'true') {
-                const userDataString = localStorage.getItem('chatUser');
-                if (!userDataString) return;
-                const userData = JSON.parse(userDataString);
-                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(userData.name)}&email=${encodeURIComponent(userData.email)}&phone=${encodeURIComponent(userData.phone)}&t=${Date.now()}`;
-                const res = await fetch(verifyUrl);
-                const data = await res.json();
-                if (data.status === 'active') {
-                    // ✅ Unblocked → reopen chat
-                    localStorage.removeItem('blockedUser');
-                    location.reload(); // refresh & open chat
-                }
+        // ============ 🔥 ULTRA AGGRESSIVE MONITORING ============
+        let statusCheckInterval = null;
+
+        function startStatusMonitoring() {
+            console.log('🟢 STATUS MONITORING STARTED');
+
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
             }
-        }, 5000);
 
+            // ⚡ IMMEDIATE FIRST CHECK
+            checkUserStatus();
+
+            // 🔄 THEN CHECK EVERY 2 SECONDS
+            statusCheckInterval = setInterval(checkUserStatus, 2000);
+        }
+
+        async function checkUserStatus() {
+            if (!currentUser) return;
+
+            try {
+                const verifyUrl = `${SAD_URL}?action=verifyUser&name=${encodeURIComponent(currentUser.name)}&email=${encodeURIComponent(currentUser.email)}&phone=${encodeURIComponent(currentUser.phone)}&t=${Date.now()}`;
+
+                const response = await fetch(verifyUrl);
+                const data = await response.json();
+
+                const isCurrentlyBlocked = localStorage.getItem('blockedUser') === 'true';
+
+                console.log('🔍', new Date().toLocaleTimeString(), '→', data.status, '| Local:', isCurrentlyBlocked);
+
+                // 🔴 BLOCK: active → blocked
+                if (data.status === 'blocked' && !isCurrentlyBlocked) {
+                    console.log('🔴 BLOCKING NOW!');
+                    localStorage.setItem('blockedUser', 'true');
+                    clearInterval(statusCheckInterval);
+                    if (refreshInterval) clearInterval(refreshInterval);
+                    showBlockedScreen();
+                    return;
+                }
+
+                // ✅ UNBLOCK: blocked → active
+                if (data.status === 'active' && isCurrentlyBlocked) {
+                    console.log('✅ UNBLOCKING NOW!');
+                    localStorage.removeItem('blockedUser');
+                    clearInterval(statusCheckInterval);
+                    if (refreshInterval) clearInterval(refreshInterval);
+
+                    // Show alert
+                    alert('✅ You have been unblocked by Admin!\n\nReloading chat...');
+
+                    // Reload page
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 500);
+                    return;
+                }
+
+            } catch (error) {
+                console.error('❌ Check failed:', error);
+            }
+        }
+
+        // ============ 🔥 MESSAGE REFRESH + STATUS MONITORING ============
+        function startMessageRefresh() {
+            console.log('📨 Message refresh started');
+
+            // Initial load
+            fetchMessages();
+
+            // Clear old interval
+            if (refreshInterval) clearInterval(refreshInterval);
+
+            // ✅ Refresh every 4 seconds (optimized)
+            refreshInterval = setInterval(() => {
+                fetchMessages();
+                loadOnlineCount();
+            }, 3000);
+
+            // ✅ Start status monitoring
+            startStatusMonitoring();
+        }
 
         async function verifyAccountStatus(user) {
             try {
@@ -1715,73 +1775,73 @@
 
         // ============ PHOTO PREVIEW ============
         // ============ CROSS-BROWSER PHOTO UPLOAD ============
-function triggerPhotoUpload() {
-    const input = document.getElementById('signupPhotoInput');
-    
-    // Reset input to allow same file selection
-    input.value = '';
-    
-    // Try multiple methods for different browsers
-    try {
-        // Method 1: Standard click (works on most browsers)
-        input.click();
-    } catch (e) {
-        console.error('Click method failed:', e);
-        
-        // Method 2: Create temporary event
-        try {
-            const event = new MouseEvent('click', {
-                view: window,
-                bubbles: true,
-                cancelable: true
-            });
-            input.dispatchEvent(event);
-        } catch (e2) {
-            console.error('Event dispatch failed:', e2);
-            alert('⚠️ Please try again or use a different browser');
-        }
-    }
-}
+        function triggerPhotoUpload() {
+            const input = document.getElementById('signupPhotoInput');
 
-// ============ PREVIEW WITH NO SIZE LIMIT ============
-// ============ HIGH QUALITY PREVIEW ============
-// ============ FULL QUALITY PREVIEW ============
-function previewSignupPhoto(e) {
-    const file = e.target.files[0];
-    const preview = document.getElementById('signupPhotoPreview');
-    
-    if (!file) {
-        console.log('No file selected');
-        return;
-    }
-    
-    if (!file.type.startsWith('image/')) {
-        alert('❌ Please select an image file');
-        e.target.value = '';
-        return;
-    }
-    
-    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    preview.innerHTML = `<div style="color:var(--accent);font-size:12px;padding:20px;text-align:center;">📸 Loading...<br>${fileSizeMB}MB</div>`;
-    
-    const reader = new FileReader();
-    
-    reader.onload = function(event) {
-        preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
-        console.log(`✅ Photo loaded: ${fileSizeMB}MB - Original Quality`);
-    };
-    
-    reader.onerror = function() {
-        alert('❌ Error loading photo. Try again!');
-        preview.innerHTML = `
+            // Reset input to allow same file selection
+            input.value = '';
+
+            // Try multiple methods for different browsers
+            try {
+                // Method 1: Standard click (works on most browsers)
+                input.click();
+            } catch (e) {
+                console.error('Click method failed:', e);
+
+                // Method 2: Create temporary event
+                try {
+                    const event = new MouseEvent('click', {
+                        view: window,
+                        bubbles: true,
+                        cancelable: true
+                    });
+                    input.dispatchEvent(event);
+                } catch (e2) {
+                    console.error('Event dispatch failed:', e2);
+                    alert('⚠️ Please try again or use a different browser');
+                }
+            }
+        }
+
+        // ============ PREVIEW WITH NO SIZE LIMIT ============
+        // ============ HIGH QUALITY PREVIEW ============
+        // ============ FULL QUALITY PREVIEW ============
+        function previewSignupPhoto(e) {
+            const file = e.target.files[0];
+            const preview = document.getElementById('signupPhotoPreview');
+
+            if (!file) {
+                console.log('No file selected');
+                return;
+            }
+
+            if (!file.type.startsWith('image/')) {
+                alert('❌ Please select an image file');
+                e.target.value = '';
+                return;
+            }
+
+            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+            preview.innerHTML = `<div style="color:var(--accent);font-size:12px;padding:20px;text-align:center;">📸 Loading...<br>${fileSizeMB}MB</div>`;
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                console.log(`✅ Photo loaded: ${fileSizeMB}MB - Original Quality`);
+            };
+
+            reader.onerror = function () {
+                alert('❌ Error loading photo. Try again!');
+                preview.innerHTML = `
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
         `;
-    };
-    
-    reader.readAsDataURL(file);
-}
+            };
+
+            reader.readAsDataURL(file);
+        }
 
         // ============ COPY PURA YEH ============
         // Tera HTML file me search kar: "async function handleSignup"
@@ -1789,217 +1849,320 @@ function previewSignupPhoto(e) {
 
         // FIR YEH PASTE KAR:
 
-      async function handleSignup(e) {
-    e.preventDefault();
+        async function handleSignup(e) {
+            e.preventDefault();
 
-    if (!fingerprintVerified) {
-        alert('❌ Please scan your fingerprint first!');
-        return;
-    }
+            if (!fingerprintVerified) {
+                alert('❌ Please scan your fingerprint first!');
+                return;
+            }
 
-    const code = document.getElementById('signupCode').value.trim();
-    if (code !== SECURITY_CODE) {
-        alert('❌ Invalid security code!');
-        return;
-    }
+            const code = document.getElementById('signupCode').value.trim();
+            if (code !== SECURITY_CODE) {
+                alert('❌ Invalid security code!');
+                return;
+            }
 
-    const name = document.getElementById('signupName').value.trim();
-    const email = document.getElementById('signupEmail').value.trim().toLowerCase();
-    const phone = document.getElementById('signupPhone').value.trim();
-    const rollNo = document.getElementById('signupRollNo').value.trim();
-    
-    // 🔥 PASSWORD CHECK - agar password section visible hai to password mandatory hai
-    const passwordSection = document.getElementById('passwordSection');
-    let userPassword = null;
-    
-    if (passwordSection.classList.contains('active')) {
-        userPassword = document.getElementById('signupPassword').value.trim();
-        if (!userPassword || userPassword.length < 6) {
-            alert('❌ Password must be at least 6 characters!');
-            return;
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim().toLowerCase();
+            const phone = document.getElementById('signupPhone').value.trim();
+            const rollNo = document.getElementById('signupRollNo').value.trim();
+
+            // 🔥 PASSWORD CHECK - agar password section visible hai to password mandatory hai
+            const passwordSection = document.getElementById('passwordSection');
+            let userPassword = null;
+
+            if (passwordSection.classList.contains('active')) {
+                userPassword = document.getElementById('signupPassword').value.trim();
+                if (!userPassword || userPassword.length < 6) {
+                    alert('❌ Password must be at least 6 characters!');
+                    return;
+                }
+            }
+
+            // Validation
+            if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
+            if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
+            if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
+            if (!rollNo) return alert('❌ Please enter Roll Number!');
+
+            const photoFile = document.getElementById('signupPhotoInput').files[0];
+            if (!photoFile) return alert('❌ Please upload a profile photo!');
+
+            const btn = document.getElementById('signupBtn');
+            btn.textContent = 'Checking account...';
+            btn.disabled = true;
+
+            try {
+                // Step 1: Check for duplicates
+                const checkUrl = `${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&rollNo=${encodeURIComponent(rollNo)}&t=${Date.now()}`;
+                const checkResponse = await fetch(checkUrl);
+                const checkData = await checkResponse.json();
+
+                if (checkData.exists === true) {
+                    alert(`❌ This ${checkData.field} already exists!`);
+                    btn.textContent = 'Sign Up';
+                    btn.disabled = false;
+                    return;
+                }
+
+                btn.textContent = 'Creating account...';
+
+                // Step 2: Convert photo to base64
+                const photoBase64 = await fileToBase64(photoFile);
+
+                // Step 3: Send to Apps Script
+                const signupData = {
+                    action: 'signup',
+                    name,
+                    email,
+                    phone,
+                    rollNo,
+                    status: '✅'
+                };
+
+                const response = await fetch(SAD_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(signupData)
+                });
+
+                const result = await response.json();
+                console.log('Signup response:', result);
+
+                if (!result.success) {
+                    alert('❌ Signup failed: ' + result.message);
+                    btn.textContent = 'Sign Up';
+                    btn.disabled = false;
+                    return;
+                }
+
+                // Step 4: Save locally WITH PASSWORD (if used)
+                currentUser = {
+                    name,
+                    email,
+                    phone,
+                    rollNo,
+                    photo: photoBase64,
+                    password: userPassword, // 🔥 PASSWORD SAVE HOGA AGAR HAI TO
+                    timestamp: new Date().toISOString()
+                };
+                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+
+                alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
+                showChat();
+                loadWallpapers();
+                startMessageRefresh();
+                loadOnlineCount();
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert('❌ Error: ' + error.message);
+                btn.textContent = 'Sign Up';
+                btn.disabled = false;
+            }
         }
-    }
 
-    // Validation
-    if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
-    if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
-    if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
-    if (!rollNo) return alert('❌ Please enter Roll Number!');
-
-    const photoFile = document.getElementById('signupPhotoInput').files[0];
-    if (!photoFile) return alert('❌ Please upload a profile photo!');
-
-    const btn = document.getElementById('signupBtn');
-    btn.textContent = 'Checking account...';
-    btn.disabled = true;
-
-    try {
-        // Step 1: Check for duplicates
-        const checkUrl = `${SAD_URL}?action=checkDuplicate&name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&rollNo=${encodeURIComponent(rollNo)}&t=${Date.now()}`;
-        const checkResponse = await fetch(checkUrl);
-        const checkData = await checkResponse.json();
-
-        if (checkData.exists === true) {
-            alert(`❌ This ${checkData.field} already exists!`);
-            btn.textContent = 'Sign Up';
-            btn.disabled = false;
-            return;
-        }
-
-        btn.textContent = 'Creating account...';
-
-        // Step 2: Convert photo to base64
-        const photoBase64 = await fileToBase64(photoFile);
-
-        // Step 3: Send to Apps Script
-        const signupData = {
-            action: 'signup',
-            name,
-            email,
-            phone,
-            rollNo,
-            status: '✅'
-        };
-
-        const response = await fetch(SAD_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(signupData)
-        });
-
-        const result = await response.json();
-        console.log('Signup response:', result);
-
-        if (!result.success) {
-            alert('❌ Signup failed: ' + result.message);
-            btn.textContent = 'Sign Up';
-            btn.disabled = false;
-            return;
-        }
-
-        // Step 4: Save locally WITH PASSWORD (if used)
-        currentUser = {
-            name,
-            email,
-            phone,
-            rollNo,
-            photo: photoBase64,
-            password: userPassword, // 🔥 PASSWORD SAVE HOGA AGAR HAI TO
-            timestamp: new Date().toISOString()
-        };
-        localStorage.setItem('chatUser', JSON.stringify(currentUser));
-
-        alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
-        showChat();
-        loadWallpapers();
-        startMessageRefresh();
-        loadOnlineCount();
-
-    } catch (error) {
-        console.error('Signup error:', error);
-        alert('❌ Error: ' + error.message);
-        btn.textContent = 'Sign Up';
-        btn.disabled = false;
-    }
-}
-
-        // ============ SEND MESSAGE (INSTANT DISPLAY) ============
         async function sendMessage() {
             const msgInput = document.getElementById('messageInput');
             const messageText = msgInput.value.trim();
 
-            if (!messageText) return;
-            if (isSending) return;
+            if (!messageText || isSending) return;
 
             isSending = true;
             const sendBtn = document.querySelector('.send-btn');
             sendBtn.disabled = true;
 
             try {
-                // ✅ STEP 1: Instantly show in chatbox (optimistic update)
                 const msgTimestamp = new Date();
-                const tempMessage = {
-                    studentName: currentUser.name,
-                    message: messageText,
-                    timestamp: msgTimestamp.toISOString(),
-                    replyTo: replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : ''
-                };
+                const replyData = replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : '';
 
-                // Add to display immediately
-                const messagesArea = document.getElementById('messagesArea');
-                const messageDiv = createMessageElement(tempMessage, currentMessages.length);
-                messagesArea.appendChild(messageDiv);
-
-                // Clear input aur reply bar
-                msgInput.value = '';
-                msgInput.style.height = 'auto';
-                if (replyToMessage) {
-                    cancelReply();
-                }
-
-                // Scroll to bottom
-                scrollToBottom();
-
-                // ✅ STEP 2: Save to Google Sheets (background me)
                 const messageData = {
                     action: 'saveMessage',
                     studentName: currentUser.name,
                     message: messageText,
                     timestamp: msgTimestamp.toISOString(),
-                    replyTo: replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : ''
+                    replyTo: replyData
                 };
 
+                console.log('📤 Sending message:', messageData);
 
-                // Fire and forget - don't wait
-                fetch(SMD_URL, {
+                // 🔥 CREATE TEMP MESSAGE
+                const tempMessage = {
+                    studentName: currentUser.name,
+                    message: messageText,
+                    timestamp: msgTimestamp.toISOString(),
+                    replyTo: replyData
+                };
+
+                // 🔥 ADD TO GLOBAL ARRAY FIRST
+                currentMessages.push(tempMessage);
+
+                // ✅ Show message instantly IN SENDER'S CHAT
+                const messagesArea = document.getElementById('messagesArea');
+                const messageDiv = createMessageElement(tempMessage, currentMessages.length - 1);
+                messagesArea.appendChild(messageDiv);
+                scrollToBottom();
+
+                // Clear input
+                msgInput.value = '';
+                msgInput.style.height = 'auto';
+                cancelReply();
+
+                // 🔥 BLOCK FETCH FOR 15 SECONDS (sender ko apna message dikhega)
+                localStorage.setItem('lastSentTime', Date.now().toString());
+                localStorage.setItem('myLastMessage', messageText); // Track sender's message
+
+                // Save to sheet (background)
+                const response = await fetch(SMD_URL, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'text/plain;charset=utf-8'
-                    },
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(messageData)
-                }).then(res => res.json())
-                    .then(data => {
-                        console.log('Message saved to sheet:', data);
-                    })
-                    .catch(err => console.error('Save error:', err));
+                });
 
-                // ✅ STEP 3: After 1 second, fetch all messages to sync
-                // (This will show other students' messages aur filter out duplicates)
-                setTimeout(() => {
-                    fetchMessagesWithFilter();
-                }, 1000);
+                const result = await response.json();
+                console.log('✅ Message saved to sheet:', result);
 
             } catch (err) {
-                console.error('Send error:', err);
-                alert('Error: ' + err.message);
+                console.error('Send Error:', err);
+                alert('Error sending message: ' + err.message);
+                currentMessages.pop(); // Remove temp message on error
             } finally {
                 isSending = false;
                 sendBtn.disabled = false;
             }
         }
 
-        // ============ FETCH MESSAGES WITH FILTER ============
+        // ===============================================
+        // ✅ FIXED fetchMessagesWithFilter (No Flicker)
+        // ===============================================
         async function fetchMessagesWithFilter() {
+            try {
+                const response = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`, {
+                    cache: "no-store"
+                });
+
+                if (!data.success) {
+                    console.error('Fetch failed:', data.message);
+                    return;
+                }
+
+                const messagesArea = document.getElementById('messagesArea');
+
+                // 🧠 FIX: Don't clear all messages instantly
+                const existingMessages = Array.from(messagesArea.querySelectorAll('.message'));
+                const existingTexts = existingMessages.map(m => m.querySelector('.message-text')?.textContent.trim());
+
+                // ✅ Filter messages for this class only (if you use class filter)
+                const filteredMessages = data.messages || [];
+
+                let newMessageAdded = false;
+
+                // ✅ Add only new messages (prevent blinking)
+                filteredMessages.forEach((msg, i) => {
+                    const text = msg.message?.trim();
+                    if (!text || existingTexts.includes(text)) return;
+
+                    const messageDiv = createMessageElement(msg, i);
+                    messagesArea.appendChild(messageDiv);
+                    newMessageAdded = true;
+                });
+
+                // ✅ Auto-scroll if new message arrives
+                if (newMessageAdded) {
+                    scrollToBottom();
+                }
+
+            } catch (err) {
+                console.error('Error fetching messages:', err);
+            }
+        }
+
+        if (data.messages.length > existingTexts.length) {
+            scrollToBottom();
+        }
+
+
+
+        async function fetchMessages() {
+            // 🔥 ULTRA CHECK: If this user just sent a message, BLOCK fetch completely
+            const lastSent = localStorage.getItem('lastSentTime');
+            if (lastSent) {
+                const timeSinceSent = Date.now() - parseInt(lastSent);
+                if (timeSinceSent < 15000) { // 15 seconds block
+                    console.log('🚫 SENDER BLOCKED: ' + Math.ceil((15000 - timeSinceSent) / 1000) + 's remaining');
+                    return; // ABSOLUTELY NO FETCH!
+                } else {
+                    // Clear flag after cooldown
+                    localStorage.removeItem('lastSentTime');
+                    localStorage.removeItem('myLastMessage');
+                }
+            }
+
             try {
                 const res = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
                 const result = await res.json();
-                const messages = result.messages || result.data || [];
 
-                if (!Array.isArray(messages)) return;
+                const messages = result.messages || result.data || [];
+                const messagesArea = document.getElementById("messagesArea");
+
+                if (!messagesArea) return;
+
+                // Remove loading text
+                const loadingElement = messagesArea.querySelector('.loading');
+                if (loadingElement) {
+                    loadingElement.remove();
+                }
+
+                if (!Array.isArray(messages) || messages.length === 0) {
+                    if (messagesArea.children.length === 0) {
+                        messagesArea.innerHTML = '<div class="loading">No messages yet 💬</div>';
+                    }
+                    return;
+                }
+
+                // 🔥 CHECK: If sender's own message is in DOM, DON'T rebuild
+                const myLastMsg = localStorage.getItem('myLastMessage');
+                if (myLastMsg) {
+                    const existingMessages = Array.from(messagesArea.querySelectorAll('.message-text'));
+                    const hasMyMessage = existingMessages.some(el => el.textContent.trim() === myLastMsg.trim());
+
+                    if (hasMyMessage) {
+                        console.log('✅ Sender message already visible, skipping rebuild');
+
+                        // Only add NEW messages from others
+                        const currentDOMCount = messagesArea.querySelectorAll('.message').length;
+                        if (messages.length > currentDOMCount) {
+                            const newMessages = messages.slice(currentDOMCount);
+                            newMessages.forEach((msg, idx) => {
+                                const messageDiv = createMessageElement(msg, currentDOMCount + idx);
+                                messagesArea.appendChild(messageDiv);
+                            });
+                        }
+                        return;
+                    }
+                }
+
+                // 🔥 NORMAL REBUILD (for other users)
+                const currentDOMCount = messagesArea.querySelectorAll('.message').length;
+                const newMessageCount = messages.length;
+
+                if (currentDOMCount === newMessageCount) {
+                    console.log('✅ No new messages');
+                    return;
+                }
+
+                console.log(`📥 Fetching ${newMessageCount - currentDOMCount} new messages`);
 
                 currentMessages = messages;
+                const wasAtBottom = isScrolledToBottom();
 
-                const messagesArea = document.getElementById('messagesArea');
-                const myName = currentUser.name.toLowerCase().trim();
-
-                // Clear existing messages
                 messagesArea.innerHTML = '';
                 let currentDate = '';
 
                 messages.forEach((msg, index) => {
                     if (!msg.studentName || !msg.message) return;
 
-                    // Add date badge if needed
                     const msgDate = new Date(msg.timestamp);
                     const dateStr = formatDate(msgDate);
 
@@ -2015,157 +2178,16 @@ function previewSignupPhoto(e) {
                     messagesArea.appendChild(messageDiv);
                 });
 
-                scrollToBottom();
-
-            } catch (err) {
-                console.error('Fetch error:', err);
-            }
-        }
-
-        // ============ MESSAGE REFRESH (BACKGROUND) ============
-        function startMessageRefresh() {
-            fetchMessages();
-            if (refreshInterval) clearInterval(refreshInterval);
-            // Add a 3-second delay for the first verification after signup
-            setTimeout(() => {
-                refreshInterval = setInterval(async () => {
-                    if (currentUser) {
-                        const isActive = await verifyAccountStatus(currentUser);
-                        if (!isActive) {
-                            // ✅ Alert removed - seedha block screen dikhao
-                            localStorage.setItem('blockedUser', 'true');
-                            clearInterval(refreshInterval);
-                            document.body.innerHTML = `
-                <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
-                    <div style="font-size:80px;">⛔</div>
-                    <p><strong>You are Blocked by Admin</strong></p>
-                </div>`;
-                            return;
-                        }
-                    }
-                    fetchMessages();
-                    loadOnlineCount();
-                }, 1000); // 1-second interval for subsequent checks
-            }, 3000); // Initial 3-second delay
-        }
-        // ============ SMART FETCH MESSAGES (NO BLINKING) ============
-        let lastMessageIds = []; // Track which messages we've already shown
-
-        async function fetchMessages() {
-            try {
-                const res = await fetch(`${SMD_URL}?action=fetchMessages&t=${Date.now()}`);
-                const result = await res.json();
-
-                const messages = result.messages || result.data || [];
-                const messagesArea = document.getElementById("messagesArea");
-
-                if (!messagesArea) return;
-
-                if (!Array.isArray(messages) || messages.length === 0) {
-                    if (messagesArea.innerHTML === '<div class="loading">No messages yet 💬</div>') {
-                        return; // Already showing, don't refresh
-                    }
-                    messagesArea.innerHTML = '<div class="loading">No messages yet 💬</div>';
-                    return;
+                if (wasAtBottom) {
+                    scrollToBottom();
                 }
 
-                // Store messages globally
-                currentMessages = messages;
-
-                // ✅ SMART LOGIC: Sirf naye messages add karo, scroll mat karo
-                const currentMessageCount = document.querySelectorAll('[data-index]').length;
-                const newMessageCount = messages.length;
-
-                // Agar same number of messages hain to mat reload karo
-                if (currentMessageCount === newMessageCount) {
-                    // Check if any message was modified (deleted/reacted)
-                    const allBubbles = document.querySelectorAll('.message-bubble[data-index]');
-                    let hasChanges = false;
-
-                    allBubbles.forEach((bubble, i) => {
-                        if (i < messages.length) {
-                            const oldText = bubble.getAttribute('data-message');
-                            const newText = messages[i].message;
-                            if (oldText !== newText) {
-                                hasChanges = true;
-                            }
-                        }
-                    });
-
-                    if (!hasChanges) {
-                        return; // No new messages, no changes - don't refresh!
-                    }
-                }
-
-                // ⚠️ If new messages exist, rebuild only once
-                if (newMessageCount > currentMessageCount) {
-                    const wasAtBottom = isScrolledToBottom();
-
-                    // Remove old date badges first
-                    document.querySelectorAll('.message-date').forEach(el => el.remove());
-
-                    // Remove old messages
-                    document.querySelectorAll('[data-index]').forEach(el => el.remove());
-
-                    let currentDate = '';
-
-                    messages.forEach((msg, index) => {
-                        if (!msg.studentName || !msg.message) return;
-
-                        // Add date badge if needed
-                        const msgDate = new Date(msg.timestamp);
-                        const dateStr = formatDate(msgDate);
-
-                        if (dateStr !== currentDate) {
-                            currentDate = dateStr;
-                            const dateBadge = document.createElement('div');
-                            dateBadge.className = 'message-date';
-                            dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
-                            messagesArea.appendChild(dateBadge);
-                        }
-
-                        const messageDiv = createMessageElement(msg, index);
-                        messagesArea.appendChild(messageDiv);
-                    });
-
-                    // Only scroll if was at bottom
-                    if (wasAtBottom) {
-                        scrollToBottom();
-                    }
-
-                    lastMessageCount = newMessageCount;
-                }
+                lastMessageCount = newMessageCount;
 
             } catch (err) {
                 console.error("Fetch error:", err);
             }
         }
-
-        // ============ MESSAGE REFRESH ============
-        function startMessageRefresh() {
-            fetchMessages(); // Initial load
-
-            if (refreshInterval) clearInterval(refreshInterval);
-
-            // ✅ Change to 3 seconds aur smarter logic
-            refreshInterval = setInterval(async () => {
-                if (currentUser) {
-                    const isActive = await verifyAccountStatus(currentUser);
-                    if (!isActive) {
-                        alert('Your account has been blocked by Admin');
-                        localStorage.removeItem('chatUser');
-                        clearInterval(refreshInterval);
-                        window.location.reload();
-                        return;
-                    }
-                }
-                fetchMessages(); // Smart fetch - sirf changes refresh hote hain
-                loadOnlineCount();
-            }, 3000); // 3 seconds - zyada smooth
-        }
-
-
-
 
         // ============ DISPLAY MESSAGES ============
         function displayMessages(messages) {
@@ -2222,25 +2244,29 @@ function previewSignupPhoto(e) {
             const time = msgDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             const firstLetter = msg.studentName.charAt(0).toUpperCase();
 
+            // 🔥 IMPROVED REPLY HTML - Yeh change kar
             let replyHTML = '';
-            if (msg.replyTo && msg.replyTo !== '' && msg.replyTo.includes('|||')) {
-                try {
+            if (msg.replyTo && msg.replyTo.trim() !== '') {
+                // Check if replyTo contains both name and message
+                if (msg.replyTo.includes('|||')) {
                     const replyParts = msg.replyTo.split('|||');
                     if (replyParts.length >= 2) {
-                        const replySender = replyParts[0];
-                        const replyText = replyParts[1];
+                        const replySender = replyParts[0].trim();
+                        const replyText = replyParts[1].trim();
                         const replyTextShort = replyText.length > 30 ? replyText.substring(0, 30) + '...' : replyText;
+
                         replyHTML = `
-        <div class="reply-preview">
-          <div class="reply-name">${escapeHtml(replySender)}</div>
-          <div class="reply-text">${escapeHtml(replyTextShort)}</div>
-        </div>
-      `;
+                    <div class="reply-preview">
+                        <div class="reply-name">${escapeHtml(replySender)}</div>
+                        <div class="reply-text">${escapeHtml(replyTextShort)}</div>
+                    </div>
+                `;
+                        console.log('✅ Reply found:', replySender, '->', replyTextShort); // Debug
                     }
-                } catch (e) {
-                    console.error('Error parsing reply:', e);
                 }
             }
+
+            // ... baaki ka code same rahega
 
             let reactionHTML = '';
             if (msg.reaction && msg.reaction !== '' && !msg.reaction.includes('🕸')) {
@@ -2513,9 +2539,29 @@ function previewSignupPhoto(e) {
             }, 2000);
         }
 
+        // ===============================
+        // ✅ REPLY SYSTEM FIXED VERSION
+        // ===============================
+
+        // ✅ When user clicks “Reply” from context menu
         function replyMessage() {
-            replyMessageByIndex(selectedMessage);
-            hideContextMenu();
+            if (!selectedMessage) return;
+
+            const msgBubble = selectedMessage.querySelector('.message-text');
+            const senderName = selectedMessage.querySelector('.message-sender')?.textContent || 'Unknown';
+            const msgText = msgBubble?.textContent || '';
+
+            // Save reply target
+            replyToMessage = {
+                sender: senderName,
+                text: msgText
+            };
+
+            // Show reply bar
+            const replyBar = document.getElementById('replyBar');
+            replyBar.classList.add('active');
+            document.getElementById('replyName').textContent = senderName;
+            document.getElementById('replyText').textContent = msgText.slice(0, 60);
         }
 
         function replyMessageByIndex(index) {
@@ -2536,11 +2582,13 @@ function previewSignupPhoto(e) {
             document.getElementById('messageInput').focus();
         }
 
+        // ✅ Cancel reply
         function cancelReply() {
             replyToMessage = null;
             document.getElementById('replyBar').classList.remove('active');
+            document.getElementById('replyName').textContent = '';
+            document.getElementById('replyText').textContent = '';
         }
-
 
 
         async function deleteMessage() {
@@ -2601,6 +2649,7 @@ function previewSignupPhoto(e) {
 
 
         // ============ MEMBERS SIDEBAR ============
+        // ============ MEMBERS SIDEBAR ============
         async function toggleMembersSidebar() {
             const sidebar = document.getElementById('membersSidebar');
             const overlay = document.getElementById('sidebarOverlay');
@@ -2623,6 +2672,8 @@ function previewSignupPhoto(e) {
                 const response = await fetch(`${SAD_URL}?action=getAllStudents&t=${Date.now()}`);
                 const data = await response.json();
 
+                console.log('Members API Response:', data); // Debug log
+
                 if (!data.success || !data.students || data.students.length === 0) {
                     membersList.innerHTML = '<div class="loading">No members found</div>';
                     return;
@@ -2637,11 +2688,13 @@ function previewSignupPhoto(e) {
                     memberDiv.className = 'member-item';
 
                     const firstLetter = student.name.charAt(0).toUpperCase();
+                    const rollNo = student.rollNo || 'N/A';
 
                     memberDiv.innerHTML = `
                 <div class="member-avatar">${firstLetter}</div>
                 <div class="member-info">
                     <div class="member-name">${escapeHtml(student.name)}</div>
+                    <div style="font-size: 13px; color: var(--text-secondary); margin-top: 2px;">Roll No: ${escapeHtml(rollNo)}</div>
                 </div>
             `;
 
@@ -2652,6 +2705,17 @@ function previewSignupPhoto(e) {
                 console.error('Error loading members:', error);
                 membersList.innerHTML = '<div class="loading">Error loading members</div>';
             }
+        }
+
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.toString().replace(/[&<>"']/g, m => map[m]);
         }
 
         // ============ WALLPAPER ============
@@ -2690,9 +2754,13 @@ function previewSignupPhoto(e) {
             }
         }
 
+        // ============ LOAD CUSTOM WALLPAPER COUNT ============
         function loadCustomWallpaperCount() {
             const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
             customWallpaperCount = customWallpapers.length;
+
+            // Debug log
+            console.log(`📸 Custom Wallpapers Uploaded: ${customWallpaperCount}/1`);
         }
 
         function setWallpaper(url, element) {
@@ -2711,16 +2779,24 @@ function previewSignupPhoto(e) {
             element.classList.add('active');
         }
 
+        // ============ SINGLE WALLPAPER UPLOAD ONLY ============
         async function uploadCustomWallpaper(e) {
             const file = e.target.files[0];
             if (!file) return;
 
-            // Check if max custom wallpapers limit reached
+            // ✅ Check if user already uploaded a custom wallpaper
             const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
 
-            if (customWallpapers.length >= MAX_CUSTOM_WALLPAPERS) {
-                alert(`❌ You cannot upload more wallpapers!\n\nMaximum limit: ${MAX_CUSTOM_WALLPAPERS} custom wallpapers`);
+            if (customWallpapers.length >= 1) {
+                alert('❌ You already uploaded a wallpaper!\n\n⚠️ You can only upload ONE custom wallpaper.');
                 e.target.value = ''; // Reset file input
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                alert('❌ Please select an image file');
+                e.target.value = '';
                 return;
             }
 
@@ -2732,7 +2808,6 @@ function previewSignupPhoto(e) {
                     // Save to localStorage
                     customWallpapers.push(customUrl);
                     localStorage.setItem('customWallpapers', JSON.stringify(customWallpapers));
-                    customWallpaperCount = customWallpapers.length;
 
                     // Add to grid
                     const grid = document.getElementById('wallpaperGrid');
@@ -2745,7 +2820,7 @@ function previewSignupPhoto(e) {
                     // Set as active wallpaper
                     setWallpaper(customUrl, customItem);
 
-                    alert(`✅ Wallpaper uploaded successfully!\n\nCustom wallpapers: ${customWallpaperCount}/${MAX_CUSTOM_WALLPAPERS}`);
+                    alert('✅ Wallpaper uploaded successfully!\n\n🔒 You cannot upload more wallpapers.');
                 };
                 reader.readAsDataURL(file);
             } catch (error) {
@@ -2782,30 +2857,6 @@ function previewSignupPhoto(e) {
             document.body.setAttribute('data-theme', theme);
         }
 
-        // ============ MESSAGE REFRESH ============
-        function startMessageRefresh() {
-            fetchMessages();
-            if (refreshInterval) clearInterval(refreshInterval);
-            refreshInterval = setInterval(async () => {
-                // Har refresh pe status check karo
-                if (currentUser) {
-                    const isActive = await verifyAccountStatus(currentUser);
-                    if (!isActive) {
-                        localStorage.setItem('blockedUser', 'true');
-                        clearInterval(refreshInterval);
-                        document.body.innerHTML = `
-        <div style="background:#111; color:#ff4c4c; font-size:20px; display:flex; align-items:center; justify-content:center; height:100vh; text-align:center; flex-direction:column;">
-            <div style="font-size:80px;">⛔</div>
-            <p><strong>You are Blocked by Admin</strong></p>
-        </div>`;
-                        return;
-                    }
-                }
-                fetchMessages();
-                loadOnlineCount();
-            }, 1000); // 1 seconds - blink nahi hoga
-        }
-
         // ============ PROFILE FUNCTIONS ============
         function showProfile() {
             const chatContainer = document.getElementById('chatContainer');
@@ -2832,37 +2883,37 @@ function previewSignupPhoto(e) {
             chatContainer.classList.add('active');
             chatContainer.style.display = 'flex';
         }
-async function updateProfilePhoto(e) {
-    const file = e.target.files[0];
-    if (!file) return;
-    
-    // Validate file
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
-    if (!validTypes.includes(file.type)) {
-        alert('❌ Please upload a valid image');
-        return;
-    }
-    
-    if (file.size > 5 * 1024 * 1024) {
-        alert('❌ Image size should be less than 5MB');
-        return;
-    }
+        async function updateProfilePhoto(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-    try {
-        const photoBase64 = await fileToBase64(file);
-        currentUser.photo = photoBase64;
-        localStorage.setItem('chatUser', JSON.stringify(currentUser));
+            // Validate file
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
+            if (!validTypes.includes(file.type)) {
+                alert('❌ Please upload a valid image');
+                return;
+            }
 
-        document.getElementById('profilePhotoLarge').src = photoBase64;
-        document.getElementById('headerProfilePhoto').src = photoBase64;
-        document.getElementById('inputProfilePhoto').src = photoBase64;
+            if (file.size > 5 * 1024 * 1024) {
+                alert('❌ Image size should be less than 5MB');
+                return;
+            }
 
-        alert('✅ Profile photo updated!');
-    } catch (error) {
-        console.error('Update photo error:', error);
-        alert('❌ Error updating photo. Please try again.');
-    }
-}
+            try {
+                const photoBase64 = await fileToBase64(file);
+                currentUser.photo = photoBase64;
+                localStorage.setItem('chatUser', JSON.stringify(currentUser));
+
+                document.getElementById('profilePhotoLarge').src = photoBase64;
+                document.getElementById('headerProfilePhoto').src = photoBase64;
+                document.getElementById('inputProfilePhoto').src = photoBase64;
+
+                alert('✅ Profile photo updated!');
+            } catch (error) {
+                console.error('Update photo error:', error);
+                alert('❌ Error updating photo. Please try again.');
+            }
+        }
 
         // ============ LOGOUT ============
         function logout() {
@@ -2906,12 +2957,15 @@ async function updateProfilePhoto(e) {
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
 
-            signupPage.style.display = 'flex';
-            signupPage.classList.remove('hidden');
+            // Hide everything first
             chatContainer.classList.remove('active');
             chatContainer.style.display = 'none';
             profilePage.classList.remove('active');
             profilePage.style.display = 'none';
+
+            // Show signup
+            signupPage.classList.remove('hidden');
+            signupPage.style.display = 'flex';
         }
 
         function showChat() {
@@ -2919,12 +2973,15 @@ async function updateProfilePhoto(e) {
             const chatContainer = document.getElementById('chatContainer');
             const profilePage = document.getElementById('profilePage');
 
-            signupPage.style.display = 'none';
+            // Hide everything first
             signupPage.classList.add('hidden');
-            chatContainer.classList.add('active');
-            chatContainer.style.display = 'flex';
+            signupPage.style.display = 'none';
             profilePage.classList.remove('active');
             profilePage.style.display = 'none';
+
+            // Show chat
+            chatContainer.classList.add('active');
+            chatContainer.style.display = 'flex';
 
             if (currentUser && currentUser.photo) {
                 document.getElementById('headerProfilePhoto').src = currentUser.photo;
@@ -2933,37 +2990,37 @@ async function updateProfilePhoto(e) {
         }
 
         // ============ HELPER FUNCTIONS ============
-       // ============ IMPROVED FILE TO BASE64 WITH FALLBACK ============
-// ============ AUTO COMPRESS ANY SIZE IMAGE ============
-// ============ HIGH QUALITY COMPRESSION ============
-// ============ ORIGINAL QUALITY - NO COMPRESSION ============
-function fileToBase64(file) {
-    return new Promise((resolve, reject) => {
-        if (!file) {
-            reject(new Error('No file provided'));
-            return;
+        // ============ IMPROVED FILE TO BASE64 WITH FALLBACK ============
+        // ============ AUTO COMPRESS ANY SIZE IMAGE ============
+        // ============ HIGH QUALITY COMPRESSION ============
+        // ============ ORIGINAL QUALITY - NO COMPRESSION ============
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                if (!file) {
+                    reject(new Error('No file provided'));
+                    return;
+                }
+
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    // 🔥 DIRECT BASE64 - NO CANVAS, NO COMPRESSION!
+                    const base64 = e.target.result;
+
+                    const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
+                    console.log(`✅ Original Quality Saved: ${fileSizeMB}MB - NO compression applied!`);
+
+                    resolve(base64);
+                };
+
+                reader.onerror = () => {
+                    console.error('File read failed');
+                    reject(new Error('File read failed'));
+                };
+
+                reader.readAsDataURL(file);
+            });
         }
-        
-        const reader = new FileReader();
-        
-        reader.onload = (e) => {
-            // 🔥 DIRECT BASE64 - NO CANVAS, NO COMPRESSION!
-            const base64 = e.target.result;
-            
-            const fileSizeMB = (file.size / (1024 * 1024)).toFixed(2);
-            console.log(`✅ Original Quality Saved: ${fileSizeMB}MB - NO compression applied!`);
-            
-            resolve(base64);
-        };
-        
-        reader.onerror = () => {
-            console.error('File read failed');
-            reject(new Error('File read failed'));
-        };
-        
-        reader.readAsDataURL(file);
-    });
-}
 
         document.getElementById("contextMenuDelete").onclick = deleteMessage;
 
