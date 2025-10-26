@@ -5,6 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Class Group Chat</title>
+    <!-- ✅ Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -16,6 +20,7 @@
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
         }
 
         :root {
@@ -50,13 +55,20 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
             background: var(--bg-primary);
             color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
             position: fixed;
             width: 100%;
+        }
+
+        input,
+        textarea,
+        button,
+        select {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
         }
 
         /* Loader Animation */
@@ -208,7 +220,7 @@
 
         .auth-header {
             text-align: center;
-            margin-top: 150px;
+            margin-top: 180px;
             margin-bottom: 30px;
         }
 
@@ -383,6 +395,8 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
+            background-attachment: fixed;
+            /* ✅ Fixed position */
             background-attachment: scroll;
             scroll-behavior: smooth;
             display: flex;
@@ -393,35 +407,31 @@
             background-color: #e5ddd5;
         }
 
+        [data-theme="light"] .date-badge {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
         .message-date {
             text-align: center;
-            margin: 0px 0px 10px 0px;
             position: sticky;
-            top: 10px;
-            z-index: 1;
+            margin-top: 0px 0px 0px 0px;
+            top: -20px;
+            z-index: 10;
+            padding: 0px 0px;
+            background: transparent;
         }
 
         .date-badge {
-            width: 130px;
-            text-align: center;
             display: inline-block;
-            background: var(--bg-input);
-            padding: 5px 12px;
+            background: rgba(42, 57, 66, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 6px 14px;
             border-radius: 8px;
             font-size: 12px;
             color: var(--text-secondary);
-            margin: 10px auto;
-            /* display: inline-block;
-            background: var(--bg-input);
-            padding: 5px 12px;
-            border-radius: 7px;
-            font-size: 12px;
-            color: var(--text-secondary);
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-            width: 150px; */
-            /* ✅ Fixed width */
-            /* text-align: center; */
-            /* Center text inside */
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            font-weight: 500;
         }
 
 
@@ -1093,6 +1103,78 @@
             color: var(--text-primary);
             font-size: 14px;
         }
+
+        /* ============ MESSAGE STATUS ICONS ============ */
+        .message-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            margin-left: 5px;
+            font-size: 14px;
+            vertical-align: middle;
+            transition: all 0.3s ease;
+        }
+
+        .status-clock {
+            color: #8696a0;
+            animation: clockRotate 0.9s ease;
+        }
+
+        .status-tick-single {
+            color: #8696a0 !important;
+            animation: tickFadeIn 0.9s ease;
+        }
+
+        .status-tick-double {
+            color: #8696a0 !important;
+            animation: tickFadeIn 0.9s ease;
+        }
+
+        .status-tick-double.read {
+            color: #53bdeb !important;
+            animation: blueTickPop 0.9s ease;
+        }
+
+        @keyframes clockRotate {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg) scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        @keyframes tickFadeIn {
+            from {
+                opacity: 0;
+                transform: rotate(-180deg) scale(0.5);
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(0deg) scale(1);
+            }
+        }
+
+        @keyframes blueTickPop {
+            0% {
+                transform: scale(1);
+                color: #8696a0;
+            }
+
+            50% {
+                transform: scale(1.4);
+                color: #53bdeb;
+            }
+
+            100% {
+                transform: scale(1);
+                color: #53bdeb;
+            }
+        }
     </style>
 </head>
 
@@ -1299,37 +1381,18 @@
         </div>
     </div>
 
-    <!-- Context Menu -->
-    <div id="contextMenu" class="context-menu">
-        <div class="context-menu-item" onclick="copyMessage()">
-            <span>📋</span> Copy
-        </div>
-        <div class="context-menu-item" onclick="replyMessage()">
-            <span>↩️</span> Reply
-        </div>
-        <div class="context-menu-item delete" onclick="deleteMessage()" id="deleteOption"
-            style="display: none; opacity: 0; visibility: hidden;">
-            <span>🗑️</span> Delete
-        </div>
-    </div>
-
-    <!-- Copy Toast -->
-    <div id="copyToast" class="copy-toast">
-        ✅ Message copied
-    </div>
-
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
         const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbwjW2PwdcFGZULOBHYem8hVQ2YK3dKCiyaKZt2kOdVOwXS8Zl1zp2werZSCtZzWE359/exec";
-        const MAX_CUSTOM_WALLPAPERS = 5;
+        const MAX_CUSTOM_WALLPAPERS = 1;
 
         // ============ WALLPAPERS ============
+        const DEFAULT_WALLPAPER = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
         const WALLPAPERS = [
-            { name: 'Dark Abstract', url: 'https://images.unsplash.com/photo-1557683311-eac922347aa1?w=800&q=80' },
-            { name: 'Blue Wave', url: 'https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=800&q=80' },
-            { name: 'Purple Space', url: 'https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=800&q=80' },
+            { name: 'Wallpeper 2', url: 'https://w0.peakpx.com/wallpaper/457/910/HD-wallpaper-whatsapp-black-patterns-dark.jpg' },
+            { name: 'Wallpeper 3', url: 'https://i.pinimg.com/236x/cd/0a/36/cd0a36a8cecd3c7185c35450cc98b66f.jpg' },
             { name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
             { name: 'Neon Lights', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80' },
             { name: 'Ocean Blue', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' },
@@ -1349,6 +1412,27 @@
             { name: 'Deep Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' }
         ];
 
+        function applySettings() {
+            const wallpaper = localStorage.getItem('chatWallpaper');
+
+            // ✅ If no wallpaper saved, use default
+            if (!wallpaper || wallpaper === 'none') {
+                document.getElementById('messagesArea').style.backgroundImage = `url(${DEFAULT_WALLPAPER})`;
+                localStorage.setItem('chatWallpaper', DEFAULT_WALLPAPER);
+            } else {
+                document.getElementById('messagesArea').style.backgroundImage = `url(${wallpaper})`;
+            }
+
+            const fontSize = localStorage.getItem('fontSize');
+            if (fontSize) {
+                document.documentElement.style.setProperty('--font-size', fontSize + 'px');
+                document.getElementById('fontSizeDisplay').textContent = fontSize + 'px';
+            }
+
+            const theme = localStorage.getItem('theme') || 'dark';
+            document.body.setAttribute('data-theme', theme);
+        }
+
         // ============ STATE MANAGEMENT ============
         let currentUser = null;
         let refreshInterval = null;
@@ -1364,6 +1448,49 @@
         let lastMessageSentTime = 0;
         let isFirstMessage = true;
         let pendingMessageId = null;
+        let serverDate = null;
+        let dateOffset = 0;
+        // ============ SOUND EFFECTS ============
+        const sendSound = new Audio('https://cdn.freesound.org/previews/720/720277_7037-lq.mp3');
+        const receiveSound = new Audio('https://cdn.freesound.org/previews/720/720280_7037-lq.mp3');
+        sendSound.volume = 0.7;
+        receiveSound.volume = 0.7;
+
+        let lastReceivedMessageCount = 0; // Track received messages
+
+
+        // ============ FETCH REAL DATE FROM API ============
+        async function fetchRealDate() {
+            try {
+                // WorldTimeAPI se India time fetch karo
+                const response = await fetch('https://worldtimeapi.org/api/timezone/Asia/Kolkata');
+                const data = await response.json();
+
+                serverDate = new Date(data.datetime);
+                const localDate = new Date();
+
+                // Calculate offset between server and local time
+                dateOffset = serverDate.getTime() - localDate.getTime();
+
+                console.log('✅ Real Server Date:', serverDate.toLocaleString());
+                console.log('📅 Local Date:', localDate.toLocaleString());
+                console.log('⏰ Offset:', Math.round(dateOffset / 1000), 'seconds');
+
+                return serverDate;
+            } catch (error) {
+                console.error('❌ Date API Error:', error);
+                // Fallback to local date if API fails
+                return new Date();
+            }
+        }
+
+        // Get current date (with server sync)
+        function getCurrentDate() {
+            if (dateOffset !== 0) {
+                return new Date(Date.now() + dateOffset);
+            }
+            return new Date();
+        }
 
         // ============ EMOJIS ============
         const REACTION_EMOJIS = ['❤️', '😂', '😮', '😢', '🙏', '👍', '👎', '🔥', '🎉', '😍', '😡', '💯', '✅', '❌'];
@@ -1516,6 +1643,7 @@
         // ============ 🔥 CLEAN CHECKAUTH - NO ISSUES ============
         async function checkAuth() {
             try {
+                await fetchRealDate();
                 const userDataString = localStorage.getItem('chatUser');
                 const isBlocked = localStorage.getItem('blockedUser');
 
@@ -1667,17 +1795,22 @@
 
             // Initial load
             fetchMessages();
+            fetchRealDate(); // ✅ Date bhi sync karo
 
             // Clear old interval
             if (refreshInterval) clearInterval(refreshInterval);
 
-            // ✅ Refresh every 4 seconds (optimized)
+            // ✅ Refresh every 3 seconds
             refreshInterval = setInterval(() => {
                 fetchMessages();
                 loadOnlineCount();
-            }, 3000);
+            }, 2000);
 
-            // ✅ Start status monitoring
+            // ✅ Date sync every 5 minutes
+            setInterval(() => {
+                fetchRealDate();
+            }, 300000); // 5 minutes
+
             startStatusMonitoring();
         }
 
@@ -1735,35 +1868,6 @@
 
             // Scroll event for date badge visibility
             const messagesArea = document.getElementById('messagesArea');
-            messagesArea.addEventListener('scroll', handleScroll);
-
-        }
-
-        function handleScroll() {
-            const messagesArea = document.getElementById('messagesArea');
-            const currentScroll = messagesArea.scrollTop;
-            const dateBadges = document.querySelectorAll('.message-date');
-
-            dateBadges.forEach((badge, index) => {
-                const rect = badge.getBoundingClientRect();
-                const messagesRect = messagesArea.getBoundingClientRect();
-
-                // Hide "Today" badge if not at top
-                if (badge.querySelector('.date-badge').textContent === 'Today') {
-                    if (currentScroll > 100) {
-                        badge.style.display = 'none';
-                    } else {
-                        badge.style.display = 'block';
-                    }
-                }
-
-                // Show/hide other date badges based on scroll position
-                if (rect.top >= messagesRect.top && rect.top <= messagesRect.top + 100) {
-                    badge.style.display = 'block';
-                }
-            });
-
-            lastScrollPosition = currentScroll;
         }
 
         function autoResize() {
@@ -1974,7 +2078,7 @@
             sendBtn.disabled = true;
 
             try {
-                const msgTimestamp = new Date();
+                const msgTimestamp = getCurrentDate();
                 const replyData = replyToMessage ? `${replyToMessage.sender}|||${replyToMessage.text}` : '';
 
                 const messageData = {
@@ -1987,18 +2091,19 @@
 
                 console.log('📤 Sending message:', messageData);
 
-                // 🔥 CREATE TEMP MESSAGE
+                // ✅ CREATE TEMP MESSAGE
+                const tempId = 'temp_' + Date.now();
                 const tempMessage = {
                     studentName: currentUser.name,
                     message: messageText,
                     timestamp: msgTimestamp.toISOString(),
-                    replyTo: replyData
+                    replyTo: replyData,
+                    tempId: tempId,
+                    status: 'sending' // ⏱ Clock
                 };
 
-                // 🔥 ADD TO GLOBAL ARRAY FIRST
                 currentMessages.push(tempMessage);
 
-                // ✅ Show message instantly IN SENDER'S CHAT
                 const messagesArea = document.getElementById('messagesArea');
                 const messageDiv = createMessageElement(tempMessage, currentMessages.length - 1);
                 messagesArea.appendChild(messageDiv);
@@ -2009,11 +2114,48 @@
                 msgInput.style.height = 'auto';
                 cancelReply();
 
-                // 🔥 BLOCK FETCH FOR 15 SECONDS (sender ko apna message dikhega)
-                localStorage.setItem('lastSentTime', Date.now().toString());
-                localStorage.setItem('myLastMessage', messageText); // Track sender's message
+                // 🔊 SEND SOUND - 1 second baad
+                setTimeout(() => {
+                    try {
+                        sendSound.currentTime = 0;
+                        sendSound.play().catch(e => console.log('🔇 Blocked'));
+                        console.log('🔊 SEND SOUND!');
+                    } catch (e) { }
+                }, 1000);
 
-                // Save to sheet (background)
+                // ✅ PERFECT ANIMATION SEQUENCE
+                // Step 1: Clock icon - 0.9 seconds
+                setTimeout(() => {
+                    tempMessage.status = 'sent';
+                    updateMessageStatus(messageDiv, 'sent');
+                    console.log('✓ Single tick grey');
+
+                    // Step 2: Single tick - 0.9 seconds
+                    setTimeout(() => {
+                        tempMessage.status = 'delivered';
+                        updateMessageStatus(messageDiv, 'delivered');
+                        console.log('✓✓ Double tick grey');
+
+                        // Step 3: Double tick grey - 0.9 seconds
+                        setTimeout(() => {
+                            tempMessage.status = 'read';
+                            updateMessageStatus(messageDiv, 'read');
+                            console.log('✓✓ Double tick BLUE - FINAL!');
+                        }, 900); // 0.9 sec for double grey
+
+                    }, 900); // 0.9 sec for single tick
+
+                }, 900); // 0.9 sec for clock
+
+                // Block fetch
+                const blockDuration = messageText.length > 100 ? 20000 : 15000;
+                localStorage.setItem('lastSentTime', Date.now().toString());
+                localStorage.setItem('myLastMessage', messageText);
+                localStorage.setItem('blockDuration', blockDuration.toString());
+
+                console.log(`🚫 Fetch blocked for ${blockDuration / 1000}s`);
+
+                // Save to sheet
                 const response = await fetch(SMD_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -2023,13 +2165,45 @@
                 const result = await response.json();
                 console.log('✅ Message saved to sheet:', result);
 
+                if (result.success) {
+                    const tempMsg = currentMessages.find(m => m.tempId === tempId);
+                    if (tempMsg) {
+                        delete tempMsg.tempId;
+                    }
+                }
+
             } catch (err) {
                 console.error('Send Error:', err);
                 alert('Error sending message: ' + err.message);
-                currentMessages.pop(); // Remove temp message on error
+                currentMessages.pop();
+                displayMessages(currentMessages);
             } finally {
                 isSending = false;
                 sendBtn.disabled = false;
+            }
+        }
+
+        function updateMessageStatus(messageDiv, status) {
+            if (!messageDiv) return;
+
+            const statusElement = messageDiv.querySelector('.message-status');
+            if (!statusElement) return;
+
+            // Remove all classes
+            statusElement.className = 'message-status';
+
+            if (status === 'sending') {
+                statusElement.classList.add('status-clock');
+                statusElement.textContent = '⏱';
+            } else if (status === 'sent') {
+                statusElement.classList.add('status-tick-single');
+                statusElement.textContent = '✓';
+            } else if (status === 'delivered') {
+                statusElement.classList.add('status-tick-double');
+                statusElement.textContent = '✓✓';
+            } else if (status === 'read') {
+                statusElement.classList.add('status-tick-double', 'read');
+                statusElement.textContent = '✓✓';
             }
         }
 
@@ -2085,17 +2259,19 @@
 
 
         async function fetchMessages() {
-            // 🔥 ULTRA CHECK: If this user just sent a message, BLOCK fetch completely
+            // ✅ CHECK BLOCK DURATION
             const lastSent = localStorage.getItem('lastSentTime');
+            const blockDuration = parseInt(localStorage.getItem('blockDuration') || '15000');
+
             if (lastSent) {
                 const timeSinceSent = Date.now() - parseInt(lastSent);
-                if (timeSinceSent < 15000) { // 15 seconds block
-                    console.log('🚫 SENDER BLOCKED: ' + Math.ceil((15000 - timeSinceSent) / 1000) + 's remaining');
-                    return; // ABSOLUTELY NO FETCH!
+                if (timeSinceSent < blockDuration) {
+                    console.log(`🚫 SENDER BLOCKED: ${Math.ceil((blockDuration - timeSinceSent) / 1000)}s remaining`);
+                    return;
                 } else {
-                    // Clear flag after cooldown
                     localStorage.removeItem('lastSentTime');
                     localStorage.removeItem('myLastMessage');
+                    localStorage.removeItem('blockDuration');
                 }
             }
 
@@ -2108,7 +2284,6 @@
 
                 if (!messagesArea) return;
 
-                // Remove loading text
                 const loadingElement = messagesArea.querySelector('.loading');
                 if (loadingElement) {
                     loadingElement.remove();
@@ -2121,29 +2296,71 @@
                     return;
                 }
 
-                // 🔥 CHECK: If sender's own message is in DOM, DON'T rebuild
+                // 🔊 CHECK FOR NEW RECEIVED MESSAGES
+                const receivedMessages = messages.filter(m =>
+                    m.studentName.trim().toLowerCase() !== currentUser.name.trim().toLowerCase()
+                );
+
+                if (receivedMessages.length > lastReceivedMessageCount) {
+                    console.log('📩 NEW MESSAGE RECEIVED!');
+
+                    // 🔊 RECEIVE SOUND PLAY
+                    try {
+                        receiveSound.currentTime = 0;
+                        receiveSound.play().catch(e => console.log('🔇 Receive sound blocked'));
+                        console.log('🔊 RECEIVE SOUND PLAYED!');
+                    } catch (e) { }
+
+                    lastReceivedMessageCount = receivedMessages.length;
+                }
+
+                // Blue tick logic
+                const sentMessages = document.querySelectorAll('.message.sent .status-tick-double');
+                if (receivedMessages.length > 0) {
+                    sentMessages.forEach(icon => {
+                        icon.classList.add('read');
+                    });
+                }
+
                 const myLastMsg = localStorage.getItem('myLastMessage');
                 if (myLastMsg) {
                     const existingMessages = Array.from(messagesArea.querySelectorAll('.message-text'));
                     const hasMyMessage = existingMessages.some(el => el.textContent.trim() === myLastMsg.trim());
 
                     if (hasMyMessage) {
-                        console.log('✅ Sender message already visible, skipping rebuild');
+                        console.log('✅ Your message already visible');
 
-                        // Only add NEW messages from others
                         const currentDOMCount = messagesArea.querySelectorAll('.message').length;
                         if (messages.length > currentDOMCount) {
                             const newMessages = messages.slice(currentDOMCount);
+
+                            const hasNewFromOthers = newMessages.some(msg =>
+                                msg.studentName.trim().toLowerCase() !== currentUser.name.trim().toLowerCase()
+                            );
+
+                            if (hasNewFromOthers) {
+                                console.log('💙 New message received! Turning to blue tick...');
+                                const sentMessages = messagesArea.querySelectorAll('.message.sent');
+                                if (sentMessages.length > 0) {
+                                    const lastSentMsg = sentMessages[sentMessages.length - 1];
+                                    setTimeout(() => {
+                                        updateMessageStatus(lastSentMsg, 'read');
+                                    }, 100);
+                                }
+                            }
+
                             newMessages.forEach((msg, idx) => {
+                                if (msg.message.trim() === myLastMsg.trim()) return;
+
                                 const messageDiv = createMessageElement(msg, currentDOMCount + idx);
                                 messagesArea.appendChild(messageDiv);
                             });
+                            currentMessages = messages;
                         }
                         return;
                     }
                 }
 
-                // 🔥 NORMAL REBUILD (for other users)
                 const currentDOMCount = messagesArea.querySelectorAll('.message').length;
                 const newMessageCount = messages.length;
 
@@ -2152,36 +2369,10 @@
                     return;
                 }
 
-                console.log(`📥 Fetching ${newMessageCount - currentDOMCount} new messages`);
+                console.log(`🔥 Fetching ${newMessageCount - currentDOMCount} new messages`);
 
                 currentMessages = messages;
-                const wasAtBottom = isScrolledToBottom();
-
-                messagesArea.innerHTML = '';
-                let currentDate = '';
-
-                messages.forEach((msg, index) => {
-                    if (!msg.studentName || !msg.message) return;
-
-                    const msgDate = new Date(msg.timestamp);
-                    const dateStr = formatDate(msgDate);
-
-                    if (dateStr !== currentDate) {
-                        currentDate = dateStr;
-                        const dateBadge = document.createElement('div');
-                        dateBadge.className = 'message-date';
-                        dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
-                        messagesArea.appendChild(dateBadge);
-                    }
-
-                    const messageDiv = createMessageElement(msg, index);
-                    messagesArea.appendChild(messageDiv);
-                });
-
-                if (wasAtBottom) {
-                    scrollToBottom();
-                }
-
+                displayMessages(messages);
                 lastMessageCount = newMessageCount;
 
             } catch (err) {
@@ -2190,33 +2381,27 @@
         }
 
         // ============ DISPLAY MESSAGES ============
+        // ============ DISPLAY MESSAGES ============
         function displayMessages(messages) {
             const container = document.getElementById('messagesArea');
             const wasAtBottom = isScrolledToBottom();
-            const currentScroll = container.scrollTop;
 
             container.innerHTML = '';
             let currentDate = '';
-            let todayBadgeShown = false;
 
             messages.forEach((msg, index) => {
+                if (!msg.studentName || !msg.message) return;
+
                 const msgDate = new Date(msg.timestamp);
                 const dateStr = formatDate(msgDate);
 
+                // ✅ ONLY add date badge when date CHANGES
                 if (dateStr !== currentDate) {
                     currentDate = dateStr;
                     const dateBadge = document.createElement('div');
                     dateBadge.className = 'message-date';
-
-                    // Hide "Today" badge if scrolled down
-                    if (dateStr === 'Today' && currentScroll > 100) {
-                        dateBadge.style.display = 'none';
-                    }
-
                     dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
                     container.appendChild(dateBadge);
-
-                    if (dateStr === 'Today') todayBadgeShown = true;
                 }
 
                 const messageDiv = createMessageElement(msg, index);
@@ -2239,15 +2424,15 @@
             messageDiv.setAttribute('data-index', index);
             messageDiv.setAttribute('data-message', msg.message);
             messageDiv.setAttribute('data-sender', msg.studentName);
+            messageDiv.setAttribute('data-timestamp', msg.timestamp); // ✅ Add timestamp
 
             const msgDate = new Date(msg.timestamp);
             const time = msgDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
             const firstLetter = msg.studentName.charAt(0).toUpperCase();
 
-            // 🔥 IMPROVED REPLY HTML - Yeh change kar
+            // Reply HTML
             let replyHTML = '';
             if (msg.replyTo && msg.replyTo.trim() !== '') {
-                // Check if replyTo contains both name and message
                 if (msg.replyTo.includes('|||')) {
                     const replyParts = msg.replyTo.split('|||');
                     if (replyParts.length >= 2) {
@@ -2261,13 +2446,11 @@
                         <div class="reply-text">${escapeHtml(replyTextShort)}</div>
                     </div>
                 `;
-                        console.log('✅ Reply found:', replySender, '->', replyTextShort); // Debug
                     }
                 }
             }
 
-            // ... baaki ka code same rahega
-
+            // Reaction HTML
             let reactionHTML = '';
             if (msg.reaction && msg.reaction !== '' && !msg.reaction.includes('🕸')) {
                 const reactions = parseReactions(msg.reaction);
@@ -2292,10 +2475,25 @@
             if (isDeleted) {
                 messageTextHTML = `<div class="message-text deleted">Deleted</div>`;
             } else {
-                // Preserve line breaks and formatting
                 const formattedText = msg.message.replace(/\n/g, '<br>');
                 const textWithLinks = linkify(formattedText);
                 messageTextHTML = `<div class="message-text">${textWithLinks}</div>`;
+            }
+
+            // ✅ STATUS ICON (only for sent messages)
+            let statusIcon = '';
+            if (isSent && !isDeleted) {
+                const status = msg.status || 'read'; // 🔥 DEFAULT: Blue double tick
+
+                if (status === 'sending') {
+                    statusIcon = '<span class="message-status status-clock">⏱</span>';
+                } else if (status === 'sent') {
+                    statusIcon = '<span class="message-status status-tick-single">✓</span>';
+                } else if (status === 'delivered') {
+                    statusIcon = '<span class="message-status status-tick-double">✓✓</span>';
+                } else if (status === 'read') {
+                    statusIcon = '<span class="message-status status-tick-double read">✓✓</span>';
+                }
             }
 
             messageDiv.innerHTML = `
@@ -2308,7 +2506,7 @@
                 ${!isSent ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
                 ${replyHTML}
                 ${messageTextHTML}
-                <div class="message-time">${time}</div>
+                <div class="message-time">${time}${statusIcon}</div>
                 ${reactionHTML}
             </div>
         </div>
@@ -2428,17 +2626,23 @@
 
         function formatDate(dateString) {
             const date = new Date(dateString);
-            const now = new Date();
+            const now = getCurrentDate(); // ✅ Real date use karo
 
-            // Convert both to local midnight for comparison
+            // Reset time to midnight for accurate comparison
             const msgDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
             const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             const yesterday = new Date(today);
-            yesterday.setDate(today.getDate() - 1);
+            yesterday.setDate(yesterday.getDate() - 1);
 
-            if (msgDate.getTime() === today.getTime()) return 'Today';
-            if (msgDate.getTime() === yesterday.getTime()) return 'Yesterday';
-            return msgDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+            const diffTime = today.getTime() - msgDate.getTime();
+            const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+
+            if (diffDays === 0) return 'Today';
+            if (diffDays === 1) return 'Yesterday';
+
+            // Format: "Oct 24, Sun"
+            const options = { month: 'short', day: 'numeric', weekday: 'short' };
+            return msgDate.toLocaleDateString('en-US', options);
         }
 
 
@@ -2723,16 +2927,29 @@
             const grid = document.getElementById('wallpaperGrid');
             grid.innerHTML = '';
 
-            const noneItem = document.createElement('div');
-            noneItem.className = 'wallpaper-item active';
-            noneItem.onclick = () => setWallpaper('none', noneItem);
-            noneItem.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-            noneItem.innerHTML = '<div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:white;font-size:16px;font-weight:bold;">None</div>';
-            grid.appendChild(noneItem);
+            // ✅ CHANGE: None → Default with your wallpaper
+            const defaultItem = document.createElement('div');
+            defaultItem.className = 'wallpaper-item';
 
+            // Check if this should be active
+            const savedWallpaper = localStorage.getItem('chatWallpaper');
+            if (!savedWallpaper || savedWallpaper === 'none' || savedWallpaper === 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg') {
+                defaultItem.classList.add('active');
+            }
+
+            defaultItem.onclick = () => setWallpaper('https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg', defaultItem);
+            defaultItem.innerHTML = `<img src="https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg" alt="Default">`;
+            grid.appendChild(defaultItem);
+
+            // Rest wallpapers
             WALLPAPERS.forEach(wallpaper => {
                 const item = document.createElement('div');
                 item.className = 'wallpaper-item';
+
+                if (savedWallpaper === wallpaper.url) {
+                    item.classList.add('active');
+                }
+
                 item.onclick = () => setWallpaper(wallpaper.url, item);
                 item.innerHTML = `<img src="${wallpaper.url}" alt="${wallpaper.name}">`;
                 grid.appendChild(item);
@@ -2743,14 +2960,22 @@
             customWallpapers.forEach(wallpaperUrl => {
                 const item = document.createElement('div');
                 item.className = 'wallpaper-item';
+
+                if (savedWallpaper === wallpaperUrl) {
+                    item.classList.add('active');
+                }
+
                 item.onclick = () => setWallpaper(wallpaperUrl, item);
                 item.innerHTML = `<img src="${wallpaperUrl}" alt="Custom">`;
                 grid.appendChild(item);
             });
 
-            const savedWallpaper = localStorage.getItem('chatWallpaper');
+            // Apply saved wallpaper
             if (savedWallpaper && savedWallpaper !== 'none') {
                 document.getElementById('messagesArea').style.backgroundImage = `url(${savedWallpaper})`;
+            } else {
+                // ✅ Default wallpaper
+                document.getElementById('messagesArea').style.backgroundImage = `url(https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg)`;
             }
         }
 
@@ -2765,14 +2990,12 @@
 
         function setWallpaper(url, element) {
             const messagesArea = document.getElementById('messagesArea');
-            if (url === 'none') {
-                messagesArea.style.backgroundImage = 'none';
-                localStorage.setItem('chatWallpaper', 'none');
-            } else {
-                messagesArea.style.backgroundImage = `url(${url})`;
-                localStorage.setItem('chatWallpaper', url);
-            }
 
+            // ✅ REMOVE: none check (ab none nahi hai)
+            messagesArea.style.backgroundImage = `url(${url})`;
+            localStorage.setItem('chatWallpaper', url);
+
+            // Update active state
             document.querySelectorAll('.wallpaper-item').forEach(item => {
                 item.classList.remove('active');
             });
@@ -2843,7 +3066,13 @@
 
         function applySettings() {
             const wallpaper = localStorage.getItem('chatWallpaper');
-            if (wallpaper && wallpaper !== 'none') {
+
+            // ✅ Default wallpaper if nothing saved
+            if (!wallpaper || wallpaper === 'none') {
+                const defaultWallpaper = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+                localStorage.setItem('chatWallpaper', defaultWallpaper);
+            } else {
                 document.getElementById('messagesArea').style.backgroundImage = `url(${wallpaper})`;
             }
 
@@ -2987,6 +3216,14 @@
                 document.getElementById('headerProfilePhoto').src = currentUser.photo;
                 document.getElementById('inputProfilePhoto').src = currentUser.photo;
             }
+
+            // ✅ Set default wallpaper
+            const wallpaper = localStorage.getItem('chatWallpaper');
+            if (!wallpaper || wallpaper === 'none') {
+                const defaultWallpaper = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+                localStorage.setItem('chatWallpaper', defaultWallpaper);
+            }
         }
 
         // ============ HELPER FUNCTIONS ============
@@ -3028,5 +3265,3 @@
 </body>
 
 </html>
-
-
