@@ -426,7 +426,7 @@
             display: inline-block;
             background: rgba(42, 57, 66, 0.95);
             backdrop-filter: blur(10px);
-            padding: 8px 14px;
+            padding: 6px 16px;
             border-radius: 8px;
             font-size: 12px;
             color: var(--text-secondary);
@@ -1190,7 +1190,7 @@
             content: '👑';
             position: absolute;
             bottom: -8px;
-            left: 12px;
+            left: 5px;
             font-size: 20px;
             text-shadow: 0px 0px 3px black;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
@@ -1493,24 +1493,25 @@
         const DEFAULT_WALLPAPER = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
         const WALLPAPERS = [
             { name: 'Wallpeper 2', url: 'https://w0.peakpx.com/wallpaper/457/910/HD-wallpaper-whatsapp-black-patterns-dark.jpg' },
-            { name: 'Wallpeper 3', url: 'https://i.pinimg.com/236x/cd/0a/36/cd0a36a8cecd3c7185c35450cc98b66f.jpg' },
-            { name: 'Dark Mountains', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
-            { name: 'Neon Lights', url: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=800&q=80' },
-            { name: 'Ocean Blue', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' },
-            { name: 'Galaxy Stars', url: 'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80' },
-            { name: 'Sunset Sky', url: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80' },
-            { name: 'Forest Green', url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&q=80' },
-            { name: 'Pink Clouds', url: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=800&q=80' },
-            { name: 'Aurora Night', url: 'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80' },
-            { name: 'Desert Sand', url: 'https://images.unsplash.com/photo-1509316785289-025f5b846b35?w=800&q=80' },
-            { name: 'Lavender Dream', url: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80' },
-            { name: 'Starry Night', url: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80' },
-            { name: 'Cherry Blossom', url: 'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=800&q=80' },
-            { name: 'Tropical Beach', url: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=800&q=80' },
-            { name: 'Mountain Lake', url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80' },
-            { name: 'Colorful Smoke', url: 'https://images.unsplash.com/photo-1553356084-58ef4a67b2a7?w=800&q=80' },
-            { name: 'Autumn Leaves', url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80' },
-            { name: 'Deep Ocean', url: 'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=800&q=80' }
+            { name: 'Wallpeper 3', url: 'https://i.pinimg.com/474x/e4/84/b6/e484b6bdd768c259162daefdc20994bd.jpg' },
+            { name: 'Wallpeper 4', url: 'https://i.pinimg.com/474x/91/70/f3/9170f305bff38dbdcc005570eadc9de9.jpg' },
+            { name: 'Wallpeper 5', url: 'https://i.pinimg.com/736x/c7/0d/61/c70d613f9dac81944d7cccd8bc96a4be.jpg' },
+            { name: 'Wallpeper 6', url: 'https://i.pinimg.com/1200x/3f/a7/1e/3fa71ec639d480cb71151d458f1af257.jpg' },
+            { name: 'Wallpeper 7', url: 'https://i.pinimg.com/736x/19/63/d1/1963d13cc3fba4e2fd6ddea286284a90.jpg' },
+            { name: 'Wallpeper 8', url: 'https://i.pinimg.com/564x/4a/1a/52/4a1a52f7910b68d29b73b05a9c4cf854.jpg' },
+            { name: 'Wallpeper 9', url: 'https://i.pinimg.com/736x/0b/21/cb/0b21cb6ed83cef4898cd26c476b9b911.jpg' },
+            { name: 'Wallpeper 11', url: 'https://i.pinimg.com/474x/91/70/f3/9170f305bff38dbdcc005570eadc9de9.jpg' },
+            { name: 'Wallpeper 12', url: 'https://i.pinimg.com/236x/c0/fa/1e/c0fa1e296267df74606203db8f5928a6.jpg' },
+            { name: 'Wallpeper 13', url: 'https://i.pinimg.com/236x/2c/78/ec/2c78ecbd3f965cf29d658cdc85e29517.jpg' },
+            { name: 'Wallpeper 14', url: 'https://i.pinimg.com/564x/08/37/7c/08377cece016ce76b8ba539129bd4012.jpg' },
+            { name: 'Wallpeper 15', url: 'https://wallpapercave.com/wp/wp10889605.jpg' },
+            { name: 'Wallpeper 16', url: 'https://i.pinimg.com/564x/75/c8/25/75c825e51312db0be8033f9b394cd395.jpg' },
+            { name: 'Wallpeper 17', url: 'https://mrwallpaper.com/images/thumbnail/cute-black-planet-aesthetic-ehpy1pjtrisfgw32.jpg' },
+            { name: 'Wallpeper 21', url: 'https://i.pinimg.com/736x/0c/99/fc/0c99fc61e69b4d876c395bd7ef517b93.jpg' },
+            { name: 'Wallpeper 22', url: 'https://i.pinimg.com/736x/59/55/1a/59551a6e10a304207a445a84a771b71e.jpg' },
+            { name: 'Wallpeper 23', url: 'https://i.pinimg.com/474x/7f/a2/2b/7fa22bb96f19a0c760160e796e9d2bb5.jpg' },
+            { name: 'Wallpeper 23', url: 'https://i.pinimg.com/736x/fd/6b/4c/fd6b4c58f84703955cb7e91419c59d5f.jpg' },
+            { name: 'Wallpeper 23', url: 'https://i.pinimg.com/564x/08/6d/c7/086dc716585f7abdba1730ac3619b704.jpg' }
         ];
 
         function applySettings() {
@@ -2595,10 +2596,15 @@
         function createMessageElement(msg, index) {
             const messageDiv = document.createElement('div');
             const isSent = msg.studentName.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
-            const isDeleted = msg.message === '❌';
+            const isDeleted = msg.message === 'âŒ';
             const isAdminMsg = isAdmin(msg.studentName);
 
-            messageDiv.className = isAdminMsg ? 'message admin' : (isSent ? 'message sent' : 'message received');
+            // ✅ FIX: Admin ko apne msg right side dikhne chahiye
+            if (isSent) {
+                messageDiv.className = isAdminMsg ? 'message sent admin' : 'message sent';
+            } else {
+                messageDiv.className = isAdminMsg ? 'message received admin' : 'message received';
+            }
 
             messageDiv.setAttribute('data-index', index);
             messageDiv.setAttribute('data-message', msg.message);
@@ -2647,7 +2653,7 @@
             // Avatar HTML
             let avatarHTML = '';
             if (isAdminMsg) {
-                avatarHTML = `<div class="message-avatar" style="background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%); color: white; font-weight: 700; border: 2px solid #FF8C00;">👑</div>`;
+                avatarHTML = `<div class="message-avatar" style="background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%); color: white; font-weight: 700; border: 2px solid #FF8C00; text-shadow: 0px 0px 3px black;">👑</div>`;
             } else {
                 const userPhoto = getUserPhoto(msg.studentName);
                 if (userPhoto) {
