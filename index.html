@@ -426,7 +426,7 @@
             display: inline-block;
             background: rgba(42, 57, 66, 0.95);
             backdrop-filter: blur(10px);
-            padding: 6px 14px;
+            padding: 8px 14px;
             border-radius: 8px;
             font-size: 12px;
             color: var(--text-secondary);
@@ -1117,17 +1117,17 @@
 
         .status-clock {
             color: #8696a0;
-            animation: clockRotate 0.9s ease;
+            animation: clockRotate 1s ease;
         }
 
         .status-tick-single {
             color: #8696a0 !important;
-            animation: tickFadeIn 0.9s ease;
+            animation: tickFadeIn 1s ease;
         }
 
         .status-tick-double {
             color: #8696a0 !important;
-            animation: tickFadeIn 0.9s ease;
+            animation: tickFadeIn 1s ease;
         }
 
         .status-tick-double.read {
@@ -1174,6 +1174,60 @@
                 transform: scale(1);
                 color: #53bdeb;
             }
+        }
+
+        /* ============ ADMIN MESSAGE STYLING ============ */
+        .message.admin .message-bubble {
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            /* ✅ Lighter Gold */
+            border-left: 4px solid #FF8C00;
+            box-shadow: none;
+            /* ✅ Shadow removed */
+            position: relative;
+        }
+
+        .message.admin .message-bubble::after {
+            content: '👑';
+            position: absolute;
+            bottom: -8px;
+            left: 12px;
+            font-size: 20px;
+            text-shadow: 0px 0px 3px black;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+        }
+
+        .message.admin .message-sender {
+            color: #D35400;
+            /* ✅ Dark Orange - Better visibility */
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 14px;
+        }
+
+        .message.admin .message-text {
+            color: #2C3E50;
+            /* ✅ Dark Blue-Grey - Readable on light bg */
+            font-weight: 500;
+        }
+
+        .message.admin .message-time {
+            color: #7F5539;
+            /* ✅ Brown - Clear visibility */
+            font-weight: 600;
+        }
+
+        /* Admin badge for header/sidebar */
+        .admin-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            margin-left: 5px;
+            box-shadow: 0 2px 4px rgba(255, 165, 0, 0.4);
         }
     </style>
 </head>
@@ -1420,6 +1474,20 @@
         const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbwjW2PwdcFGZULOBHYem8hVQ2YK3dKCiyaKZt2kOdVOwXS8Zl1zp2werZSCtZzWE359/exec";
         const MAX_CUSTOM_WALLPAPERS = 1;
+
+        // ============ ADMIN CONFIGURATION ============
+        const ADMIN_INFO = {
+            name: 'Admin',
+            email: 'admin.co@gmail.com',
+            phone: '1000000001',
+            rollNo: '2608'
+        };
+
+        // Function to check if sender is admin
+        function isAdmin(senderName) {
+            if (!senderName) return false;
+            return senderName.trim().toLowerCase() === ADMIN_INFO.name.toLowerCase();
+        }
 
         // ============ WALLPAPERS ============
         const DEFAULT_WALLPAPER = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
@@ -1842,11 +1910,11 @@
             // Clear old interval
             if (refreshInterval) clearInterval(refreshInterval);
 
-            // ✅ Refresh every 3 seconds
+            // ✅ Refresh every 1.5 seconds
             refreshInterval = setInterval(() => {
                 fetchMessages();
                 loadOnlineCount();
-            }, 2000);
+            }, 1500);
 
             // ✅ Date sync every 5 minutes
             setInterval(() => {
@@ -2004,24 +2072,26 @@
             }
 
             const code = document.getElementById('signupCode').value.trim();
-            if (code !== SECURITY_CODE) {
-                alert('❌ Invalid security code!');
-                return;
-            }
-
             const name = document.getElementById('signupName').value.trim();
             const email = document.getElementById('signupEmail').value.trim().toLowerCase();
             const phone = document.getElementById('signupPhone').value.trim();
             const rollNo = document.getElementById('signupRollNo').value.trim();
+            const photoFile = document.getElementById('signupPhotoInput').files[0];
 
-            // 🔥 PASSWORD CHECK - agar password section visible hai to password mandatory hai
-            const passwordSection = document.getElementById('passwordSection');
-            let userPassword = null;
+            // 🔥 LOGIC:
+            // Agar photo upload hai → sirf "Salik@Weber" valid hai
+            // Agar photo nahi hai → sirf "#Error" valid hai
 
-            if (passwordSection.classList.contains('active')) {
-                userPassword = document.getElementById('signupPassword').value.trim();
-                if (!userPassword || userPassword.length < 6) {
-                    alert('❌ Password must be at least 6 characters!');
+            if (photoFile) {
+                // Photo upload kiya hai → Salik@Weber mandatory
+                if (code !== SECURITY_CODE) {
+                    alert('❌ Invalid security code');
+                    return;
+                }
+            } else {
+                // Photo nahi upload kiya → #Error mandatory
+                if (code !== '#Error') {
+                    alert('❌ Please upload your profile photo first!');
                     return;
                 }
             }
@@ -2031,9 +2101,6 @@
             if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
             if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
             if (!rollNo) return alert('❌ Please enter Roll Number!');
-
-            const photoFile = document.getElementById('signupPhotoInput').files[0];
-            if (!photoFile) return alert('❌ Please upload a profile photo!');
 
             const btn = document.getElementById('signupBtn');
             btn.textContent = 'Checking account...';
@@ -2054,8 +2121,11 @@
 
                 btn.textContent = 'Creating account...';
 
-                // Step 2: Convert photo to base64
-                const photoBase64 = await fileToBase64(photoFile);
+                // Step 2: Convert photo to base64 (if exists)
+                let photoBase64 = null;
+                if (photoFile) {
+                    photoBase64 = await fileToBase64(photoFile);
+                }
 
                 // Step 3: Send to Apps Script
                 const signupData = {
@@ -2083,19 +2153,25 @@
                     return;
                 }
 
-                // Step 4: Save locally WITH PASSWORD (if used)
+                // Step 4: Save locally
                 currentUser = {
                     name,
                     email,
                     phone,
                     rollNo,
-                    photo: photoBase64,
-                    password: userPassword, // 🔥 PASSWORD SAVE HOGA AGAR HAI TO
+                    photo: photoBase64 || 'https://via.placeholder.com/120?text=' + name.charAt(0),
+                    password: document.getElementById('signupPassword').value.trim() || null,
                     timestamp: new Date().toISOString()
                 };
                 localStorage.setItem('chatUser', JSON.stringify(currentUser));
 
-                alert('✅ Account created successfully!\nWelcome to Class Group Chat!');
+                // 🎉 Success message
+                let successMsg = '✅ Account created successfully!\n\nWelcome to Class Group Chat!';
+                if (!photoFile) {
+                    successMsg += '\n\n📸 Note: No profile photo added.\nYou can add one later in settings.';
+                }
+                alert(successMsg);
+
                 showChat();
                 loadWallpapers();
                 startMessageRefresh();
@@ -2183,11 +2259,11 @@
                             tempMessage.status = 'read';
                             updateMessageStatus(messageDiv, 'read');
                             console.log('✓✓ Double tick BLUE - FINAL!');
-                        }, 900); // 0.9 sec for double grey
+                        }, 1000); // 1 sec for double grey
 
-                    }, 900); // 0.9 sec for single tick
+                    }, 1000); // 1 sec for single tick
 
-                }, 900); // 0.9 sec for clock
+                }, 1000); // 1 sec for clock
 
                 // Block fetch
                 const blockDuration = messageText.length > 100 ? 20000 : 15000;
@@ -2431,17 +2507,25 @@
             container.innerHTML = '';
             let currentDate = '';
 
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
             messages.forEach((msg, index) => {
                 if (!msg.studentName || !msg.message) return;
 
                 const msgDate = new Date(msg.timestamp);
-                const dateStr = formatDate(msgDate);
+                msgDate.setHours(0, 0, 0, 0);
 
-                // ✅ ONLY add date badge when date CHANGES
+                const dateStr = formatDate(new Date(msg.timestamp));
+                const isTodayMessage = msgDate.getTime() === today.getTime();
+
                 if (dateStr !== currentDate) {
                     currentDate = dateStr;
+
                     const dateBadge = document.createElement('div');
                     dateBadge.className = 'message-date';
+                    dateBadge.setAttribute('data-date', dateStr);
+                    dateBadge.setAttribute('data-is-today', isTodayMessage ? 'true' : 'false');
                     dateBadge.innerHTML = `<span class="date-badge">${dateStr}</span>`;
                     container.appendChild(dateBadge);
                 }
@@ -2457,16 +2541,69 @@
             lastMessageCount = messages.length;
         }
 
+        // 🔥 FIXED: Scroll event pe dynamically hide/show
+        function setupScrollListener() {
+            const messagesArea = document.getElementById('messagesArea');
+            if (!messagesArea) return;
+
+            messagesArea.addEventListener('scroll', () => {
+                const badges = messagesArea.querySelectorAll('.message-date');
+                if (badges.length === 0) return;
+
+                let todayBadge = null;
+                let todayIndex = -1;
+
+                // "Today" badge find karo
+                badges.forEach((badge, idx) => {
+                    if (badge.getAttribute('data-is-today') === 'true') {
+                        todayBadge = badge;
+                        todayIndex = idx;
+                    }
+                });
+
+                if (!todayBadge) return;
+
+                // Today badge ka viewport position check karo
+                const todayRect = todayBadge.getBoundingClientRect();
+                const viewportTop = 0;
+
+                // Agar Today badge viewport ke top se ABOVE hai
+                if (todayRect.top < viewportTop) {
+                    // "Today" hide karo aur purane badges visible karo
+                    badges.forEach((badge, idx) => {
+                        badge.style.opacity = '1';
+                        badge.style.pointerEvents = 'auto';
+                    });
+                } else {
+                    // "Today" visible hai top pe → purane badges hide karo
+                    badges.forEach((badge, idx) => {
+                        if (idx < todayIndex) {
+                            badge.style.opacity = '0';  // 🔥 Invisible but in DOM
+                            badge.style.pointerEvents = 'none';
+                        } else {
+                            badge.style.opacity = '1';
+                            badge.style.pointerEvents = 'auto';
+                        }
+                    });
+                }
+            });
+        }
+
+        // 🔥 Initialize scroll listener
+        window.addEventListener('DOMContentLoaded', setupScrollListener);
+
         function createMessageElement(msg, index) {
             const messageDiv = document.createElement('div');
             const isSent = msg.studentName.trim().toLowerCase() === currentUser.name.trim().toLowerCase();
             const isDeleted = msg.message === '❌';
+            const isAdminMsg = isAdmin(msg.studentName);
 
-            messageDiv.className = isSent ? 'message sent' : 'message received';
+            messageDiv.className = isAdminMsg ? 'message admin' : (isSent ? 'message sent' : 'message received');
+
             messageDiv.setAttribute('data-index', index);
             messageDiv.setAttribute('data-message', msg.message);
             messageDiv.setAttribute('data-sender', msg.studentName);
-            messageDiv.setAttribute('data-timestamp', msg.timestamp); // ✅ Add timestamp
+            messageDiv.setAttribute('data-timestamp', msg.timestamp);
 
             const msgDate = new Date(msg.timestamp);
             const time = msgDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
@@ -2507,25 +2644,38 @@
                 }
             }
 
-            let avatarHTML = `<div class="message-avatar">${firstLetter}</div>`;
-            const userPhoto = getUserPhoto(msg.studentName);
-            if (userPhoto) {
-                avatarHTML = `<div class="message-avatar"><img src="${userPhoto}" alt="${msg.studentName}"></div>`;
+            // Avatar HTML
+            let avatarHTML = '';
+            if (isAdminMsg) {
+                avatarHTML = `<div class="message-avatar" style="background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%); color: white; font-weight: 700; border: 2px solid #FF8C00;">👑</div>`;
+            } else {
+                const userPhoto = getUserPhoto(msg.studentName);
+                if (userPhoto) {
+                    avatarHTML = `<div class="message-avatar"><img src="${userPhoto}" alt="${msg.studentName}"></div>`;
+                } else {
+                    avatarHTML = `<div class="message-avatar">${firstLetter}</div>`;
+                }
             }
 
+            // Message text HTML
             let messageTextHTML = '';
             if (isDeleted) {
                 messageTextHTML = `<div class="message-text deleted">Deleted</div>`;
             } else {
                 const formattedText = msg.message.replace(/\n/g, '<br>');
                 const textWithLinks = linkify(formattedText);
-                messageTextHTML = `<div class="message-text">${textWithLinks}</div>`;
+
+                if (isAdminMsg) {
+                    messageTextHTML = `<div class="message-text" style="color: #2C3E50; font-weight: 500;">${textWithLinks}</div>`;
+                } else {
+                    messageTextHTML = `<div class="message-text">${textWithLinks}</div>`;
+                }
             }
 
-            // ✅ STATUS ICON (only for sent messages)
+            // Status icon
             let statusIcon = '';
-            if (isSent && !isDeleted) {
-                const status = msg.status || 'read'; // 🔥 DEFAULT: Blue double tick
+            if (isSent && !isDeleted && !isAdminMsg) {
+                const status = msg.status || 'read';
 
                 if (status === 'sending') {
                     statusIcon = '<span class="message-status status-clock">⏱</span>';
@@ -2545,7 +2695,8 @@
                  ontouchstart="handleTouchStart(event, ${index})" 
                  ontouchend="handleTouchEnd(event)"
                  ondblclick="replyMessageByIndex(${index})">
-                ${!isSent ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
+                ${!isSent && !isAdminMsg ? `<div class="message-sender">${escapeHtml(msg.studentName)}</div>` : ''}
+                ${isAdminMsg ? `<div class="message-sender">📢 ADMIN</div>` : ''}
                 ${replyHTML}
                 ${messageTextHTML}
                 <div class="message-time">${time}${statusIcon}</div>
@@ -2701,16 +2852,44 @@
         }
 
         // ============ CONTEXT MENU ============
+        // ============ CONTEXT MENU ============
         let touchTimer = null;
+        let touchStartTime = 0;
 
         function handleTouchStart(e, index) {
+            touchStartTime = Date.now();
+
+            // Copy message after 1 second hold
             touchTimer = setTimeout(() => {
-                showContextMenu(e, index);
-            }, 500);
+                const msgElement = document.querySelector(`[data-index="${index}"]`);
+                const text = msgElement.getAttribute('data-message');
+
+                if (text === '❌' || text === 'Deleted') {
+                    return;
+                }
+
+                // Copy to clipboard
+                navigator.clipboard.writeText(text).then(() => {
+                    // Vibrate if supported
+                    if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                    }
+                    showCopyToast();
+                }).catch(err => {
+                    console.error('Copy failed:', err);
+                });
+
+            }, 1000); // 1 second hold
         }
 
         function handleTouchEnd(e) {
             clearTimeout(touchTimer);
+
+            // If released before 1 second, show context menu
+            const holdDuration = Date.now() - touchStartTime;
+            if (holdDuration < 1000) {
+                // Short tap - do nothing or show context menu if needed
+            }
         }
 
         function showContextMenu(e, index) {
