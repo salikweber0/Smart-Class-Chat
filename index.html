@@ -3633,6 +3633,88 @@
         }
 
     </script>
+
+    <script type="text/javascript">
+        (function (d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = "https://cdn.pushalert.co/integrate_35538d826dc7a820ad6795bde79eff17.js";
+            s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+
+        // ✅ FIXED: Save Token in SAD Sheet
+        function savePushTokenToSheet(studentName, token) {
+            const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
+
+            fetch(SAD_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "saveToken",
+                    studentName: studentName,
+                    token: token
+                })
+            }).then(res => res.json()).then(data => {
+                console.log("✅ Token Response:", data);
+            }).catch(err => {
+                console.error("❌ Token Error:", err);
+            });
+        }
+
+        // ✅ FIXED: Update Status in SAD Sheet
+        function updateStatusInSheet(isActive) {
+            const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
+
+            if (!currentUser) return;
+
+            fetch(SAD_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    action: "updateStatus",
+                    studentName: currentUser.name,
+                    status: isActive
+                })
+            }).then(res => res.json()).then(data => {
+                console.log(isActive ? "🟢 ACTIVE" : "🔴 INACTIVE", data);
+            }).catch(err => {
+                console.error("❌ Status Error:", err);
+            });
+        }
+
+        // ✅ Get Token from PushAlert
+        document.addEventListener('pushalert-subscriber', function (event) {
+            const token = event.detail.subscriber_id;
+
+            if (currentUser && currentUser.name) {
+                console.log("🔔 Token Received:", token);
+                savePushTokenToSheet(currentUser.name, token);
+            }
+        });
+
+        // ✅ Track Active/Inactive
+        document.addEventListener("visibilitychange", () => {
+            const isActive = !document.hidden;
+            updateStatusInSheet(isActive);
+        });
+
+        // ✅ ON LOAD: Set Active
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (currentUser) {
+                    updateStatusInSheet(true);
+                }
+            }, 2000);
+        });
+
+        // ✅ ON CLOSE: Set Inactive
+        window.addEventListener('beforeunload', () => {
+            if (currentUser) {
+                updateStatusInSheet(false);
+            }
+        });
+    </script>
+
 </body>
 
 </html>
