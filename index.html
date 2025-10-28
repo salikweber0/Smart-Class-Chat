@@ -1117,33 +1117,33 @@
 
         .status-clock {
             color: #8696a0;
-            animation: clockRotate 1s ease;
+            animation: clockRotate 2.2s ease;
         }
 
         .status-tick-single {
             color: #8696a0 !important;
-            animation: tickFadeIn 1s ease;
+            animation: tickFadeIn 0.8s ease;
         }
 
         .status-tick-double {
             color: #8696a0 !important;
-            animation: tickFadeIn 1s ease;
+            animation: tickFadeIn 0.8s ease;
         }
 
         .status-tick-double.read {
             color: #53bdeb !important;
-            animation: blueTickPop 0.9s ease;
+            animation: blueTickPop 0.8s ease;
         }
 
         @keyframes clockRotate {
             from {
                 opacity: 0;
-                transform: rotate(-180deg) scale(0.5);
+                transform: rotate(-2000deg) scale(0.5);
             }
 
             to {
                 opacity: 1;
-                transform: rotate(0deg) scale(1);
+                transform: rotate(2150deg) scale(1);
             }
         }
 
@@ -1178,7 +1178,7 @@
 
         /* ============ ADMIN MESSAGE STYLING ============ */
         .message.admin .message-bubble {
-            background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%);
+            background: linear-gradient(135deg, #FFE066 0%, rgb(213, 144, 41) 100%);
             /* ✅ Lighter Gold */
             border-left: 4px solid #FF8C00;
             box-shadow: none;
@@ -1230,6 +1230,17 @@
             box-shadow: 0 2px 4px rgba(255, 165, 0, 0.4);
         }
     </style>
+
+    <!-- PushAlert -->
+    <script type="text/javascript">
+        (function (d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = "https://cdn.pushalert.co/integrate_35538d826dc7a820ad6795bde79eff17.js";
+            s.parentNode.insertBefore(g, s);
+        }(document, "script"));
+    </script>
+    <!-- End PushAlert -->
 </head>
 
 <body data-theme="dark">
@@ -2243,28 +2254,28 @@
                 }, 1000);
 
                 // ✅ PERFECT ANIMATION SEQUENCE
-                // Step 1: Clock icon - 0.9 seconds
+                // Step 1: Clock icon - 2.2 seconds
                 setTimeout(() => {
                     tempMessage.status = 'sent';
                     updateMessageStatus(messageDiv, 'sent');
                     console.log('✓ Single tick grey');
 
-                    // Step 2: Single tick - 0.9 seconds
+                    // Step 2: Single tick - 0.8 seconds
                     setTimeout(() => {
                         tempMessage.status = 'delivered';
                         updateMessageStatus(messageDiv, 'delivered');
                         console.log('✓✓ Double tick grey');
 
-                        // Step 3: Double tick grey - 0.9 seconds
+                        // Step 3: Double tick grey - 0.8 seconds
                         setTimeout(() => {
                             tempMessage.status = 'read';
                             updateMessageStatus(messageDiv, 'read');
                             console.log('✓✓ Double tick BLUE - FINAL!');
-                        }, 1000); // 1 sec for double grey
+                        }, 800); // 0.8 sec for double grey
 
-                    }, 1000); // 1 sec for single tick
+                    }, 800); // 0.8 sec for single tick
 
-                }, 1000); // 1 sec for clock
+                }, 2200); // 2.2 sec for clock
 
                 // Block fetch
                 const blockDuration = messageText.length > 100 ? 20000 : 15000;
@@ -3698,7 +3709,7 @@
             updateStatusInSheet(isActive);
         });
 
-        // ✅ ON LOAD: Set Active
+        // ✅ On load → Active = TRUE
         window.addEventListener('load', () => {
             setTimeout(() => {
                 if (currentUser) {
@@ -3707,7 +3718,7 @@
             }, 2000);
         });
 
-        // ✅ ON CLOSE: Set Inactive
+        // ✅ On close → Active = FALSE
         window.addEventListener('beforeunload', () => {
             if (currentUser) {
                 updateStatusInSheet(false);
