@@ -5,10 +5,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Class Group Chat</title>
-    <!-- ✅ Google Fonts -->
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="data:application/manifest+json,{
+    \" name\": \"Class Group Chat\", \"short_name\": \"Class Chat\", \"start_url\": \"./\", \"display\":
+        \"standalone\", \"background_color\": \"#111b21\", \"theme_color\": \"#00a884\", \"orientation\":
+        \"portrait-primary\", \"icons\": [ { \"src\": \"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'
+        viewBox='0 0 192 192' %3E%3Crect fill='%2300a884' width='192' height='192' /%3E%3Ctext x='50%' y='50%'
+        font-size='100' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'
+        %3ECG%3C/text%3E%3C/svg%3E\", \"sizes\": \"192x192\", \"type\": \"image/svg+xml\", \"purpose\": \"any\" } ] }">
+
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#00a884">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&family=Edu+NSW+ACT+Hand+Pre:wght@400..700&family=Raleway:ital,wght@0,100..900;1,100..900&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&family=Savate:ital,wght@0,200..900;1,200..900&display=swap"
+        rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+    <script>
+        window.OneSignalDeferred = window.OneSignalDeferred || [];
+        OneSignalDeferred.push(function (OneSignal) {
+            OneSignal.init({
+                appId: "244608f6-0c20-452e-bcd3-336c1bd85274",
+                safari_web_id: "",
+                notifyButton: { enable: true },
+            });
+        });
+    </script>
+
     <style>
         * {
             margin: 0;
@@ -1178,21 +1208,23 @@
 
         /* ============ ADMIN MESSAGE STYLING ============ */
         .message.admin .message-bubble {
-            background: linear-gradient(135deg, #FFE066 0%, rgb(213, 144, 41) 100%);
+            background: #FFE066;
             /* ✅ Lighter Gold */
             border-left: 4px solid #FF8C00;
             box-shadow: none;
             /* ✅ Shadow removed */
             position: relative;
+            line-height: 1.8;
+            letter-spacing: 0.3px;
         }
 
         .message.admin .message-bubble::after {
             content: '👑';
             position: absolute;
-            bottom: -8px;
+            bottom: -7px;
             left: 5px;
             font-size: 20px;
-            text-shadow: 0px 0px 3px black;
+            text-shadow: 0px 0px 2px black;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
         }
 
@@ -1207,8 +1239,16 @@
 
         .message.admin .message-text {
             color: #2C3E50;
-            /* ✅ Dark Blue-Grey - Readable on light bg */
-            font-weight: 500;
+            font-family: "Ubuntu", sans-serif !important;
+            font-weight: 600 !important;
+            font-size: 13px;
+        }
+
+        .message.admin .message-text a {
+            color: #FF6B35;
+            /* Brighter orange */
+            text-decoration: none;
+            font-weight: 700;
         }
 
         .message.admin .message-time {
@@ -1230,17 +1270,6 @@
             box-shadow: 0 2px 4px rgba(255, 165, 0, 0.4);
         }
     </style>
-
-    <!-- PushAlert -->
-    <script type="text/javascript">
-        (function (d, t) {
-            var g = d.createElement(t),
-                s = d.getElementsByTagName(t)[0];
-            g.src = "https://cdn.pushalert.co/integrate_35538d826dc7a820ad6795bde79eff17.js";
-            s.parentNode.insertBefore(g, s);
-        }(document, "script"));
-    </script>
-    <!-- End PushAlert -->
 </head>
 
 <body data-theme="dark">
@@ -1751,6 +1780,58 @@
             setupEventListeners();
             checkAuth();
             loadCustomWallpaperCount();
+
+            // ============ PWA INSTALL PROMPT ============
+            let deferredPrompt;
+
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredPrompt = e;
+
+                // Check agar user ne pehle se accept kar diya
+                const installAccepted = localStorage.getItem('pwaInstallAccepted');
+
+                if (!installAccepted) {
+                    // Show popup after 2 seconds
+                    setTimeout(() => {
+                        showInstallPrompt();
+                    }, 2000);
+                }
+            });
+
+            function showInstallPrompt() {
+                if (!deferredPrompt) return;
+
+                const userConfirm = confirm(
+                    '📱 Add Class Group Chat to your home screen?\n\n' +
+                    'This will give you quick access to the app!'
+                );
+
+                if (userConfirm) {
+                    // ✅ Flag set karo localStorage me
+                    localStorage.setItem('pwaInstallAccepted', 'true');
+
+                    deferredPrompt.prompt();
+                    deferredPrompt.userChoice.then((choiceResult) => {
+                        if (choiceResult.outcome === 'accepted') {
+                            console.log('✅ App installed!');
+                            alert('✅ App added to home screen!\n\nYou can now open it directly from there.');
+                        } else {
+                            console.log('❌ Installation cancelled');
+                        }
+                        deferredPrompt = null;
+                    });
+                } else {
+                    console.log('❌ User declined installation');
+                    // Flag nahi set hoga - next time phir se popup aayega
+                }
+            }
+
+            // Optional: Clear install flag (logout ke time)
+            function clearInstallFlag() {
+                localStorage.removeItem('pwaInstallAccepted');
+                console.log('🔄 Install flag cleared - popup again show hoga');
+            }
         };
 
         // ============ 🔥 CLEAN CHECKAUTH - NO ISSUES ============
@@ -2188,6 +2269,7 @@
                 loadWallpapers();
                 startMessageRefresh();
                 loadOnlineCount();
+                saveOneSignalToken(currentUser.name);
 
             } catch (error) {
                 console.error('Signup error:', error);
@@ -2664,7 +2746,7 @@
             // Avatar HTML
             let avatarHTML = '';
             if (isAdminMsg) {
-                avatarHTML = `<div class="message-avatar" style="background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%); color: white; font-weight: 700; border: 2px solid #FF8C00; text-shadow: 0px 0px 3px black;">👑</div>`;
+                avatarHTML = `<div class="message-avatar" style="background: linear-gradient(135deg, #FFE066 0%, #FFB84D 100%); color: white; font-weight: 700; border: 2px solid #FF8C00; text-shadow: 0px 0px 2px black;">👑</div>`;
             } else {
                 const userPhoto = getUserPhoto(msg.studentName);
                 if (userPhoto) {
@@ -3386,26 +3468,32 @@
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('chatUser');
+                localStorage.removeItem('pwaInstallAccepted');  // 👈 YEH ADD KAR
                 currentUser = null;
-                if (refreshInterval) {
-                    clearInterval(refreshInterval);
-                    refreshInterval = null;
-                }
-                document.getElementById('profilePage').classList.remove('active');
-                document.getElementById('chatContainer').classList.remove('active');
-                showSignup();
-                fingerprintVerified = false;
-                document.getElementById('fingerprintBtn').disabled = false;
-                document.getElementById('fingerprintBtn').style.background = 'linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%)';
-                document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
-                document.getElementById('fingerprintStatus').style.color = 'var(--text-secondary)';
-                document.getElementById('signupBtn').disabled = true;
-                document.getElementById('signupForm').reset();
-                document.getElementById('signupPhotoPreview').innerHTML = `
+
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('chatUser');
+                    currentUser = null;
+                    if (refreshInterval) {
+                        clearInterval(refreshInterval);
+                        refreshInterval = null;
+                    }
+                    document.getElementById('profilePage').classList.remove('active');
+                    document.getElementById('chatContainer').classList.remove('active');
+                    showSignup();
+                    fingerprintVerified = false;
+                    document.getElementById('fingerprintBtn').disabled = false;
+                    document.getElementById('fingerprintBtn').style.background = 'linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%)';
+                    document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
+                    document.getElementById('fingerprintStatus').style.color = 'var(--text-secondary)';
+                    document.getElementById('signupBtn').disabled = true;
+                    document.getElementById('signupForm').reset();
+                    document.getElementById('signupPhotoPreview').innerHTML = `
             <svg viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
             </svg>
         `;
+                }
             }
         }
 
@@ -3642,89 +3730,34 @@
             loadOnlineCount();
             startStatusMonitoring();
         }
-
     </script>
 
-    <script type="text/javascript">
-        (function (d, t) {
-            var g = d.createElement(t),
-                s = d.getElementsByTagName(t)[0];
-            g.src = "https://cdn.pushalert.co/integrate_35538d826dc7a820ad6795bde79eff17.js";
-            s.parentNode.insertBefore(g, s);
-        }(document, "script"));
-
-        // ✅ FIXED: Save Token in SAD Sheet
-        function savePushTokenToSheet(studentName, token) {
-            const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
-
-            fetch(SAD_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "saveToken",
-                    studentName: studentName,
-                    token: token
-                })
-            }).then(res => res.json()).then(data => {
-                console.log("✅ Token Response:", data);
-            }).catch(err => {
-                console.error("❌ Token Error:", err);
-            });
-        }
-
-        // ✅ FIXED: Update Status in SAD Sheet
-        function updateStatusInSheet(isActive) {
-            const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
-
-            if (!currentUser) return;
-
-            fetch(SAD_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    action: "updateStatus",
-                    studentName: currentUser.name,
-                    status: isActive
-                })
-            }).then(res => res.json()).then(data => {
-                console.log(isActive ? "🟢 ACTIVE" : "🔴 INACTIVE", data);
-            }).catch(err => {
-                console.error("❌ Status Error:", err);
-            });
-        }
-
-        // ✅ Get Token from PushAlert
-        document.addEventListener('pushalert-subscriber', function (event) {
-            const token = event.detail.subscriber_id;
-
-            if (currentUser && currentUser.name) {
-                console.log("🔔 Token Received:", token);
-                savePushTokenToSheet(currentUser.name, token);
-            }
-        });
-
-        // ✅ Track Active/Inactive
-        document.addEventListener("visibilitychange", () => {
-            const isActive = !document.hidden;
-            updateStatusInSheet(isActive);
-        });
-
-        // ✅ On load → Active = TRUE
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                if (currentUser) {
-                    updateStatusInSheet(true);
+    <script>
+        async function saveOneSignalToken(studentName) {
+            try {
+                const playerId = await OneSignal.getUserId();
+                if (!playerId) {
+                    console.log("❌ No OneSignal playerId found");
+                    return;
                 }
-            }, 2000);
-        });
 
-        // ✅ On close → Active = FALSE
-        window.addEventListener('beforeunload', () => {
-            if (currentUser) {
-                updateStatusInSheet(false);
+                await fetch(SAD_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({
+                        action: 'saveToken',
+                        studentName: studentName,
+                        token: playerId
+                    })
+                });
+                console.log("✅ OneSignal Token saved:", playerId);
+            } catch (err) {
+                console.error("Token save error:", err);
             }
-        });
+        }
     </script>
+    <!-- End OneSignal -->
+
 
 </body>
 
