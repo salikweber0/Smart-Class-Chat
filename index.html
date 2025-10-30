@@ -1307,7 +1307,7 @@
                         onclick="document.getElementById('signupPhotoInput').click()">Upload Photo</button>
                 </div>
                 <div class="form-group">
-                    <label>Full Name</label>
+                    <label>Name</label>
                     <input type="text" id="signupName" required>
                 </div>
                 <div class="form-group">
@@ -1320,7 +1320,8 @@
                 </div>
                 <div class="form-group">
                     <label>Roll Number</label>
-                    <input type="text" id="signupRollNo" required>
+                    <input type="text" id="signupRollNo" required maxlength="4" pattern="\d{4}"
+                        placeholder="1001 to 1142 (4 digits)" oninput="validateRollNumber(this)">
                 </div>
                 <div class="form-group">
                     <label>Security Code</label>
@@ -1511,8 +1512,8 @@
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
-        const SAD_URL = "https://script.google.com/macros/s/AKfycbzDGlPNFhx9kNyf1cg5csL4ba1cYnvg8GN1C7MGFacdou5aMAL5U-5eP-G8fpcufXhT/exec";
-        const SMD_URL = "https://script.google.com/macros/s/AKfycbwjW2PwdcFGZULOBHYem8hVQ2YK3dKCiyaKZt2kOdVOwXS8Zl1zp2werZSCtZzWE359/exec";
+        const SAD_URL = "https://script.google.com/macros/s/AKfycbyXy2JJWQWFUoFi07Hi5CABiCSWawKzfLiMfd8DuhrjUQBCsB_XICBTfrLBryEkfD8W/exec";
+        const SMD_URL = "https://script.google.com/macros/s/AKfycbyy6JdeHBrSddtqVzQi4pGxi_xJCYLcHf6SbTFVqLLG5z94-WLjFdDsjTkuuc5TKlmy/exec";
         const MAX_CUSTOM_WALLPAPERS = 1;
 
         // ============ ADMIN CONFIGURATION ============
@@ -2171,29 +2172,45 @@
             const rollNo = document.getElementById('signupRollNo').value.trim();
             const photoFile = document.getElementById('signupPhotoInput').files[0];
 
-            // 🔥 LOGIC:
-            // Agar photo upload hai → sirf "Salik@Weber" valid hai
-            // Agar photo nahi hai → sirf "#Error" valid hai
-
+            // Photo validation
             if (photoFile) {
-                // Photo upload kiya hai → Salik@Weber mandatory
                 if (code !== SECURITY_CODE) {
                     alert('❌ Invalid security code');
                     return;
                 }
             } else {
-                // Photo nahi upload kiya → #Error mandatory
                 if (code !== '#Error') {
                     alert('❌ Please upload your profile photo first!');
                     return;
                 }
             }
 
-            // Validation
+            // Basic validations
             if (!name || name.length < 2) return alert('❌ Please enter a valid name!');
             if (!email.includes('@') || !email.endsWith('gmail.com')) return alert('❌ Please use a valid Gmail!');
             if (!/^\d{10}$/.test(phone)) return alert('❌ Please enter valid 10-digit phone!');
+
+            // ✅ ROLL NUMBER VALIDATION
             if (!rollNo) return alert('❌ Please enter Roll Number!');
+
+            // Check: Must be exactly 4 digits
+            if (!/^\d{4}$/.test(rollNo)) {
+                alert('❌ Roll Number must be exactly 4 digits!\n\nExample: 1234, 5678, 9999');
+                return;
+            }
+
+            // Check: Cannot start with 0
+            if (rollNo.startsWith('0')) {
+                alert('❌ Roll Number cannot start with 0!\n\nExample:\n✅ Valid: 1234, 5001, 9999\n❌ Invalid: 0123, 0001');
+                return;
+            }
+
+            // Check: Must be a valid number between 1000-9999
+            const rollNumber = parseInt(rollNo);
+            if (rollNumber < 1000 || rollNumber > 9999) {
+                alert('❌ Roll Number must be between 1000 and 9999!');
+                return;
+            }
 
             const btn = document.getElementById('signupBtn');
             btn.textContent = 'Checking account...';
@@ -3758,6 +3775,48 @@
     </script>
     <!-- End OneSignal -->
 
+    <script>
+        // ============ ROLL NUMBER LIVE VALIDATION ============
+        function validateRollNumber(input) {
+            // Remove non-digit characters
+            input.value = input.value.replace(/[^\d]/g, '');
+
+            // Limit to 4 digits
+            if (input.value.length > 4) {
+                input.value = input.value.slice(0, 4);
+            }
+
+            // Visual feedback
+            const rollNo = input.value;
+
+            if (rollNo.length === 0) {
+                input.style.borderColor = 'var(--border-color)';
+                return;
+            }
+
+            // Check if starts with 0
+            if (rollNo.startsWith('0')) {
+                input.style.borderColor = '#ff4c4c';
+                input.style.boxShadow = '0 0 5px rgba(255, 76, 76, 0.3)';
+                return;
+            }
+
+            // Check if valid 4 digits
+            if (rollNo.length === 4) {
+                const num = parseInt(rollNo);
+                if (num >= 1000 && num <= 9999) {
+                    input.style.borderColor = '#00a884';
+                    input.style.boxShadow = '0 0 5px rgba(0, 168, 132, 0.3)';
+                } else {
+                    input.style.borderColor = '#ff4c4c';
+                    input.style.boxShadow = '0 0 5px rgba(255, 76, 76, 0.3)';
+                }
+            } else {
+                input.style.borderColor = 'var(--border-color)';
+                input.style.boxShadow = 'none';
+            }
+        }
+    </script>
 
 </body>
 
