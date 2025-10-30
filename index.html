@@ -1322,6 +1322,9 @@
                     <label>Roll Number</label>
                     <input type="text" id="signupRollNo" required maxlength="4" pattern="\d{4}"
                         placeholder="1001 to 1142 (4 digits)" oninput="validateRollNumber(this)">
+                    <small style="color: var(--text-secondary); font-size: 12px; margin-top: 5px; display: block;">
+                        📋 Must be 4 digits (1001 to 1142). Cannot start with 0.
+                    </small>
                 </div>
                 <div class="form-group">
                     <label>Security Code</label>
@@ -1533,26 +1536,28 @@
         // ============ WALLPAPERS ============
         const DEFAULT_WALLPAPER = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
         const WALLPAPERS = [
-            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/49/f4/7e/49f47ebc6d7d5c2f953e8bb34f67d1d6.jpg' },
-            { name: 'Wallpeper 3', url: 'https://i.pinimg.com/736x/f4/5c/f9/f45cf9790eea9f9723892bde8410b445.jpg' },
-            { name: 'Wallpeper 4', url: 'https://i.pinimg.com/474x/91/70/f3/9170f305bff38dbdcc005570eadc9de9.jpg' },
-            { name: 'Wallpeper 5', url: 'https://i.pinimg.com/736x/c7/0d/61/c70d613f9dac81944d7cccd8bc96a4be.jpg' },
-            { name: 'Wallpeper 6', url: 'https://i.pinimg.com/1200x/3f/a7/1e/3fa71ec639d480cb71151d458f1af257.jpg' },
-            { name: 'Wallpeper 7', url: 'https://i.pinimg.com/736x/19/63/d1/1963d13cc3fba4e2fd6ddea286284a90.jpg' },
-            { name: 'Wallpeper 8', url: 'https://i.pinimg.com/236x/0e/6d/d6/0e6dd669b5e9f78e51d7e91b94e8246c.jpg' },
-            { name: 'Wallpeper 9', url: 'https://wallpapersok.com/images/high/cute-black-and-white-aesthetic-heart-doodle-vtxn0j543jm8sc7o.jpg' },
-            { name: 'Wallpeper 10', url: 'https://i.pinimg.com/1200x/00/66/a8/0066a86176822eea6531a8839071ad77.jpg' },
-            { name: 'Wallpeper 11', url: 'https://i.pinimg.com/736x/4c/b7/10/4cb710372e63cdcb87c42e995aaaf58a.jpg' },
-            { name: 'Wallpeper 12', url: 'https://i.pinimg.com/736x/34/c2/99/34c29910dcb120f9daa1b4b1d9611b88.jpg' },
-            { name: 'Wallpeper 13', url: 'https://i.pinimg.com/564x/08/37/7c/08377cece016ce76b8ba539129bd4012.jpg' },
-            { name: 'Wallpeper 14', url: 'https://wallpapercave.com/wp/wp10889605.jpg' },
-            { name: 'Wallpeper 15', url: 'https://i.pinimg.com/736x/06/ee/17/06ee170201a9eb066756d5436618a650.jpg' },
-            { name: 'Wallpeper 16', url: 'https://i.pinimg.com/736x/f6/92/8e/f6928e8e49942cefd3d1c5d96853d4e5.jpg' },
-            { name: 'Wallpeper 17', url: 'https://i.pinimg.com/736x/0c/99/fc/0c99fc61e69b4d876c395bd7ef517b93.jpg' },
-            { name: 'Wallpeper 18', url: 'https://i.pinimg.com/736x/59/55/1a/59551a6e10a304207a445a84a771b71e.jpg' },
-            { name: 'Wallpeper 19', url: 'https://i.pinimg.com/474x/7f/a2/2b/7fa22bb96f19a0c760160e796e9d2bb5.jpg' },
-            { name: 'Wallpeper 20', url: 'https://i.pinimg.com/736x/fd/6b/4c/fd6b4c58f84703955cb7e91419c59d5f.jpg' },
-            { name: 'Wallpeper 21', url: 'https://i.pinimg.com/564x/08/6d/c7/086dc716585f7abdba1730ac3619b704.jpg' }
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/b3/ce/21/b3ce211605cc3bd3ab3c0c2a7847c4ba.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/b1/03/99/b10399e030a86cf1e24c7f3c2e6402da.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/54/61/b9/5461b9a60ff000e6e54593864ea30a56.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/c3/83/89/c383892f6ae9c6d298d13fab013a8ce2.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/2f/ae/fc/2faefc45deb93187a9174f9ac885252c.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/65/ef/63/65ef630abe552a0cae1fb030f573d88f.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/af/4a/8e/af4a8e0e754737be37236ed93f850e3d.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/d7/80/1d/d7801d0ae8c6b5630e1117af08be2bcc.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/e5/1a/b7/e51ab72bdf9805698fb6a336f7e457db.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/6f/49/b3/6f49b36c69f23da1d48ace5e292a804c.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/24/48/1a/24481a9ef9d2181a9d46dff99ac08839.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/b5/25/f1/b525f13a9702254baf5004a3af670236.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/58/a4/cb/58a4cb293b0bc95148d374616ffd2d59.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/07/19/0f/07190f6c7836e3968773dbdd6024e239.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/e4/d1/59/e4d15982a0bd0ff10ead0850465617da.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/0f/6b/ee/0f6beeb227684f0f17751516aa39e781.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/31/de/5d/31de5d92ec07ce5359f133033c111c68.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/5b/20/41/5b2041ec0c840fe86ca8c01c1bae7a85.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/3d/cc/99/3dcc99ad245711be60d754c6f593f968.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/8b/30/31/8b3031cc09901e0636401183956fbf63.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/1200x/ab/cb/5a/abcb5a8c0d3ce8f3494582ec403ca462.jpg' },
+            { name: 'Wallpeper 2', url: 'https://i.pinimg.com/736x/6c/a9/18/6ca918602776e22f9adec0f20c68fef0.jpg' }
         ];
 
         function applySettings() {
