@@ -4509,20 +4509,26 @@
             selectedWallpaperUrl = null;
         }
 
-        // ============ FREE TRIAL SYSTEM (30 SECONDS) ============
+        // ============ FREE TRIAL SYSTEM (30 SECONDS) - FIXED ============
         function startFreeTrial() {
             if (!selectedWallpaperUrl) return;
 
-            // Check if already used
+            // ✅ Check if trial already used for THIS specific wallpaper
             const trialUsed = JSON.parse(localStorage.getItem('wallpaperTrials') || '{}');
+
             if (trialUsed[selectedWallpaperUrl]) {
-                alert('⚠️ Free trial already used for this wallpaper!');
+                alert('⚠️ Free trial already used for this wallpaper!\n\n💛 Get Premium to unlock unlimited access.');
+                closeWallpaperPreview();
                 return;
             }
 
             // Apply wallpaper
             const messagesArea = document.getElementById('messagesArea');
             messagesArea.style.backgroundImage = `url(${selectedWallpaperUrl})`;
+
+            // ✅ IMMEDIATELY MARK AS USED (before starting timer)
+            trialUsed[selectedWallpaperUrl] = true;
+            localStorage.setItem('wallpaperTrials', JSON.stringify(trialUsed));
 
             // Close preview
             closeWallpaperPreview();
@@ -4533,6 +4539,11 @@
 
             toast.textContent = `⏰ Trial: ${timeLeft}s remaining`;
             toast.classList.add('show');
+
+            // Clear any existing timer
+            if (trialTimer) {
+                clearInterval(trialTimer);
+            }
 
             trialTimer = setInterval(() => {
                 timeLeft--;
@@ -4545,9 +4556,8 @@
                     // Reset to default wallpaper
                     resetToDefaultWallpaper();
 
-                    // Mark trial as used
-                    trialUsed[selectedWallpaperUrl] = true;
-                    localStorage.setItem('wallpaperTrials', JSON.stringify(trialUsed));
+                    // Reload wallpapers to update lock UI
+                    loadWallpapers();
 
                     // Show premium popup
                     setTimeout(() => {
@@ -4721,4 +4731,3 @@
 </body>
 
 </html>
-
