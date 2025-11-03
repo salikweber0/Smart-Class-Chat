@@ -1987,7 +1987,7 @@
                         2️⃣ Pay exactly <strong>₹20</strong><br>
                         3️⃣ Take screenshot of payment<br>
                         4️⃣ Send to admin for verification<br>
-                        5️⃣ Premium will be activated within 24 hours
+                        5️⃣ Premium will be activated within 1 hours
                     </p>
                 </div>
                 <p style="color: var(--text-secondary); font-size: 13px; margin-top: 15px;">
@@ -4020,39 +4020,6 @@
             }
         }
 
-        // ============ LOGOUT ============
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('chatUser');
-                localStorage.removeItem('pwaInstallAccepted');  // 👈 YEH ADD KAR
-                currentUser = null;
-
-                if (confirm('Are you sure you want to logout?')) {
-                    localStorage.removeItem('chatUser');
-                    currentUser = null;
-                    if (refreshInterval) {
-                        clearInterval(refreshInterval);
-                        refreshInterval = null;
-                    }
-                    document.getElementById('profilePage').classList.remove('active');
-                    document.getElementById('chatContainer').classList.remove('active');
-                    showSignup();
-                    fingerprintVerified = false;
-                    document.getElementById('fingerprintBtn').disabled = false;
-                    document.getElementById('fingerprintBtn').style.background = 'linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%)';
-                    document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
-                    document.getElementById('fingerprintStatus').style.color = 'var(--text-secondary)';
-                    document.getElementById('signupBtn').disabled = true;
-                    document.getElementById('signupForm').reset();
-                    document.getElementById('signupPhotoPreview').innerHTML = `
-            <svg viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-            </svg>
-        `;
-                }
-            }
-        }
-
         // ============ THEME TOGGLE ============
         function toggleTheme() {
             const body = document.body;
@@ -4094,39 +4061,9 @@
             signupPage.style.display = 'flex';
         }
 
-        function showChat() {
-            const signupPage = document.getElementById('signupPage');
-            const chatContainer = document.getElementById('chatContainer');
-            const profilePage = document.getElementById('profilePage');
 
-            // Hide everything first
-            signupPage.classList.add('hidden');
-            signupPage.style.display = 'none';
-            profilePage.classList.remove('active');
-            profilePage.style.display = 'none';
 
-            // Show chat
-            chatContainer.classList.add('active');
-            chatContainer.style.display = 'flex';
 
-            if (currentUser && currentUser.photo) {
-                document.getElementById('headerProfilePhoto').src = currentUser.photo;
-                document.getElementById('inputProfilePhoto').src = currentUser.photo;
-            }
-
-            // ✅ Set default wallpaper
-            const wallpaper = localStorage.getItem('chatWallpaper');
-            if (!wallpaper || wallpaper === 'none') {
-                const defaultWallpaper = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
-                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
-                localStorage.setItem('chatWallpaper', defaultWallpaper);
-            }
-        }
-
-        // ============ HELPER FUNCTIONS ============
-        // ============ IMPROVED FILE TO BASE64 WITH FALLBACK ============
-        // ============ AUTO COMPRESS ANY SIZE IMAGE ============
-        // ============ HIGH QUALITY COMPRESSION ============
         // ============ ORIGINAL QUALITY - NO COMPRESSION ============
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -4288,19 +4225,7 @@
             }
         }
 
-        // On successful verification
-        function onVerificationSuccess() {
-            // Set session flag (cleared on tab close)
-            sessionStorage.setItem('verified', 'true');
 
-            // Hide security page and show chat
-            document.getElementById('securityPage').classList.add('hidden');
-            showChat();
-            loadWallpapers();
-            startMessageRefresh();
-            loadOnlineCount();
-            startStatusMonitoring();
-        }
 
         function openProject() {
             window.open('https://salikweber0.github.io/Professional-Protfolio/', '_blank');
@@ -4395,11 +4320,18 @@
             const now = new Date();
 
             if (now > expiryDate) {
-                // Premium expired
                 localStorage.removeItem('premiumData');
-                resetToDefaultWallpaper();
+
+                resetToDefaultWallpaper();   // ✅ Wallpaper reset
+
+                loadWallpapers();            // ✅ All wallpapers lock instantly
+                applyWallpaper('default');   // ✅ Chat background instantly default
+                updatePremiumUI();           // ✅ UI states update (button, badge, etc.)
+
+                alert("❌ Premium expired!");
                 return false;
             }
+
 
             return true;
         }
@@ -4648,39 +4580,6 @@
             window.open(whatsappUrl, '_blank');
         }
 
-        // ============ CHECK PREMIUM FROM ADMIN SHEET ============
-        async function checkPremiumFromSheet() {
-            if (!currentUser || !currentUser.rollNo) return;
-
-            try {
-                const response = await fetch(`${PREMIUM_URL}?action=checkPremium&rollNo=${encodeURIComponent(currentUser.rollNo)}&t=${Date.now()}`);
-                const data = await response.json();
-
-                console.log('✅ Premium API Response:', data);
-
-                if (data.success && data.isPremium === 'yes') {
-                    // Activate premium
-                    const premiumData = {
-                        status: 'active',
-                        activatedDate: new Date().toISOString(),
-                        expiryDate: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString()
-                    };
-
-                    localStorage.setItem('premiumData', JSON.stringify(premiumData));
-                    console.log('💎 Premium activated for Roll No:', currentUser.rollNo);
-
-                    // Reload wallpapers to remove locks
-                    loadWallpapers();
-
-                    alert('🎉 Premium Activated!\n\nAll wallpapers unlocked for 31 days.');
-                } else {
-                    console.log('🔒 Premium not active for Roll No:', currentUser.rollNo);
-                }
-            } catch (error) {
-                console.error('❌ Premium check error:', error);
-            }
-        }
-
         // ============ START PREMIUM MONITORING ============
         function startPremiumMonitoring() {
             // Initial check
@@ -4725,6 +4624,354 @@
 
             // ✅ START PREMIUM MONITORING
             startPremiumMonitoring();
+        }
+
+        // ============ REAL-TIME PREMIUM MONITORING (EVERY 5 SECONDS) ============
+        let premiumMonitorInterval = null;
+        let lastPremiumStatus = null;
+
+        function startRealTimePremiumMonitoring() {
+            console.log('🟢 REAL-TIME PREMIUM MONITORING STARTED');
+
+            if (premiumMonitorInterval) {
+                clearInterval(premiumMonitorInterval);
+            }
+
+            // First check immediately
+            checkAndUpdatePremiumStatus();
+
+            // Then check every 5 seconds
+            premiumMonitorInterval = setInterval(() => {
+                checkAndUpdatePremiumStatus();
+            }, 5000); // 5 seconds
+        }
+
+        // ============ CHECK PREMIUM STATUS - ULTRA AGGRESSIVE ============
+        async function checkAndUpdatePremiumStatus() {
+            if (!currentUser || !currentUser.rollNo) return;
+
+            try {
+                const premiumData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+                const currentStatus = premiumData.status;
+
+                // Check expiry time
+                if (premiumData.expiryDate) {
+                    const expiryDate = new Date(premiumData.expiryDate);
+                    const now = new Date();
+
+                    console.log('🕐 Checking Premium:', {
+                        status: currentStatus,
+                        expiryDate: expiryDate.toLocaleTimeString(),
+                        nowTime: now.toLocaleTimeString(),
+                        expired: now > expiryDate
+                    });
+
+                    // ✅ EXPIRED - Immediately lock everything
+                    if (currentStatus === 'active' && now > expiryDate) {
+                        console.log('❌ PREMIUM EXPIRED - LOCKING NOW');
+
+                        // Mark as expired
+                        localStorage.removeItem('premiumData');
+                        lastPremiumStatus = 'expired';
+
+                        // 🔴 Step 1: Reset wallpaper instantly
+                        resetToDefaultWallpaperImmediately();
+
+                        // 🔴 Step 2: Lock all wallpapers instantly
+                        lockAllWallpapersImmediately();
+
+                        // 🔴 Step 3: Show notification
+                        showExpiredNotification();
+
+                        return;
+                    }
+
+                    // ✅ ACTIVE - Keep tabs on expiry
+                    if (currentStatus === 'active' && now < expiryDate) {
+                        const timeLeft = (expiryDate - now) / 1000; // seconds
+
+                        if (timeLeft <= 60) {
+                            console.log(`⚠️ PREMIUM EXPIRING SOON: ${Math.ceil(timeLeft)}s`);
+                        }
+
+                        lastPremiumStatus = 'active';
+                        return;
+                    }
+                }
+
+                // If not active, lock everything
+                if (currentStatus !== 'active' && lastPremiumStatus === 'active') {
+                    console.log('❌ PREMIUM NO LONGER ACTIVE');
+                    resetToDefaultWallpaperImmediately();
+                    lockAllWallpapersImmediately();
+                    showExpiredNotification();
+                }
+
+            } catch (error) {
+                console.error('❌ Premium check error:', error);
+            }
+        }
+
+        // ============ RESET WALLPAPER IMMEDIATELY ============
+        function resetToDefaultWallpaperImmediately() {
+            console.log('🔄 Resetting wallpaper to default...');
+
+            const theme = localStorage.getItem('theme') || 'dark';
+            const defaultWallpaper = theme === 'light'
+                ? 'https://i.pinimg.com/1200x/65/43/08/6543080537d11e105e6039f1a17a939e.jpg'
+                : 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+
+            // ✅ Direct DOM manipulation - no wait
+            const messagesArea = document.getElementById('messagesArea');
+            if (messagesArea) {
+                messagesArea.style.backgroundImage = `url(${defaultWallpaper})`;
+                messagesArea.style.transition = 'background-image 0.3s ease'; // Smooth transition
+            }
+
+            // Update localStorage
+            localStorage.setItem('chatWallpaper', defaultWallpaper);
+
+            console.log('✅ Wallpaper reset to default');
+        }
+
+        // ============ LOCK ALL WALLPAPERS IMMEDIATELY ============
+        function lockAllWallpapersImmediately() {
+            console.log('🔐 Locking all wallpapers immediately...');
+
+            const grid = document.getElementById('wallpaperGrid');
+            if (!grid) return;
+
+            // Get all wallpaper items
+            const items = grid.querySelectorAll('.wallpaper-item');
+
+            items.forEach((item) => {
+                // Remove existing lock if any
+                const existingLock = item.querySelector('.wallpaper-lock');
+                if (existingLock) {
+                    existingLock.remove();
+                }
+
+                // Create new lock
+                const lockDiv = document.createElement('div');
+                lockDiv.className = 'wallpaper-lock';
+                lockDiv.innerHTML = '🔒';
+                lockDiv.onclick = (e) => {
+                    e.stopPropagation();
+                    showWallpaperPreview(item.querySelector('img').src);
+                };
+
+                // Remove old click handlers by cloning
+                const newItem = item.cloneNode(true);
+                newItem.onclick = null;
+
+                // Add lock to new item
+                newItem.appendChild(lockDiv);
+
+                // Replace in DOM
+                item.parentNode.replaceChild(newItem, item);
+            });
+
+            console.log('✅ All wallpapers locked');
+        }
+
+        // ============ EXPIRED NOTIFICATION ============
+        function showExpiredNotification() {
+            // Check if already showed this session
+            const alreadyShowed = sessionStorage.getItem('premiumExpiredAlertShowed');
+
+            if (!alreadyShowed) {
+                console.log('🔔 Showing expiry notification');
+
+                // Show toast notification
+                const toast = document.getElementById('trialTimerToast');
+                if (toast) {
+                    toast.textContent = '❌ Premium Expired - Wallpapers Locked';
+                    toast.style.background = '#ff4c4c';
+                    toast.classList.add('show');
+
+                    setTimeout(() => {
+                        toast.classList.remove('show');
+                    }, 3000);
+                }
+
+                // Mark as showed
+                sessionStorage.setItem('premiumExpiredAlertShowed', 'true');
+            }
+        }
+
+        // ============ MODIFIED checkPremiumFromSheet ============
+        // ============ REPLACE YE FUNCTION ============
+        async function checkPremiumFromSheet() {
+            if (!currentUser || !currentUser.rollNo) {
+                console.log('❌ No user or rollNo found');
+                return;
+            }
+
+            try {
+                console.log('🔍 Checking premium for Roll No:', currentUser.rollNo);
+
+                const response = await fetch(`${PREMIUM_URL}?action=checkPremium&rollNo=${encodeURIComponent(currentUser.rollNo)}&t=${Date.now()}`);
+                const data = await response.json();
+
+                console.log('✅ Premium API Response:', data);
+
+                if (data.success && data.isPremium === 'yes') {
+                    // Check if already activated
+                    const existingData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+                    if (existingData.status !== 'active') {
+                        // NEW ACTIVATION
+                        console.log('🎉 NEW PREMIUM ACTIVATION');
+
+                        const premiumData = {
+                            status: 'active',
+                            activatedDate: new Date().toISOString(),
+                            expiryDate: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString()  // 31 days
+                            // expiryDate: new Date(Date.now() + 60 * 1000).toISOString() // 60 seconds - Testing
+                        };
+
+                        localStorage.setItem('premiumData', JSON.stringify(premiumData));
+                        lastPremiumStatus = 'active';
+
+                        // ✅ INSTANTLY UNLOCK WALLPAPERS
+                        console.log('🔓 UNLOCKING WALLPAPERS NOW');
+                        loadWallpapers();
+
+                        // Show success message
+                        const toast = document.getElementById('trialTimerToast');
+                        if (toast) {
+                            toast.textContent = '✅ Premium Activated - Wallpapers Unlocked (31 days)';
+                            toast.style.background = 'var(--accent)';
+                            toast.classList.add('show');
+
+                            setTimeout(() => {
+                                toast.classList.remove('show');
+                            }, 4000);
+                        }
+
+                        // ✅ START REAL-TIME MONITORING
+                        startRealTimePremiumMonitoring();
+                    } else {
+                        console.log('✅ Premium already active');
+                    }
+                } else {
+                    console.log('❌ Premium not found in sheet');
+                    const existingData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+                    if (existingData.status === 'active') {
+                        console.log('❌ PREMIUM REMOVED BY ADMIN');
+                        localStorage.removeItem('premiumData');
+                        lastPremiumStatus = null;
+
+                        resetToDefaultWallpaperImmediately();
+                        lockAllWallpapersImmediately();
+                        showExpiredNotification();
+                    }
+                }
+            } catch (error) {
+                console.error('❌ Premium check error:', error);
+            }
+        }
+
+        // ============ STOP MONITORING ============
+        function stopPremiumMonitoring() {
+            if (premiumMonitorInterval) {
+                clearInterval(premiumMonitorInterval);
+                premiumMonitorInterval = null;
+                console.log('⏹️ Premium monitoring stopped');
+            }
+        }
+
+        // ============ ON LOGOUT - CLEAR ALERT FLAG ============
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('chatUser');
+                localStorage.removeItem('pwaInstallAccepted');
+
+                // ✅ Clear expired alert flag
+                sessionStorage.removeItem('premiumExpiredAlertShowed');
+
+                stopPremiumMonitoring();
+
+                currentUser = null;
+
+                if (refreshInterval) {
+                    clearInterval(refreshInterval);
+                    refreshInterval = null;
+                }
+
+                document.getElementById('profilePage').classList.remove('active');
+                document.getElementById('chatContainer').classList.remove('active');
+                showSignup();
+
+                // Reset fingerprint
+                fingerprintVerified = false;
+                document.getElementById('fingerprintBtn').disabled = false;
+                document.getElementById('fingerprintBtn').style.background = 'linear-gradient(135deg, var(--accent) 0%, #00d9a8 100%)';
+                document.getElementById('fingerprintStatus').textContent = 'Tap to scan fingerprint';
+                document.getElementById('fingerprintStatus').style.color = 'var(--text-secondary)';
+                document.getElementById('signupBtn').disabled = true;
+                document.getElementById('signupForm').reset();
+                document.getElementById('signupPhotoPreview').innerHTML = `
+            <svg viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+        `;
+            }
+        }
+
+        // ============ MODIFIED showChat() ============
+        function showChat() {
+            const signupPage = document.getElementById('signupPage');
+            const chatContainer = document.getElementById('chatContainer');
+            const profilePage = document.getElementById('profilePage');
+
+            signupPage.classList.add('hidden');
+            signupPage.style.display = 'none';
+            profilePage.classList.remove('active');
+            profilePage.style.display = 'none';
+
+            chatContainer.classList.add('active');
+            chatContainer.style.display = 'flex';
+
+            if (currentUser && currentUser.photo) {
+                document.getElementById('headerProfilePhoto').src = currentUser.photo;
+                document.getElementById('inputProfilePhoto').src = currentUser.photo;
+            }
+
+            const wallpaper = localStorage.getItem('chatWallpaper');
+            if (!wallpaper || wallpaper === 'none') {
+                const defaultWallpaper = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+                localStorage.setItem('chatWallpaper', defaultWallpaper);
+            }
+
+            // ✅ IMMEDIATELY CHECK PREMIUM (IMPORTANT!)
+            console.log('🟢 Checking premium on chat load...');
+            checkPremiumFromSheet();
+        }
+
+        // ============ ON VERIFICATION SUCCESS ============
+        function onVerificationSuccess() {
+            sessionStorage.setItem('verified', 'true');
+
+            document.getElementById('securityPage').classList.add('hidden');
+            showChat();
+            loadWallpapers();
+            startMessageRefresh();
+            loadOnlineCount();
+            startStatusMonitoring();
+
+            // âœ… WAIT 1 SECOND THEN CHECK PREMIUM
+            setTimeout(() => {
+                console.log('ðŸŸ¢ Checking premium now...');
+                checkPremiumFromSheet();
+
+                // âœ… ALSO START REAL-TIME MONITORING
+                setTimeout(() => {
+                    startRealTimePremiumMonitoring();
+                }, 500);
+            }, 1000);
         }
     </script>
 
