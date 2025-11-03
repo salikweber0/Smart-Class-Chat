@@ -1300,6 +1300,374 @@
             margin-left: 5px;
             box-shadow: 0 2px 4px rgba(255, 165, 0, 0.4);
         }
+
+        /* ============ PREMIUM SYSTEM STYLES ============ */
+
+        /* Profile Header Icons */
+        .profile-header-icons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto;
+        }
+
+        .profile-icon-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .profile-icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        /* Wallpaper Lock Overlay */
+        .wallpaper-item {
+            position: relative;
+        }
+
+        .wallpaper-lock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wallpaper-lock:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Wallpaper Preview Overlay */
+        .wallpaper-preview-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 9999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .wallpaper-preview-overlay.active {
+            display: flex;
+        }
+
+        .preview-close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 32px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .wallpaper-preview-img {
+            max-width: 90%;
+            max-height: 60vh;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .preview-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .trial-btn,
+        .premium-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .trial-btn {
+            background: linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%);
+            color: white;
+        }
+
+        .premium-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+        }
+
+        .trial-btn:active,
+        .premium-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Premium Page */
+        .premium-page {
+            position: fixed;
+            right: -100%;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .premium-page.active {
+            right: 0;
+        }
+
+        .premium-header {
+            background: var(--header-bg);
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .premium-content {
+            padding: 20px;
+        }
+
+        .premium-card {
+            background: var(--bg-secondary);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .premium-card h3 {
+            color: var(--accent);
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+
+        .premium-timer {
+            font-size: 18px;
+            color: var(--text-primary);
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .premium-price {
+            font-size: 32px;
+            color: #FFD700;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+
+        .get-premium-btn {
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        /* Payment Page */
+        .payment-page {
+            position: fixed;
+            right: -100%;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .payment-page.active {
+            right: 0;
+        }
+
+        .payment-qr {
+            width: 250px;
+            height: 290px;
+            margin: 30px auto;
+            background: white;
+            border-radius: 15px;
+            border-radius: 20px;
+        }
+
+        .payment-qr img {
+            width: 100%;
+            height: 100%;
+            border-radius: 20px;
+        }
+
+        .payment-info {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .payment-info h4 {
+            color: var(--accent);
+            margin-bottom: 10px;
+        }
+
+        .payment-info p {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* About Page */
+        .about-page {
+            position: fixed;
+            right: -100%;
+            top: 0;
+            width: 100%;
+            height: 100vh;
+            background: var(--bg-primary);
+            z-index: 999;
+            transition: right 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .about-page.active {
+            right: 0;
+        }
+
+        .about-content {
+            padding: 20px 20px 80px 20px;
+        }
+
+        .about-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            overflow: hidden;
+            border: 4px solid var(--accent);
+        }
+
+        .about-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .about-info {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .about-info h2 {
+            color: var(--accent);
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .about-info p {
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        .about-qr {
+            width: 200px;
+            height: 200px;
+            margin: 20px auto;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .about-qr img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .contact-info {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .contact-item:last-child {
+            border-bottom: none;
+        }
+
+        .whatsapp-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        /* Trial Timer Toast */
+        .trial-timer-toast {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            z-index: 2000;
+            display: none;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .trial-timer-toast.show {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
     </style>
 </head>
 
@@ -1451,9 +1819,19 @@
 
     <!-- Profile Page -->
     <div id="profilePage" class="profile-page">
+        <!-- Profile Header with Premium & About Icons -->
         <div class="profile-header">
             <button class="back-btn" onclick="hideProfile()">←</button>
             <h2 style="color: var(--header-text);">Profile</h2>
+            <!-- ⭐ NEW: Premium & About Icons -->
+            <div class="profile-header-icons">
+                <button class="profile-icon-btn" onclick="showPremiumPage()" title="Premium">
+                    <span style="font-size: 22px;">⭐</span>
+                </button>
+                <button class="profile-icon-btn" onclick="showAboutPage()" title="About">
+                    <span style="font-size: 22px;">ℹ️</span>
+                </button>
+            </div>
         </div>
         <div class="profile-content">
             <div class="profile-section">
@@ -1543,11 +1921,143 @@
         </div>
     </div>
 
+
+    <!-- ⭐ PREMIUM WALLPAPER PREVIEW OVERLAY -->
+    <div class="wallpaper-preview-overlay" id="wallpaperPreview">
+        <button class="preview-close-btn" onclick="closeWallpaperPreview()">×</button>
+        <img class="wallpaper-preview-img" id="previewImage" src="" alt="Preview">
+        <div class="preview-buttons">
+            <button class="trial-btn" onclick="startFreeTrial()">🟢 Free Trial (30s)</button>
+            <button class="premium-btn" onclick="showPaymentPage()">💛 Get Premium</button>
+        </div>
+    </div>
+
+    <!-- ⭐ PREMIUM PAGE -->
+    <div class="premium-page" id="premiumPage">
+        <div class="premium-header">
+            <button class="back-btn" onclick="hidePremiumPage()">←</button>
+            <h2 style="color: var(--header-text);">Premium Access</h2>
+        </div>
+        <div class="premium-content">
+            <div class="premium-card">
+                <h3>🌟 Unlock All Wallpapers</h3>
+                <p style="color: var(--text-secondary); margin: 15px 0;">
+                    Get access to all premium wallpapers for one month!
+                </p>
+                <div class="premium-price">₹20</div>
+                <p style="color: var(--text-secondary); font-size: 14px;">
+                    Valid for 31 days
+                </p>
+                <div class="premium-timer" id="premiumTimer">
+                    <!-- Timer will be shown here -->
+                </div>
+                <button class="get-premium-btn" id="getPremiumBtn" onclick="showPaymentPage()">
+                    Get Premium Now
+                </button>
+            </div>
+
+            <div class="premium-card" style="text-align: left;">
+                <h4 style="color: var(--accent); margin-bottom: 15px;">✨ Features:</h4>
+                <ul style="color: var(--text-secondary); line-height: 2;">
+                    <li>🎨 Access to all wallpapers</li>
+                    <li>🚫 No more locks</li>
+                    <li>⏰ 31 days validity</li>
+                    <li>🔄 Auto-renewal option</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 💳 PAYMENT PAGE -->
+    <div class="payment-page" id="paymentPage">
+        <div class="premium-header">
+            <button class="back-btn" onclick="hidePaymentPage()">←</button>
+            <h2 style="color: var(--header-text);">Payment</h2>
+        </div>
+        <div class="premium-content">
+            <div class="premium-card">
+                <h3>💳 Scan QR to Pay</h3>
+                <div class="payment-qr">
+                    <img src="QR.png" alt="Payment QR">
+                </div>
+                <div class="payment-info">
+                    <h4>Payment Instructions:</h4>
+                    <p>
+                        1️⃣ Scan the QR code above<br>
+                        2️⃣ Pay exactly <strong>₹20</strong><br>
+                        3️⃣ Take screenshot of payment<br>
+                        4️⃣ Send to admin for verification<br>
+                        5️⃣ Premium will be activated within 24 hours
+                    </p>
+                </div>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-top: 15px;">
+                    ⚠️ Once payment is verified by admin, your premium access will be activated automatically.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ℹ️ ABOUT PAGE -->
+    <div class="about-page" id="aboutPage">
+        <div class="premium-header">
+            <button class="back-btn" onclick="hideAboutPage()">←</button>
+            <h2 style="color: var(--header-text);">About Developer</h2>
+        </div>
+        <div class="about-content">
+            <div class="about-avatar">
+                <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTCRARf33-x1QbblvditdM8VhyieEU-BcQV-B9bC0C_tz1t3xcC"
+                    alt="Salik">
+            </div>
+            <div class="about-info">
+                <h2>Shaikh Salik</h2>
+                <p style="font-size: 18px; color: var(--accent); margin-bottom: 10px;">
+                    💼 Web Developer
+                </p>
+                <p style="max-width: 400px; margin: 0 auto;">
+                    "I created Smart Class Chat with hard work and dedication to make class communication easier and
+                    better for everyone."
+                </p>
+            </div>
+
+            <button class="whatsapp-btn" onclick="openProject()"
+                style="margin-bottom: 20px; background-color: rgba(255, 107, 53, 1)">
+                <span style="font-size: 24px;">🌍</span>
+                Open Project
+            </button>
+
+            <div class="contact-info">
+                <div class="contact-item">
+                    <span style="font-size: 24px;">📞</span>
+                    <div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">Phone</div>
+                        <div style="color: var(--text-primary);">7069331761</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <span style="font-size: 24px;">📧</span>
+                    <div>
+                        <div style="font-size: 13px; color: var(--text-secondary);">Email</div>
+                        <div style="color: var(--text-primary);">salikshaikh278@gmail.com</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="whatsapp-btn" onclick="openWhatsApp()">
+                <span style="font-size: 24px;">💬</span>
+                Contact on WhatsApp
+            </button>
+        </div>
+    </div>
+
+    <!-- ⏰ TRIAL TIMER TOAST -->
+    <div class="trial-timer-toast" id="trialTimerToast"></div>
+
     <script>
         // ============ CONFIGURATION ============
         const SECURITY_CODE = "Salik@Weber";
         const SAD_URL = "https://script.google.com/macros/s/AKfycbzC7LQ1baoYJg0Z__OlEyZ6VzZNLFlHBIGd1xsJ8tznKEfsYwIvMiqOxJ_NItKRihdH3w/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbxuhy-dKIiJ6wj9tBDgsOIt004OQfSTJd3SMDC_NBarK7bS3uqHAToeJa7t7fzvP2H6GA/exec";
+        const PREMIUM_URL = "https://script.google.com/macros/s/AKfycbwobFlIv8ogquH5KvAui4iIP-hewKleRC83zI3rYW3EbpxScX3jtlLlaPcWyOQZ7B21JA/exec";
         const MAX_CUSTOM_WALLPAPERS = 1;
 
         // ============ ADMIN CONFIGURATION ============
@@ -3791,6 +4301,10 @@
             loadOnlineCount();
             startStatusMonitoring();
         }
+
+        function openProject() {
+            window.open('https://salikweber0.github.io/Professional-Protfolio/', '_blank');
+        }
     </script>
 
     <script>
@@ -3859,6 +4373,348 @@
                 input.style.borderColor = 'var(--border-color)';
                 input.style.boxShadow = 'none';
             }
+        }
+    </script>
+
+    <script>
+        // ============ PREMIUM SYSTEM VARIABLES ============
+        let selectedWallpaperUrl = null;
+        let trialTimer = null;
+        let premiumCheckInterval = null;
+
+        // ============ PREMIUM STATUS CHECK ============
+        function checkPremiumStatus() {
+            const premiumData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+            if (!premiumData.status || premiumData.status !== 'active') {
+                return false;
+            }
+
+            // Check expiry
+            const expiryDate = new Date(premiumData.expiryDate);
+            const now = new Date();
+
+            if (now > expiryDate) {
+                // Premium expired
+                localStorage.removeItem('premiumData');
+                resetToDefaultWallpaper();
+                return false;
+            }
+
+            return true;
+        }
+
+        // ============ LOAD WALLPAPERS WITH LOCK ============
+        function loadWallpapers() {
+            const grid = document.getElementById('wallpaperGrid');
+            grid.innerHTML = '';
+
+            const savedWallpaper = localStorage.getItem('chatWallpaper');
+            const isPremium = checkPremiumStatus();
+            const trialUsed = JSON.parse(localStorage.getItem('wallpaperTrials') || '{}');
+
+            WALLPAPERS.forEach((wallpaper, index) => {
+                const item = document.createElement('div');
+                item.className = 'wallpaper-item';
+
+                if (savedWallpaper === wallpaper.url) {
+                    item.classList.add('active');
+                }
+
+                // Wallpaper image
+                item.innerHTML = `<img src="${wallpaper.url}" alt="${wallpaper.name}">`;
+
+                // Add lock overlay if not premium
+                if (!isPremium) {
+                    const lockDiv = document.createElement('div');
+                    lockDiv.className = 'wallpaper-lock';
+                    lockDiv.innerHTML = '🔒';
+                    lockDiv.onclick = () => showWallpaperPreview(wallpaper.url);
+                    item.appendChild(lockDiv);
+                } else {
+                    // Premium user - direct click to set
+                    item.onclick = () => setWallpaper(wallpaper.url, item);
+                }
+
+                grid.appendChild(item);
+            });
+
+            // Load custom wallpapers
+            const customWallpapers = JSON.parse(localStorage.getItem('customWallpapers') || '[]');
+            customWallpapers.forEach(wallpaperUrl => {
+                const item = document.createElement('div');
+                item.className = 'wallpaper-item';
+
+                if (savedWallpaper === wallpaperUrl) {
+                    item.classList.add('active');
+                }
+
+                item.innerHTML = `<img src="${wallpaperUrl}" alt="Custom">`;
+
+                if (!isPremium) {
+                    const lockDiv = document.createElement('div');
+                    lockDiv.className = 'wallpaper-lock';
+                    lockDiv.innerHTML = '🔒';
+                    lockDiv.onclick = () => showWallpaperPreview(wallpaperUrl);
+                    item.appendChild(lockDiv);
+                } else {
+                    item.onclick = () => setWallpaper(wallpaperUrl, item);
+                }
+
+                grid.appendChild(item);
+            });
+
+            // Apply saved wallpaper
+            if (savedWallpaper && savedWallpaper !== 'none') {
+                document.getElementById('messagesArea').style.backgroundImage = `url(${savedWallpaper})`;
+            } else {
+                const theme = localStorage.getItem('theme') || 'dark';
+                const defaultWallpaper = theme === 'light'
+                    ? 'https://i.pinimg.com/1200x/65/43/08/6543080537d11e105e6039f1a17a939e.jpg'
+                    : 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+            }
+        }
+
+        // ============ WALLPAPER PREVIEW ============
+        function showWallpaperPreview(wallpaperUrl) {
+            selectedWallpaperUrl = wallpaperUrl;
+            const preview = document.getElementById('wallpaperPreview');
+            const img = document.getElementById('previewImage');
+
+            img.src = wallpaperUrl;
+            preview.classList.add('active');
+
+            // Check if trial already used for this wallpaper
+            const trialUsed = JSON.parse(localStorage.getItem('wallpaperTrials') || '{}');
+            const trialBtn = document.querySelector('.trial-btn');
+
+            if (trialUsed[wallpaperUrl]) {
+                trialBtn.textContent = '❌ Trial Used';
+                trialBtn.style.background = '#888';
+                trialBtn.style.cursor = 'not-allowed';
+                trialBtn.onclick = () => {
+                    alert('⚠️ Free trial already used for this wallpaper!\n\nGet Premium to unlock unlimited access.');
+                };
+            } else {
+                trialBtn.textContent = '🟢 Free Trial (30s)';
+                trialBtn.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+                trialBtn.style.cursor = 'pointer';
+                trialBtn.onclick = startFreeTrial;
+            }
+        }
+
+        function closeWallpaperPreview() {
+            document.getElementById('wallpaperPreview').classList.remove('active');
+            selectedWallpaperUrl = null;
+        }
+
+        // ============ FREE TRIAL SYSTEM (30 SECONDS) ============
+        function startFreeTrial() {
+            if (!selectedWallpaperUrl) return;
+
+            // Check if already used
+            const trialUsed = JSON.parse(localStorage.getItem('wallpaperTrials') || '{}');
+            if (trialUsed[selectedWallpaperUrl]) {
+                alert('⚠️ Free trial already used for this wallpaper!');
+                return;
+            }
+
+            // Apply wallpaper
+            const messagesArea = document.getElementById('messagesArea');
+            messagesArea.style.backgroundImage = `url(${selectedWallpaperUrl})`;
+
+            // Close preview
+            closeWallpaperPreview();
+
+            // Show timer toast
+            const toast = document.getElementById('trialTimerToast');
+            let timeLeft = 30;
+
+            toast.textContent = `⏰ Trial: ${timeLeft}s remaining`;
+            toast.classList.add('show');
+
+            trialTimer = setInterval(() => {
+                timeLeft--;
+                toast.textContent = `⏰ Trial: ${timeLeft}s remaining`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(trialTimer);
+                    toast.classList.remove('show');
+
+                    // Reset to default wallpaper
+                    resetToDefaultWallpaper();
+
+                    // Mark trial as used
+                    trialUsed[selectedWallpaperUrl] = true;
+                    localStorage.setItem('wallpaperTrials', JSON.stringify(trialUsed));
+
+                    // Show premium popup
+                    setTimeout(() => {
+                        alert('⏰ Trial ended!\n\n💛 Get Premium for unlimited access to all wallpapers.');
+                    }, 500);
+                }
+            }, 1000);
+        }
+
+        // ============ RESET TO DEFAULT WALLPAPER ============
+        function resetToDefaultWallpaper() {
+            const theme = localStorage.getItem('theme') || 'dark';
+            const defaultWallpaper = theme === 'light'
+                ? 'https://i.pinimg.com/1200x/65/43/08/6543080537d11e105e6039f1a17a939e.jpg'
+                : 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+
+            document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+            localStorage.setItem('chatWallpaper', defaultWallpaper);
+        }
+
+        // ============ PREMIUM PAGE ============
+        function showPremiumPage() {
+            document.getElementById('premiumPage').classList.add('active');
+            updatePremiumTimer();
+        }
+
+        function hidePremiumPage() {
+            document.getElementById('premiumPage').classList.remove('active');
+        }
+
+        function updatePremiumTimer() {
+            const timerDiv = document.getElementById('premiumTimer');
+            const getPremiumBtn = document.getElementById('getPremiumBtn');
+            const premiumData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+            if (premiumData.status === 'active') {
+                const expiryDate = new Date(premiumData.expiryDate);
+                const now = new Date();
+                const daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+
+                if (daysLeft > 0) {
+                    timerDiv.innerHTML = `✅ Premium Active<br><span style="font-size: 16px; color: var(--accent);">${daysLeft} days remaining</span>`;
+                    // ✅ HIDE BUTTON
+                    if (getPremiumBtn) getPremiumBtn.style.display = 'none';
+                } else {
+                    timerDiv.textContent = '❌ Premium Expired';
+                    localStorage.removeItem('premiumData');
+                    // ✅ SHOW BUTTON
+                    if (getPremiumBtn) getPremiumBtn.style.display = 'block';
+                }
+            } else {
+                timerDiv.textContent = '🔒 Premium Not Active';
+                // ✅ SHOW BUTTON
+                if (getPremiumBtn) getPremiumBtn.style.display = 'block';
+            }
+        }
+
+        // ============ PAYMENT PAGE ============
+        function showPaymentPage() {
+            // Close other pages
+            closeWallpaperPreview();
+            hidePremiumPage();
+
+            document.getElementById('paymentPage').classList.add('active');
+        }
+
+        function hidePaymentPage() {
+            document.getElementById('paymentPage').classList.remove('active');
+        }
+
+        // ============ ABOUT PAGE ============
+        function showAboutPage() {
+            document.getElementById('aboutPage').classList.add('active');
+        }
+
+        function hideAboutPage() {
+            document.getElementById('aboutPage').classList.remove('active');
+        }
+
+        function openWhatsApp() {
+            if (!currentUser) {
+                alert('⚠️ User data not found!');
+                return;
+            }
+
+            const message = `Hi Salik, I am ${currentUser.name}, Roll No: ${currentUser.rollNo}`;
+            const whatsappUrl = `https://wa.me/917069331761?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ============ CHECK PREMIUM FROM ADMIN SHEET ============
+        async function checkPremiumFromSheet() {
+            if (!currentUser || !currentUser.rollNo) return;
+
+            try {
+                const response = await fetch(`${PREMIUM_URL}?action=checkPremium&rollNo=${encodeURIComponent(currentUser.rollNo)}&t=${Date.now()}`);
+                const data = await response.json();
+
+                console.log('✅ Premium API Response:', data);
+
+                if (data.success && data.isPremium === 'yes') {
+                    // Activate premium
+                    const premiumData = {
+                        status: 'active',
+                        activatedDate: new Date().toISOString(),
+                        expiryDate: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString()
+                    };
+
+                    localStorage.setItem('premiumData', JSON.stringify(premiumData));
+                    console.log('💎 Premium activated for Roll No:', currentUser.rollNo);
+
+                    // Reload wallpapers to remove locks
+                    loadWallpapers();
+
+                    alert('🎉 Premium Activated!\n\nAll wallpapers unlocked for 31 days.');
+                } else {
+                    console.log('🔒 Premium not active for Roll No:', currentUser.rollNo);
+                }
+            } catch (error) {
+                console.error('❌ Premium check error:', error);
+            }
+        }
+
+        // ============ START PREMIUM MONITORING ============
+        function startPremiumMonitoring() {
+            // Initial check
+            checkPremiumFromSheet();
+
+            // Check every 30 seconds
+            if (premiumCheckInterval) {
+                clearInterval(premiumCheckInterval);
+            }
+
+            premiumCheckInterval = setInterval(() => {
+                checkPremiumFromSheet();
+            }, 30000); // 30 seconds
+        }
+
+        // ============ MODIFIED showChat() - ADD PREMIUM CHECK ============
+        // REPLACE YOUR EXISTING showChat() FUNCTION WITH THIS:
+        function showChat() {
+            const signupPage = document.getElementById('signupPage');
+            const chatContainer = document.getElementById('chatContainer');
+            const profilePage = document.getElementById('profilePage');
+
+            signupPage.classList.add('hidden');
+            signupPage.style.display = 'none';
+            profilePage.classList.remove('active');
+            profilePage.style.display = 'none';
+
+            chatContainer.classList.add('active');
+            chatContainer.style.display = 'flex';
+
+            if (currentUser && currentUser.photo) {
+                document.getElementById('headerProfilePhoto').src = currentUser.photo;
+                document.getElementById('inputProfilePhoto').src = currentUser.photo;
+            }
+
+            const wallpaper = localStorage.getItem('chatWallpaper');
+            if (!wallpaper || wallpaper === 'none') {
+                const defaultWallpaper = 'https://i.pinimg.com/564x/54/3d/e8/543de8a1f2887da54f7b7de6772f6aa2.jpg';
+                document.getElementById('messagesArea').style.backgroundImage = `url(${defaultWallpaper})`;
+                localStorage.setItem('chatWallpaper', defaultWallpaper);
+            }
+
+            // ✅ START PREMIUM MONITORING
+            startPremiumMonitoring();
         }
     </script>
 
