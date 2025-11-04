@@ -1451,7 +1451,7 @@
         }
 
         .premium-content {
-            padding: 20px;
+            padding: 20px 20px 50px 20px;
         }
 
         .premium-card {
@@ -1543,6 +1543,30 @@
         .payment-info p {
             color: var(--text-secondary);
             line-height: 1.6;
+        }
+
+        /* 💳 UPI Pay Button */
+        .upi-pay-btn {
+            background: linear-gradient(135deg, #00a884 0%, #00d9a8 100%);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(0, 168, 132, 0.3);
+            transition: all 0.3s;
+        }
+
+        .upi-pay-btn:active {
+            transform: scale(0.95);
         }
 
         /* About Page */
@@ -1655,18 +1679,69 @@
             transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.9);
             color: white;
-            padding: 15px 30px;
-            border-radius: 25px;
-            font-size: 16px;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-size: 15px;
             font-weight: 600;
             z-index: 2000;
             display: none;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            max-width: 90%;
+            text-align: center;
+            line-height: 1.6;
+            word-break: break-word;
         }
 
         .trial-timer-toast.show {
             display: block;
             animation: slideDown 0.3s ease;
+        }
+
+        /* Plan Icon */
+        .plan-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Best Value Badge */
+        .premium-card.best-value {
+            position: relative;
+            border: 3px solid #FFD700;
+            box-shadow: 0 8px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .best-badge {
+            position: absolute;
+            top: -15px;
+            right: 20px;
+            background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            box-shadow: 0 4px 10px rgba(255, 165, 0, 0.5);
+        }
+
+        /* Active Premium Card */
+        .active-premium-card {
+            background: linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .active-premium-card h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        #activePremiumInfo {
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.8;
         }
     </style>
 </head>
@@ -1933,42 +2008,102 @@
     </div>
 
     <!-- ⭐ PREMIUM PAGE -->
+    <!-- ⭐ PREMIUM PAGE -->
     <div class="premium-page" id="premiumPage">
         <div class="premium-header">
             <button class="back-btn" onclick="hidePremiumPage()">←</button>
-            <h2 style="color: var(--header-text);">Premium Access</h2>
+            <h2 style="color: var(--header-text);">Premium Plans</h2>
         </div>
         <div class="premium-content">
-            <div class="premium-card">
-                <h3>🌟 Unlock All Wallpapers</h3>
-                <p style="color: var(--text-secondary); margin: 15px 0;">
-                    Get access to all premium wallpapers for one month!
+
+            <!-- 5 Days Plan -->
+            <div class="premium-card" data-plan="5days">
+                <div class="plan-icon">⚡</div>
+                <h3>5 Days Premium</h3>
+                <div class="premium-price">₹5</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 5 days
                 </p>
-                <div class="premium-price">₹20</div>
-                <p style="color: var(--text-secondary); font-size: 14px;">
-                    Valid for 31 days
-                </p>
-                <div class="premium-timer" id="premiumTimer">
-                    <!-- Timer will be shown here -->
-                </div>
-                <button class="get-premium-btn" id="getPremiumBtn" onclick="showPaymentPage()">
-                    Get Premium Now
+                <button class="get-premium-btn" onclick="selectPlan('5days', 5, 5)">
+                    Get 5 Days
                 </button>
             </div>
 
-            <div class="premium-card" style="text-align: left;">
-                <h4 style="color: var(--accent); margin-bottom: 15px;">✨ Features:</h4>
-                <ul style="color: var(--text-secondary); line-height: 2;">
-                    <li>🎨 Access to all wallpapers</li>
-                    <li>🚫 No more locks</li>
-                    <li>⏰ 31 days validity</li>
-                    <li>🔄 Auto-renewal option</li>
-                </ul>
+            <!-- 10 Days Plan -->
+            <div class="premium-card" data-plan="10days">
+                <div class="plan-icon">🔥</div>
+                <h3>10 Days Premium</h3>
+                <div class="premium-price">₹10</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 10 days
+                </p>
+                <button class="get-premium-btn" onclick="selectPlan('10days', 10, 10)">
+                    Get 10 Days
+                </button>
             </div>
+
+            <!-- 15 Days Plan -->
+            <div class="premium-card" data-plan="15days">
+                <div class="plan-icon">💎</div>
+                <h3>15 Days Premium</h3>
+                <div class="premium-price">₹15</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 15 days
+                </p>
+                <button class="get-premium-btn" onclick="selectPlan('15days', 15, 15)">
+                    Get 15 Days
+                </button>
+            </div>
+
+            <!-- 20 Days Plan -->
+            <div class="premium-card" data-plan="20days">
+                <div class="plan-icon">🚀</div>
+                <h3>20 Days Premium</h3>
+                <div class="premium-price">₹20</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 20 days
+                </p>
+                <button class="get-premium-btn" onclick="selectPlan('20days', 20, 20)">
+                    Get 20 Days
+                </button>
+            </div>
+
+            <!-- 25 Days Plan -->
+            <div class="premium-card" data-plan="25days">
+                <div class="plan-icon">🌟</div>
+                <h3>25 Days Premium</h3>
+                <div class="premium-price">₹25</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 25 days
+                </p>
+                <button class="get-premium-btn" onclick="selectPlan('25days', 25, 25)">
+                    Get 25 Days
+                </button>
+            </div>
+
+            <!-- 1 Month Plan (Best Value) -->
+            <div class="premium-card best-value" data-plan="1month">
+                <div class="best-badge">⭐ BEST VALUE</div>
+                <div class="plan-icon">👑</div>
+                <h3>1 Month Premium</h3>
+                <div class="premium-price">₹30</div>
+                <p style="color: var(--text-secondary); margin: 10px 0;">
+                    Unlock all wallpapers for 31 days
+                </p>
+                <button class="get-premium-btn" onclick="selectPlan('1month', 30, 31)">
+                    Get 1 Month
+                </button>
+            </div>
+
+            <!-- Active Premium Display -->
+            <div class="active-premium-card" id="activePremiumCard" style="display:none;">
+                <h3>✅ Your Active Premium</h3>
+                <div id="activePremiumInfo"></div>
+            </div>
+
         </div>
     </div>
 
-    <!-- 💳 PAYMENT PAGE -->
     <div class="payment-page" id="paymentPage">
         <div class="premium-header">
             <button class="back-btn" onclick="hidePaymentPage()">←</button>
@@ -1976,22 +2111,34 @@
         </div>
         <div class="premium-content">
             <div class="premium-card">
-                <h3>💳 Scan QR to Pay</h3>
+                <!-- Plan Title -->
+                <h3 id="paymentPlanTitle">💳 Premium Payment</h3>
+
+                <!-- QR Code (Dynamic) -->
                 <div class="payment-qr">
-                    <img src="QR.png" alt="Payment QR">
+                    <img id="paymentQRImage" src="" alt="Payment QR">
                 </div>
+
+                <!-- Payment Instructions -->
                 <div class="payment-info">
                     <h4>Payment Instructions:</h4>
-                    <p>
-                        1️⃣ Scan the QR code above<br>
-                        2️⃣ Pay exactly <strong>₹20</strong><br>
-                        3️⃣ Take screenshot of payment<br>
+                    <p id="paymentInstructions">
+                        1️⃣ Scan QR code OR tap UPI button<br>
+                        2️⃣ Pay <strong id="paymentAmount">₹0</strong><br>
+                        3️⃣ Screenshot payment confirmation<br>
                         4️⃣ Send to admin for verification<br>
-                        5️⃣ Premium will be activated within 1 hours
+                        5️⃣ Premium activated within 1 hour
                     </p>
                 </div>
+
+                <!-- 🔥 NEW: UPI Pay Button -->
+                <button class="upi-pay-btn" id="upiPayButton" onclick="payViaUPI()">
+                    <span style="font-size: 24px;">💳</span>
+                    Pay via UPI
+                </button>
+
                 <p style="color: var(--text-secondary); font-size: 13px; margin-top: 15px;">
-                    ⚠️ Once payment is verified by admin, your premium access will be activated automatically.
+                    ⚠️ Premium will be activated after admin verification.
                 </p>
             </div>
         </div>
@@ -2005,8 +2152,7 @@
         </div>
         <div class="about-content">
             <div class="about-avatar">
-                <img src="https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcTCRARf33-x1QbblvditdM8VhyieEU-BcQV-B9bC0C_tz1t3xcC"
-                    alt="Salik">
+                <img src="https://cdn-icons-png.flaticon.com/512/1253/1253756.png" alt="Salik">
             </div>
             <div class="about-info">
                 <h2>Shaikh Salik</h2>
@@ -2057,7 +2203,7 @@
         const SECURITY_CODE = "Salik@Weber";
         const SAD_URL = "https://script.google.com/macros/s/AKfycbzC7LQ1baoYJg0Z__OlEyZ6VzZNLFlHBIGd1xsJ8tznKEfsYwIvMiqOxJ_NItKRihdH3w/exec";
         const SMD_URL = "https://script.google.com/macros/s/AKfycbxuhy-dKIiJ6wj9tBDgsOIt004OQfSTJd3SMDC_NBarK7bS3uqHAToeJa7t7fzvP2H6GA/exec";
-        const PREMIUM_URL = "https://script.google.com/macros/s/AKfycbwobFlIv8ogquH5KvAui4iIP-hewKleRC83zI3rYW3EbpxScX3jtlLlaPcWyOQZ7B21JA/exec";
+        const PREMIUM_URL = "https://script.google.com/macros/s/AKfycby6W-rAmyUEsmry1i13JbpFOpoysIijLp_JSO-XkIbPDVbXSEitzMBvwg5fUc8T8v1ljw/exec";
         const MAX_CUSTOM_WALLPAPERS = 1;
 
         // ============ ADMIN CONFIGURATION ============
@@ -2101,6 +2247,16 @@
             { name: 'Wallpeper 23', url: 'https://i.pinimg.com/736x/7b/50/99/7b5099d17f44fd77d95158eb9bf6a349.jpg' },
             { name: 'Wallpeper 24', url: 'https://i.pinimg.com/736x/cb/96/7b/cb967bfb718cddcf25305d6bff8a1f59.jpg' }
         ];
+
+        // ============ QR CODES FOR DIFFERENT PLANS ============
+        const PREMIUM_QR_CODES = {
+            '5days': 'rs5.png',      // ₹5 wala QR
+            '10days': 'rs10.png',    // ₹10 wala QR
+            '15days': 'rs15.png',    // ₹15 wala QR
+            '20days': 'rs20.png',    // ₹20 wala QR
+            '25days': 'rs25.png',    // ₹25 wala QR
+            '1month': 'rs30.png'     // ₹30 wala QR
+        };
 
         function applySettings() {
             const wallpaper = localStorage.getItem('chatWallpaper');
@@ -4549,15 +4705,49 @@
 
         // ============ PAYMENT PAGE ============
         function showPaymentPage() {
+            if (!selectedPlanData) {
+                alert('⚠️ Please select a plan first!');
+                return;
+            }
+
             // Close other pages
             closeWallpaperPreview();
             hidePremiumPage();
 
+            // Show payment page
             document.getElementById('paymentPage').classList.add('active');
+
+            console.log('💳 Payment page opened for:', selectedPlanData);
         }
 
         function hidePaymentPage() {
             document.getElementById('paymentPage').classList.remove('active');
+        }
+
+        // ============ UPI PAYMENT BUTTON ============
+        function payViaUPI() {
+            if (!selectedPlanData) {
+                alert('⚠️ Please select a plan first!');
+                return;
+            }
+
+            const { price } = selectedPlanData;
+            const upiID = 'shaikh.salik@fam';
+            const payeeName = 'Shaikh Salik';
+            const transactionNote = `Premium ${selectedPlanData.planType}`;
+
+            // 🔥 UPI DEEP LINK
+            const upiUrl = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(payeeName)}&am=${price}&cu=INR&tn=${encodeURIComponent(transactionNote)}`;
+
+            console.log('💳 Opening UPI app:', upiUrl);
+
+            // Open UPI app
+            window.location.href = upiUrl;
+
+            // Show success message after 2 seconds
+            setTimeout(() => {
+                alert('✅ UPI app opened!\n\n📸 After payment, take screenshot and send to admin for verification.');
+            }, 2000);
         }
 
         // ============ ABOUT PAGE ============
@@ -4643,7 +4833,7 @@
             // Then check every 5 seconds
             premiumMonitorInterval = setInterval(() => {
                 checkAndUpdatePremiumStatus();
-            }, 5000); // 5 seconds
+            }, 3000); // 5 seconds
         }
 
         // ============ CHECK PREMIUM STATUS - ULTRA AGGRESSIVE ============
@@ -4658,13 +4848,21 @@
                 if (premiumData.expiryDate) {
                     const expiryDate = new Date(premiumData.expiryDate);
                     const now = new Date();
+                    const timeLeft = expiryDate - now; // milliseconds
+                    const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
 
                     console.log('🕐 Checking Premium:', {
                         status: currentStatus,
-                        expiryDate: expiryDate.toLocaleTimeString(),
-                        nowTime: now.toLocaleTimeString(),
+                        expiryDate: expiryDate.toLocaleString(),
+                        nowTime: now.toLocaleString(),
+                        timeLeft: Math.floor(timeLeft / 1000) + 's',
                         expired: now > expiryDate
                     });
+
+                    // ✅ UPDATE UI if last day (for live countdown)
+                    if (currentStatus === 'active' && daysLeft <= 1 && timeLeft > 0) {
+                        updatePremiumUI(); // Live update hours/minutes/seconds
+                    }
 
                     // ✅ EXPIRED - Immediately lock everything
                     if (currentStatus === 'active' && now > expiryDate) {
@@ -4683,17 +4881,14 @@
                         // 🔴 Step 3: Show notification
                         showExpiredNotification();
 
+                        // 🔴 Step 4: Update UI
+                        updatePremiumUI();
+
                         return;
                     }
 
-                    // ✅ ACTIVE - Keep tabs on expiry
+                    // ✅ ACTIVE - Keep monitoring
                     if (currentStatus === 'active' && now < expiryDate) {
-                        const timeLeft = (expiryDate - now) / 1000; // seconds
-
-                        if (timeLeft <= 60) {
-                            console.log(`⚠️ PREMIUM EXPIRING SOON: ${Math.ceil(timeLeft)}s`);
-                        }
-
                         lastPremiumStatus = 'active';
                         return;
                     }
@@ -4705,6 +4900,7 @@
                     resetToDefaultWallpaperImmediately();
                     lockAllWallpapersImmediately();
                     showExpiredNotification();
+                    updatePremiumUI();
                 }
 
             } catch (error) {
@@ -4774,37 +4970,133 @@
             console.log('✅ All wallpapers locked');
         }
 
-        // ============ EXPIRED NOTIFICATION ============
+        // ============ PREMIUM ACTIVATED NOTIFICATION ============
+        function showPremiumActivatedNotification(days) {
+            const message = `Premium Activated!\n${days} days access unlocked`;
+            showMobileNotification(message, 'success');
+        }
+
+        // ============ PREMIUM EXPIRED NOTIFICATION ============
+        // ============ PREMIUM EXPIRED NOTIFICATION ============
         function showExpiredNotification() {
-            // Check if already showed this session
             const alreadyShowed = sessionStorage.getItem('premiumExpiredAlertShowed');
 
             if (!alreadyShowed) {
-                console.log('🔔 Showing expiry notification');
-
-                // Show toast notification
-                const toast = document.getElementById('trialTimerToast');
-                if (toast) {
-                    toast.textContent = '❌ Premium Expired - Wallpapers Locked';
-                    toast.style.background = '#ff4c4c';
-                    toast.classList.add('show');
-
-                    setTimeout(() => {
-                        toast.classList.remove('show');
-                    }, 3000);
-                }
-
-                // Mark as showed
+                const message = '❌ Premium Expired\n🔒 Wallpapers locked';
+                showMobileNotification(message, 'error');
                 sessionStorage.setItem('premiumExpiredAlertShowed', 'true');
             }
         }
 
-        // ============ MODIFIED checkPremiumFromSheet ============
-        // ============ REPLACE YE FUNCTION ============
+        // ============ MOBILE-FRIENDLY NOTIFICATION ============
+        function showMobileNotification(message, type = 'success') {
+            const toast = document.getElementById('trialTimerToast');
+            if (!toast) return;
+
+            // Split message by \n
+            const lines = message.split('\n');
+
+            // Build HTML
+            let html = '';
+            lines.forEach(line => {
+                html += `<div>${line}</div>`;
+            });
+
+            toast.innerHTML = html;
+
+            // Set color based on type
+            if (type === 'success') {
+                toast.style.background = 'linear-gradient(135deg, #00d9a8 0%, var(--accent) 100%)';
+            } else if (type === 'error') {
+                toast.style.background = 'linear-gradient(135deg, #ff4c4c 0%, #ff6b6b 100%)';
+            }
+
+            toast.style.padding = '15px 25px';
+            toast.style.lineHeight = '1.6';
+            toast.style.textAlign = 'center';
+            toast.style.maxWidth = '90%';
+            toast.style.wordBreak = 'break-word';
+
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 4000);
+        }
+
+        // ============ PREMIUM PLAN SELECTION ============
+        let selectedPlanData = null;
+
+        function selectPlan(planType, price, days) {
+            selectedPlanData = {
+                planType: planType,
+                price: price,
+                days: days
+            };
+
+            // Update payment page with selected plan details
+            updatePaymentPageUI(planType, price, days);
+
+            // Show payment page
+            showPaymentPage();
+
+            // ✅ START AUTO-FETCH (Check every 2 seconds)
+            console.log('🟢 Starting premium auto-fetch...');
+            startPremiumAutoFetch();
+        }
+
+        function updatePaymentPageUI(planType, price, days) {
+            // Update title
+            document.getElementById('paymentPlanTitle').textContent =
+                `💳 ${getPlanName(planType)} - ₹${price}`;
+
+            // Update QR code image
+            const qrImage = document.getElementById('paymentQRImage');
+            qrImage.src = PREMIUM_QR_CODES[planType] || 'QR.png';
+
+            // ✅ BETTER PAYMENT INSTRUCTIONS
+            document.getElementById('paymentInstructions').innerHTML = `
+        <div style="text-align: left;">
+            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+                <span style="min-width: 50px; font-size: 16px;">📱</span>
+                <span>Scan QR code OR tap UPI button</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+                <span style="min-width: 50px; font-size: 16px;">💰</span>
+                <span>Pay <strong>₹${price}</strong></span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+                <span style="min-width: 50px; font-size: 16px;">📸</span>
+                <span>Screenshot payment confirmation</span>
+            </div>
+            <div style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+                <span style="min-width: 50px; font-size: 16px;">📤</span>
+                <span>Send to admin for verification</span>
+            </div>
+            <div style="display: flex; align-items: flex-start;">
+                <span style="min-width: 50px; font-size: 16px;">✅</span>
+                <span>Premium activated within 1 hour</span>
+            </div>
+        </div>
+    `;
+
+            console.log(`✅ Payment page updated: ${planType} - ₹${price}`);
+        }
+
+        // ============ AUTO-FETCH PREMIUM STATUS ============
+        let premiumFetchInterval = null;
+
         async function checkPremiumFromSheet() {
             if (!currentUser || !currentUser.rollNo) {
                 console.log('❌ No user or rollNo found');
                 return;
+            }
+
+            // ✅ CHECK: If premium already active, DON'T fetch
+            const existingData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+            if (existingData.status === 'active') {
+                console.log('✅ Premium already active - SKIPPING fetch');
+                return; // Don't fetch if already active
             }
 
             try {
@@ -4816,61 +5108,188 @@
                 console.log('✅ Premium API Response:', data);
 
                 if (data.success && data.isPremium === 'yes') {
-                    // Check if already activated
-                    const existingData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+                    console.log('🎉 NEW PREMIUM ACTIVATION:', data.activePlan, 'for', data.days, 'days');
 
-                    if (existingData.status !== 'active') {
-                        // NEW ACTIVATION
-                        console.log('🎉 NEW PREMIUM ACTIVATION');
+                    const premiumData = {
+                        status: 'active',
+                        planType: data.activePlan,
+                        days: data.days,
+                        activatedDate: new Date().toISOString(),
+                        expiryDate: new Date(Date.now() + data.days * 24 * 60 * 60 * 1000).toISOString()
+                    };
 
-                        const premiumData = {
-                            status: 'active',
-                            activatedDate: new Date().toISOString(),
-                            expiryDate: new Date(Date.now() + 31 * 24 * 60 * 60 * 1000).toISOString()  // 31 days
-                            // expiryDate: new Date(Date.now() + 60 * 1000).toISOString() // 60 seconds - Testing
-                        };
+                    localStorage.setItem('premiumData', JSON.stringify(premiumData));
 
-                        localStorage.setItem('premiumData', JSON.stringify(premiumData));
-                        lastPremiumStatus = 'active';
+                    // 🔴 STOP AUTO-FETCH (Premium active ho gaya)
+                    stopPremiumAutoFetch();
 
-                        // ✅ INSTANTLY UNLOCK WALLPAPERS
-                        console.log('🔓 UNLOCKING WALLPAPERS NOW');
-                        loadWallpapers();
+                    // 🔓 UNLOCK WALLPAPERS
+                    console.log('🔓 UNLOCKING WALLPAPERS NOW');
+                    loadWallpapers();
 
-                        // Show success message
-                        const toast = document.getElementById('trialTimerToast');
-                        if (toast) {
-                            toast.textContent = '✅ Premium Activated - Wallpapers Unlocked (31 days)';
-                            toast.style.background = 'var(--accent)';
-                            toast.classList.add('show');
+                    // ✅ SHOW SUCCESS NOTIFICATION
+                    showPremiumActivatedNotification(data.days);
 
-                            setTimeout(() => {
-                                toast.classList.remove('show');
-                            }, 4000);
-                        }
+                    // START EXPIRY MONITORING
+                    startRealTimePremiumMonitoring();
 
-                        // ✅ START REAL-TIME MONITORING
-                        startRealTimePremiumMonitoring();
-                    } else {
-                        console.log('✅ Premium already active');
-                    }
+                    return;
                 } else {
                     console.log('❌ Premium not found in sheet');
-                    const existingData = JSON.parse(localStorage.getItem('premiumData') || '{}');
-
-                    if (existingData.status === 'active') {
-                        console.log('❌ PREMIUM REMOVED BY ADMIN');
-                        localStorage.removeItem('premiumData');
-                        lastPremiumStatus = null;
-
-                        resetToDefaultWallpaperImmediately();
-                        lockAllWallpapersImmediately();
-                        showExpiredNotification();
-                    }
                 }
             } catch (error) {
                 console.error('❌ Premium check error:', error);
             }
+        }
+
+        // ============ START AUTO-FETCH (Every 2 seconds) ============
+        function startPremiumAutoFetch() {
+            const premiumData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+            // ✅ Only start if NOT already active
+            if (premiumData.status === 'active') {
+                console.log('⏩ Premium already active - skipping auto-fetch');
+                startRealTimePremiumMonitoring();
+                return;
+            }
+
+            console.log('🟢 STARTING AUTO-FETCH (Every 2 seconds)');
+
+            // Clear existing interval
+            if (premiumFetchInterval) {
+                clearInterval(premiumFetchInterval);
+            }
+
+            // First check immediately
+            checkPremiumFromSheet();
+
+            // Then check every 2 seconds
+            premiumFetchInterval = setInterval(() => {
+                const currentData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+
+                // Stop if premium becomes active
+                if (currentData.status === 'active') {
+                    console.log('🛑 Premium activated - stopping auto-fetch');
+                    stopPremiumAutoFetch();
+                    startRealTimePremiumMonitoring();
+                    return;
+                }
+
+                checkPremiumFromSheet();
+            }, 2000); // 2 seconds
+        }
+
+        // ============ STOP AUTO-FETCH ============
+        function stopPremiumAutoFetch() {
+            if (premiumFetchInterval) {
+                clearInterval(premiumFetchInterval);
+                premiumFetchInterval = null;
+                console.log('⏹️ Premium auto-fetch STOPPED');
+            }
+        }
+
+
+        // ============ UPDATE PREMIUM UI ============
+        function updatePremiumUI() {
+            const premiumData = JSON.parse(localStorage.getItem('premiumData') || '{}');
+            const activeCard = document.getElementById('activePremiumCard');
+            const activeInfo = document.getElementById('activePremiumInfo');
+
+            if (premiumData.status === 'active') {
+                const expiryDate = new Date(premiumData.expiryDate);
+                const now = new Date();
+                const timeLeft = expiryDate - now; // milliseconds
+                const daysLeft = Math.ceil(timeLeft / (1000 * 60 * 60 * 24));
+
+                if (timeLeft > 0) {
+                    activeCard.style.display = 'block';
+
+                    // ✅ LAST DAY: Show hours, minutes, seconds
+                    if (daysLeft <= 1) {
+                        const hoursLeft = Math.floor(timeLeft / (1000 * 60 * 60));
+                        const minutesLeft = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+                        const secondsLeft = Math.floor((timeLeft % (1000 * 60)) / 1000);
+
+                        activeInfo.innerHTML = `
+                    <div style="font-size: 24px; margin: 10px 0;">
+                        ${getPlanEmoji(premiumData.planType)} ${getPlanName(premiumData.planType)}
+                    </div>
+                    <div style="font-size: 18px; color: #ff6b6b; font-weight: 700; margin: 10px 0;">
+                        ⏰ EXPIRING SOON
+                    </div>
+                    <div style="font-size: 14px; opacity: 0.8; margin-top: 10px;">
+                        Expires: Last Day
+                    </div>
+                `;
+                    } else {
+                        // ✅ MORE THAN 1 DAY: Show days
+                        activeInfo.innerHTML = `
+                    <div style="font-size: 24px; margin: 10px 0;">
+                        ${getPlanEmoji(premiumData.planType)} ${getPlanName(premiumData.planType)}
+                    </div>
+                    <div style="font-size: 16px; opacity: 0.9;">
+                        ${daysLeft} days remaining
+                    </div>
+                    <div style="font-size: 14px; opacity: 0.8; margin-top: 10px;">
+                        Expires: ${expiryDate.toLocaleDateString()}
+                    </div>
+                `;
+                    }
+
+                    // Hide plan cards (already purchased)
+                    document.querySelectorAll('.premium-card[data-plan]').forEach(card => {
+                        card.style.opacity = '0.5';
+                        card.style.pointerEvents = 'none';
+                    });
+                } else {
+                    activeCard.style.display = 'none';
+                    localStorage.removeItem('premiumData');
+
+                    // Show plan cards again
+                    document.querySelectorAll('.premium-card[data-plan]').forEach(card => {
+                        card.style.opacity = '1';
+                        card.style.pointerEvents = 'auto';
+                    });
+                }
+            } else {
+                activeCard.style.display = 'none';
+
+                // Show plan cards
+                document.querySelectorAll('.premium-card[data-plan]').forEach(card => {
+                    card.style.opacity = '1';
+                    card.style.pointerEvents = 'auto';
+                });
+            }
+        }
+
+        function getPlanEmoji(planType) {
+            const emojis = {
+                '5days': '⚡',
+                '10days': '🔥',
+                '15days': '💎',
+                '20days': '🚀',
+                '25days': '🌟',
+                '1month': '👑'
+            };
+            return emojis[planType] || '⭐';
+        }
+
+        function getPlanName(planType) {
+            const names = {
+                '5days': '5 Days Premium',
+                '10days': '10 Days Premium',
+                '15days': '15 Days Premium',
+                '20days': '20 Days Premium',
+                '25days': '25 Days Premium',
+                '1month': '1 Month Premium'
+            };
+            return names[planType] || 'Premium';
+        }
+
+        // ============ MODIFIED showPremiumPage ============
+        function showPremiumPage() {
+            document.getElementById('premiumPage').classList.add('active');
+            updatePremiumUI();
         }
 
         // ============ STOP MONITORING ============
